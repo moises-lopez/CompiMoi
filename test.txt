@@ -1,0 +1,15 @@
+Programa test; 
+var testInt, testInt2 : int; testFloat, testFloat2: float;
+
+Function Main(var testParam1, testParam2: int;){  
+  testInt=5; 
+  testInt2=4; 
+
+  if(testInt > testInt2){ 
+    testInt=1;  
+  }else{
+    testInt2=2;  
+  };  
+
+  print(testInt2, "HOLA");
+}
