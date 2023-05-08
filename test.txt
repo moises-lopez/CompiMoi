@@ -1,12 +1,15 @@
 Programa test; 
-var testInt, testInt2 : int; testFloat, testFloat2: float;
+var testInt, testInt2 : int; testFloat, testFloat2, testFloat3: float;
 
 Function Main(var testParam1, testParam2: int;){  
   testInt=5; 
-  testInt2=4; 
+  testInt2=5; 
+  testFloat=5; 
+  testFloat2=5; 
+  testFloat3=testFloat + testInt * testInt2 / testFloat2 + testFloat; 
 
   if(testInt > testInt2){ 
-    testInt=1;  
+    testInt=1;
   }else{
     testInt2=2;  
   };  
