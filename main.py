@@ -5,6 +5,11 @@ import sys
 cuadruplos = []
 pilaOperadores = []
 pilaOperandos = []
+dirFuncionesDict = {}
+currentDirFuncion = ''
+currentVarTable = ''
+currentType = ''
+currentVars = []
 cubo_semantico = {
     '*': {
         'float': {
@@ -211,35 +216,59 @@ lexer = lex.lex()
 
 def p_calc(p):
     '''
-      calc : PROGRAMA ID SEMICOLON vars function
-           | PROGRAMA ID SEMICOLON function
+      calc : PROGRAMA ID seen_program SEMICOLON vars function
+           | PROGRAMA ID seen_program SEMICOLON function
       '''
     print('No syntax errors found :)')
 
+def p_seen_program(p):
+    'seen_program: '
+    dirFuncionesDict[p[-1]] = {type: 'Program'}
+    currentDirFuncion = p[-1]
+    print('No syntax errors found :)')
 
 def p_vars(p):
-    ''' vars : VAR varsaux '''
+    ''' vars : VAR seen_vars sevarsaux '''
+
+
+def p_seen_vars(p):
+    'seen_vars: '
+
 
 
 def p_varsaux(p):
     '''
-      varsaux : ID varsaux2 COLON tipo SEMICOLON varsaux
+      varsaux : ID seen_ID_var varsaux2 COLON tipo SEMICOLON varsaux
               |
       '''
 
 
 def p_varsaux2(p):
     '''
-      varsaux2 : COMMA ID varsaux2
+      varsaux2 : COMMA ID seen_ID_var varsaux2
               |
       '''
+
+def p_seen_ID_var(p):
+    ' seen_ID_var: '
+    currentVars.append(p[-1])
+
 
 
 def p_tipo(p):
     '''
-      tipo : INT
-           | FLOAT
+      tipo : INT seen_tipo
+           | FLOAT seen_tipo
       '''
+
+def p_seen_tipo(p):
+    'seen_tipo: '
+    tipo = p[-1]
+    for currentVar in currentVars:
+        if(dirFuncionesDict[currentDirFuncion].varsTable.has_key(currentVar)):
+            print('Redeclaration on variable', currentVar)
+        dirFuncionesDict[currentDirFuncion].varsTable[currentVar] = {'tipo': tipo}
+
 
 
 def p_function(p):
@@ -263,7 +292,7 @@ def p_bloque(p):
 
 def p_bloqueaux(p):
     '''
-      bloqueaux : estatuto bloqueaux 
+      bloqueaux : estatuto bloqueaux
               |
       '''
 
@@ -374,7 +403,7 @@ def p_factoraux2(p):
 
 def p_factoraux3(p):  # QUE SHOW CON ESTO
     '''
-        factoraux3 : PLUS 
+        factoraux3 : PLUS
                     | MINUS
                     |
 
