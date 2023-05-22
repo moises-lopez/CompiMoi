@@ -1,6 +1,7 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import sys
+import json
 
 cuadruplos = []
 pilaOperadores = []
@@ -222,17 +223,21 @@ def p_calc(p):
     print('No syntax errors found :)')
 
 def p_seen_program(p):
-    'seen_program: '
-    dirFuncionesDict[p[-1]] = {type: 'Program'}
+    "seen_program : "
+    global currentDirFuncion
+    dirFuncionesDict[p[-1]] = {'type': 'Program'}
     currentDirFuncion = p[-1]
     print('No syntax errors found :)')
 
 def p_vars(p):
-    ''' vars : VAR seen_vars sevarsaux '''
+    ''' vars : VAR seen_vars varsaux '''
 
 
 def p_seen_vars(p):
-    'seen_vars: '
+    "seen_vars : "
+
+    if(not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
+        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
 
 
 
@@ -250,7 +255,7 @@ def p_varsaux2(p):
       '''
 
 def p_seen_ID_var(p):
-    ' seen_ID_var: '
+    " seen_ID_var : "
     currentVars.append(p[-1])
 
 
@@ -262,12 +267,18 @@ def p_tipo(p):
       '''
 
 def p_seen_tipo(p):
-    'seen_tipo: '
+    "seen_tipo : "
+    global currentVars
     tipo = p[-1]
     for currentVar in currentVars:
-        if(dirFuncionesDict[currentDirFuncion].varsTable.has_key(currentVar)):
-            print('Redeclaration on variable', currentVar)
-        dirFuncionesDict[currentDirFuncion].varsTable[currentVar] = {'tipo': tipo}
+        try:
+            if(currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
+                print('Redeclaration on variable', currentVar)
+        except (NameError, AttributeError) as e:
+            print(e)
+            pass
+        dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': tipo}
+    currentVars=[]
 
 
 
@@ -451,8 +462,8 @@ def p_seen_factor(p):
     "seen_factor :"
     if (len(pilaOperadores) == 0):
         return
-    print(pilaOperadores)
-    print(pilaOperandos)
+    #print(pilaOperadores)
+    #print(pilaOperandos)
 
     if pilaOperadores[-1] == '*' or pilaOperadores[-1] == '/':
         right_operando = pilaOperandos.pop()
@@ -512,11 +523,13 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("test.txt").read()
+    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
     # print(file)
     parser.parse(file)
-    print(pilaOperandos)
-    print(cuadruplos)
+    #print(pilaOperandos)
+    #print(cuadruplos)
+    print(dirFuncionesDict)
+    #print(json.dumps(dirFuncionesDict, indent=4))
 else:
     while True:
         try:
