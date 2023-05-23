@@ -15,3 +15,8 @@ Tercer Avance
 Se terminó y optimizó directorio de funciones
 Se agregó reglas semánticas faltantes de módulos y variables globales
 Se agregaron variables de current_type, current_function etc
+
+Cuarto Avance
+Se empezó semántica y generación de código de módulos, 
+Se terminó de implemntar directorio de funciones para módulos
+Research de máquina virtual

@@ -80,6 +80,8 @@ tokens = [
 
 reserved = {
     'Programa': 'PROGRAMA',
+    'void': 'VOID',
+    'Main': 'MAIN',
     'Function': 'FUNCTION',
     'var': 'VAR',
     'if': 'IF',
@@ -132,6 +134,14 @@ def t_STRING_CTE(t):
 
 def t_PROGRAMA(t):
     r'Programa'
+    return t
+
+def t_VOID(t):
+    r'void'
+    return t
+
+def t_MAIN(t):
+    r'Main'
     return t
 
 
@@ -215,22 +225,32 @@ lexer = lex.lex()
 # Esta gramatica se basa en la actividad pasada con algunas modificaciones
 
 
-def p_calc(p):
+def p_calc(p): #falta poner main
     '''
-      calc : PROGRAMA ID seen_program SEMICOLON vars function
-           | PROGRAMA ID seen_program SEMICOLON function
-      '''
+      calc : PROGRAMA ID seen_program SEMICOLON vars modulesaux functionmain
+     '''
     print('No syntax errors found :)')
+
+def p_modulesaux(p):
+    '''
+      modulesaux : function modulesaux
+           |
+      '''
+
+
 
 def p_seen_program(p):
     "seen_program : "
     global currentDirFuncion
     dirFuncionesDict[p[-1]] = {'type': 'Program'}
     currentDirFuncion = p[-1]
-    print('No syntax errors found :)')
 
 def p_vars(p):
-    ''' vars : VAR seen_vars varsaux '''
+    ''' vars : VAR seen_vars varsaux
+                | empty
+    '''
+    print('hola2?')
+
 
 
 def p_seen_vars(p):
@@ -246,6 +266,8 @@ def p_varsaux(p):
       varsaux : ID seen_ID_var varsaux2 COLON tipo SEMICOLON varsaux
               |
       '''
+    print('hola3?')
+
 
 
 def p_varsaux2(p):
@@ -253,6 +275,7 @@ def p_varsaux2(p):
       varsaux2 : COMMA ID seen_ID_var varsaux2
               |
       '''
+
 
 def p_seen_ID_var(p):
     " seen_ID_var : "
@@ -284,20 +307,41 @@ def p_seen_tipo(p):
 
 def p_function(p):
     '''
-      function : FUNCTION ID params bloque
+      function : FUNCTION returnfunctionaux ID params bloque
       '''
+
+
+def p_functionmain(p):
+    '''
+      functionmain : MAIN  LEFTPARENTHESES RIGHTPARENTHESES bloque
+      '''
+
+
+
+def p_returnfunctionaux(p):
+    '''
+      returnfunctionaux : tipo
+                | VOID
+      '''
+
 
 
 def p_params(p):
     '''
-      params : LEFTPARENTHESES vars RIGHTPARENTHESES
-            | LEFTPARENTHESES RIGHTPARENTHESES
+      params : LEFTPARENTHESES paramsaux RIGHTPARENTHESES
       '''
+    print('params?', p[-1])
+
+def p_paramsaux(p):
+    '''
+      paramsaux : ID COLON tipo
+                | ID COLON tipo COMMA paramsaux
+    '''
 
 
 def p_bloque(p):
     '''
-      bloque : LEFTBRACE bloqueaux RIGHTBRACE
+      bloque : LEFTBRACE vars bloqueaux RIGHTBRACE
       '''
 
 
@@ -308,6 +352,7 @@ def p_bloqueaux(p):
       '''
 
 
+
 def p_estatuto(p):
     '''
       estatuto : asignacion
@@ -316,10 +361,12 @@ def p_estatuto(p):
       '''
 
 
+
 def p_asignacion(p):
     '''
       asignacion : varcte EQUALS expresion SEMICOLON
       '''
+
 
 
 def p_expresion(p):

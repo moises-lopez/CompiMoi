@@ -1,8 +1,8 @@
 Programa test; 
 var testInt, testInt2 : int; testFloat, testFloat2, testFloat3: float;
 
-Function Main(var testParam1, testParam2: int;){  
-  testInt=5; 
+Main (){
+  testInt=5;
   testInt2=5; 
   testFloat=5; 
   testFloat2=5; 
