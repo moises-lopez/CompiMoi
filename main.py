@@ -6,11 +6,15 @@ import json
 cuadruplos = []
 pilaOperadores = []
 pilaOperandos = []
+pilaTipos = []
 dirFuncionesDict = {}
 currentDirFuncion = ''
 currentVarTable = ''
 currentType = ''
 currentVars = []
+programName = ''
+pilaSaltos= []
+contadorCuadruplos = 0
 cubo_semantico = {
     '*': {
         'float': {
@@ -242,8 +246,10 @@ def p_modulesaux(p):
 def p_seen_program(p):
     "seen_program : "
     global currentDirFuncion
+    global programName
     dirFuncionesDict[p[-1]] = {'type': 'Program'}
     currentDirFuncion = p[-1]
+    programName = p[-1]
 
 def p_vars(p):
     ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
@@ -329,20 +335,30 @@ def p_seen_void(p):
 
 def p_params(p):
     '''
-      params : LEFTPARENTHESES paramsaux RIGHTPARENTHESES
+      params : LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES
       '''
+
+
+def p_seen_params_init(p):
+    '''
+      seen_params_init :
+    '''
+    if(not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
+        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+
 
 def p_paramsaux(p):
     '''
-      paramsaux : ID COLON tipo
-                | ID COLON tipo COMMA paramsaux
+      paramsaux : tipo ID seen_ID_var paramsaux
+                | COMMA paramsaux
+                | empty
     '''
 
 
 def p_bloque(p):
     '''
       bloque : LEFTBRACE vars bloqueaux RIGHTBRACE
-      '''
+    '''
 
 
 def p_bloqueaux(p):
@@ -429,16 +445,45 @@ def p_terminoaux(p):
 
 def p_condicion(p):
     '''
-        condicion : IF LEFTPARENTHESES expresion RIGHTPARENTHESES bloque condicionaux
+        condicion : IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
       '''
 
 
 def p_condicionaux(p):
     '''
-        condicionaux : ELSE bloque SEMICOLON
-                  | SEMICOLON
+        condicionaux : ELSE seen_else bloque SEMICOLON seen_end_condicion
+                  | SEMICOLON seen_end_condicion
       '''
 
+def p_seen_right_parentheses_condicion(p):
+    '''
+        seen_right_parentheses_condicion :
+      '''
+
+    exp_type = pilaTipos.pop()
+    print(exp_type)
+    if(exp_type != 'boolean'):
+        print('ERROR MISMATCH IN CONDITION')
+    else:
+        result = pilaOperandos.pop()
+        generate_quad(operador = 'GOTOF', left_operando =result, right_operando= '', result='')
+        pilaSaltos.append(contadorCuadruplos-1)
+
+def p_seen_else(p):
+    '''
+        seen_else :
+      '''
+    generate_quad(operador = 'GOTO', left_operando ='', right_operando= '', result='')
+    false = pilaSaltos.pop()
+    pilaSaltos.append(contadorCuadruplos-1)
+    fill(false, contadorCuadruplos)
+
+def p_seen_end_condicion(p):
+    '''
+        seen_end_condicion :
+      '''
+    end = pilaSaltos.pop()
+    fill(end, contadorCuadruplos)
 
 def p_factor(p):
     '''
@@ -479,7 +524,17 @@ def p_varcte(p):
 
 def p_seen_ID(p):
     "seen_ID :"
+    varId = p[-1]
+    tipo = ''
+    if(varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
+        tipo = dirFuncionesDict[currentDirFuncion]['varsTable'][varId]['tipo']
+    elif(varId in dirFuncionesDict[programName]['varsTable']):
+        tipo = dirFuncionesDict[programName]['varsTable'][varId]['tipo']
+
+    if(tipo == ''):
+        print('no se encontró variable', varId)
     pilaOperandos.append(p[-1])
+    pilaTipos.append(tipo)
 
 
 def p_seen_operador(p):
@@ -494,13 +549,16 @@ def p_seen_termino(p):
     if pilaOperadores[-1] == '+' or pilaOperadores[-1] == '-':
         right_operando = pilaOperandos.pop()
         left_operando = pilaOperandos.pop()
+        right_tipo = pilaTipos.pop()
+        left_tipo = pilaTipos.pop()
         operador = pilaOperadores.pop()
-        result_type = getResultType()
+        result_type = getResultType(right_tipo= right_tipo, left_tipo= left_tipo, operador=operador)
         if (result_type):
             result = nextAvail()
             cuadruplos.append(generate_quad(
                 operador=operador, left_operando=left_operando, right_operando=right_operando, result=result))
             pilaOperandos.append(result)
+            pilaTipos.append(result_type)
         else:
             print('ERROR MISMATCH')
 
@@ -509,19 +567,19 @@ def p_seen_factor(p):
     "seen_factor :"
     if (len(pilaOperadores) == 0):
         return
-    #print(pilaOperadores)
-    #print(pilaOperandos)
-
     if pilaOperadores[-1] == '*' or pilaOperadores[-1] == '/':
         right_operando = pilaOperandos.pop()
         left_operando = pilaOperandos.pop()
+        right_tipo = pilaTipos.pop()
+        left_tipo = pilaTipos.pop()
         operador = pilaOperadores.pop()
-        result_type = getResultType()
+        result_type = getResultType(right_tipo= right_tipo, left_tipo= left_tipo, operador=operador)
         if (result_type):
             result = nextAvail()
             cuadruplos.append(generate_quad(
                 operador=operador, left_operando=left_operando, right_operando=right_operando, result=result))
             pilaOperandos.append(result)
+            pilaTipos.append(result_type)
         else:
             print('ERROR MISMATCH')
 
@@ -557,12 +615,15 @@ def nextAvail():
     return 't1'
 
 
-def getResultType():
-    # result_type = cubo_semantico[operador][left_operando][right_operando]
-    return 'int'
+def getResultType(right_tipo, left_tipo, operador):
+    result_type = cubo_semantico[operador][left_tipo][right_tipo]
+    return result_type
+
+def fill(numeroCuadruploALlenar, numeroCuadrupASaltar):
+    cuadruplos[numeroCuadruploALlenar][4] = numeroCuadrupASaltar
+
 # Execution
 # IMPORTANT
-# This version does not accept end of lines, so in order to test code please put it in one line, use this tool if you need to convert to one line
 # https://lingojam.com/TexttoOneLine
 
 
@@ -576,6 +637,7 @@ if option == "1":
     #print(pilaOperandos)
     #print(cuadruplos)
     print(dirFuncionesDict)
+    print(pilaTipos)
     #print(json.dumps(dirFuncionesDict, indent=4))
 else:
     while True:
