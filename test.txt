@@ -1,5 +1,15 @@
 Programa test; 
-var testInt, testInt2 : int; testFloat, testFloat2, testFloat3: float;
+var int testInt, testInt2;
+var float testFloat, testFloat2, testFloat3;
+
+Function int TestFunction(testIntParam1: int, testIntParam2: int){
+    print("1");
+}
+
+
+Function int TestFunction2(testIntParam1: int){
+    print("1");
+}
 
 Main (){
   testInt=5;

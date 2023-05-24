@@ -246,10 +246,9 @@ def p_seen_program(p):
     currentDirFuncion = p[-1]
 
 def p_vars(p):
-    ''' vars : VAR seen_vars varsaux
+    ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
                 | empty
     '''
-    print('hola2?')
 
 
 
@@ -260,27 +259,23 @@ def p_seen_vars(p):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
 
 
-
 def p_varsaux(p):
     '''
-      varsaux : ID seen_ID_var varsaux2 COLON tipo SEMICOLON varsaux
-              |
-      '''
-    print('hola3?')
-
-
-
-def p_varsaux2(p):
-    '''
-      varsaux2 : COMMA ID seen_ID_var varsaux2
+      varsaux : COMMA ID seen_ID_var varsaux
               |
       '''
 
 
 def p_seen_ID_var(p):
     " seen_ID_var : "
-    currentVars.append(p[-1])
-
+    currentVar = p[-1]
+    try:
+        if (currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
+            print('Redeclaration on variable', currentVar)
+    except (NameError, AttributeError) as e:
+        print(e)
+        pass
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
 
 
 def p_tipo(p):
@@ -291,29 +286,28 @@ def p_tipo(p):
 
 def p_seen_tipo(p):
     "seen_tipo : "
-    global currentVars
-    tipo = p[-1]
-    for currentVar in currentVars:
-        try:
-            if(currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
-                print('Redeclaration on variable', currentVar)
-        except (NameError, AttributeError) as e:
-            print(e)
-            pass
-        dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': tipo}
-    currentVars=[]
+    global currentType
+    currentType = p[-1]
 
 
 
 def p_function(p):
     '''
-      function : FUNCTION returnfunctionaux ID params bloque
+      function : FUNCTION returnfunctionaux ID seen_id_function params bloque
       '''
 
 
+def p_seen_id_function(p):
+    '''
+        seen_id_function :
+    '''
+    global currentDirFuncion
+    dirFuncionesDict[p[-1]] = {'type': currentType}
+    currentDirFuncion = p[-1]
+
 def p_functionmain(p):
     '''
-      functionmain : MAIN  LEFTPARENTHESES RIGHTPARENTHESES bloque
+      functionmain : MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
       '''
 
 
@@ -321,16 +315,22 @@ def p_functionmain(p):
 def p_returnfunctionaux(p):
     '''
       returnfunctionaux : tipo
-                | VOID
+                | VOID seen_void
       '''
 
+
+def p_seen_void(p):
+    '''
+        seen_void :
+    '''
+    global currentType
+    currentType = 'void'
 
 
 def p_params(p):
     '''
       params : LEFTPARENTHESES paramsaux RIGHTPARENTHESES
       '''
-    print('params?', p[-1])
 
 def p_paramsaux(p):
     '''
