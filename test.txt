@@ -16,13 +16,13 @@ Main (){
   testInt2=5; 
   testFloat=5; 
   testFloat2=5; 
-  testFloat3=testFloat + testInt * testInt2 / testFloat2 + testFloat; 
+  testFloat3=testFloat + testInt * testInt2 / (testFloat2 + testFloat);
 
-  if(testInt > testInt2){ 
+  if(testInt > testInt2){
     testInt=1;
   }else{
-    testInt2=2;  
-  };  
+    testInt2=2;
+  };
 
   print(testInt2, "HOLA");
 }

@@ -488,28 +488,13 @@ def p_seen_end_condicion(p):
 def p_factor(p):
     '''
         factor : factoraux
-                  | factoraux2
+               | varcte
       '''
 
 
 def p_factoraux(p):
     '''
-        factoraux : LEFTPARENTHESES expresion RIGHTPARENTHESES
-      '''
-
-
-def p_factoraux2(p):
-    '''
-        factoraux2 : factoraux3 varcte
-      '''
-
-
-def p_factoraux3(p):  # QUE SHOW CON ESTO
-    '''
-        factoraux3 : PLUS
-                    | MINUS
-                    |
-
+        factoraux : LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
       '''
 
 
@@ -520,6 +505,22 @@ def p_varcte(p):
                     | FLOAT_CTE
 
       '''
+
+
+def p_seen_insert_fondo(p):
+    '''
+        seen_insert_fondo :
+      '''
+    pilaOperadores.append('(')
+
+def p_seen_remove_fondo(p):
+    '''
+        seen_remove_fondo :
+      '''
+    if(pilaOperadores[-1] != '('):
+        print('Parentesis Mismatch')
+    else:
+        pilaOperadores.pop()
 
 
 def p_seen_ID(p):
@@ -634,10 +635,10 @@ if option == "1":
     file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
     # print(file)
     parser.parse(file)
-    #print(pilaOperandos)
-    #print(cuadruplos)
-    print(dirFuncionesDict)
-    print(pilaTipos)
+    print('operandos: ',pilaOperandos)
+    print('cuadruplos: ',cuadruplos)
+    print('directorio funciones: ',dirFuncionesDict)
+    print('pila tipos :',pilaTipos)
     #print(json.dumps(dirFuncionesDict, indent=4))
 else:
     while True:
