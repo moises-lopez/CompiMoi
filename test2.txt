@@ -12,11 +12,5 @@ Function int TestFunction2(int testIntParam1){
 }
 
 Main (){
-  if(testInt > testInt2){
-    testInt=testInt2;
-  }else{
-    testInt2=testInt;
-  };
-
-  print(testInt2, "HOLA");
+  testInt = testInt2;
 }

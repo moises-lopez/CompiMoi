@@ -24,9 +24,9 @@ Main (){
 
 
   if(testInt > testInt2){
-    testInt=1;
+    testInt=testInt;
   }else{
-    testInt2=2;
+    testInt2=testInt;
   };
 
   print(testInt2, "HOLA");

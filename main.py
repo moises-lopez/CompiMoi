@@ -425,8 +425,34 @@ def p_estatuto(p):
 
 def p_asignacion(p):
     '''
-      asignacion : varcte EQUALS expresion SEMICOLON
+      asignacion : varcte EQUALS seen_equals expresion seen_final_asignacion SEMICOLON
       '''
+
+
+def p_seen_equals(p):
+    '''
+      seen_equals :
+      '''
+    pilaOperadores.append(p[-1])
+
+
+def p_seen_final_asignacion(p):
+    '''
+      seen_final_asignacion :
+      '''
+    print('inicio', pilaOperandos)
+    right_operando = pilaOperandos.pop()
+    left_operando = pilaOperandos.pop()
+    right_tipo = pilaTipos.pop()
+    left_tipo = pilaTipos.pop()
+    operador = pilaOperadores.pop()
+    print('final', pilaOperandos)
+
+    if (right_tipo == left_tipo):
+        generate_quad(operador=operador, left_operando=right_operando,
+                      right_operando='', result=left_operando)
+    else:
+        print('ERROR MISMATCH')
 
 
 def p_expresion(p):
@@ -731,7 +757,7 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
+    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test.txt").read()
     # print(file)
     parser.parse(file)
     print('operandos: ', pilaOperandos)
