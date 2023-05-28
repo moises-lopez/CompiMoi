@@ -3,7 +3,7 @@ import ply.yacc as yacc
 import sys
 import json
 
-cuadruplos = []
+cuadruplos = [[]]
 pilaOperadores = []
 pilaOperandos = []
 pilaTipos = []
@@ -13,8 +13,8 @@ currentVarTable = ''
 currentType = ''
 currentVars = []
 programName = ''
-pilaSaltos= []
-contadorCuadruplos = 0
+pilaSaltos = []
+contadorCuadruplos = 1
 cubo_semantico = {
     '*': {
         'float': {
@@ -56,11 +56,42 @@ cubo_semantico = {
             'float': 'float'
         }
     },
+    '<': {
+        'float': {
+            'int': 'boolean',
+            'float': 'boolean'
+        },
+        'int': {
+            'int': 'boolean',
+            'float': 'boolean'
+        }
+    },
+    '>': {
+        'float': {
+            'int': 'boolean',
+            'float': 'boolean'
+        },
+        'int': {
+            'int': 'boolean',
+            'float': 'boolean'
+        }
+    },
+    '!=': {
+        'float': {
+            'int': 'boolean',
+            'float': 'boolean'
+        },
+        'int': {
+            'int': 'boolean',
+            'float': 'boolean'
+        }
+    },
 }
 
 tokens = [
     'INT_CTE',
     'FLOAT_CTE',
+    'BOOLEAN_CTE',
     'STRING_CTE',
     'ID',
     'PLUS',
@@ -92,6 +123,7 @@ reserved = {
     'else': 'ELSE',
     'int': 'INT',
     'float': 'FLOAT',
+    'boolean': 'BOOLEAN',
     'read': 'READ',
     'print': 'PRINT',
     '<>': 'NOTEQUALS',
@@ -130,6 +162,11 @@ def t_INT_CTE(t):
     return t
 
 
+def t_BOOLEAN_CTE(t):
+    r'\b(true|false)\b'
+    return t
+
+
 def t_STRING_CTE(t):
     r'\"([^\\\n]|(\\.))*?\"'
     t.value = str(t.value)
@@ -140,9 +177,11 @@ def t_PROGRAMA(t):
     r'Programa'
     return t
 
+
 def t_VOID(t):
     r'void'
     return t
+
 
 def t_MAIN(t):
     r'Main'
@@ -199,6 +238,11 @@ def t_FLOAT(t):
     return t
 
 
+def t_BOOLEAN(t):
+    r'boolean'
+    return t
+
+
 def t_READ(t):
     r'read'
     return t
@@ -229,18 +273,18 @@ lexer = lex.lex()
 # Esta gramatica se basa en la actividad pasada con algunas modificaciones
 
 
-def p_calc(p): #falta poner main
+def p_calc(p):  # falta poner main
     '''
       calc : PROGRAMA ID seen_program SEMICOLON vars modulesaux functionmain
      '''
     print('No syntax errors found :)')
+
 
 def p_modulesaux(p):
     '''
       modulesaux : function modulesaux
            |
       '''
-
 
 
 def p_seen_program(p):
@@ -251,17 +295,17 @@ def p_seen_program(p):
     currentDirFuncion = p[-1]
     programName = p[-1]
 
+
 def p_vars(p):
     ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
                 | empty
     '''
 
 
-
 def p_seen_vars(p):
     "seen_vars : "
 
-    if(not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
+    if (not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
 
 
@@ -281,20 +325,23 @@ def p_seen_ID_var(p):
     except (NameError, AttributeError) as e:
         print(e)
         pass
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
+        'tipo': currentType}
 
 
 def p_tipo(p):
     '''
       tipo : INT seen_tipo
            | FLOAT seen_tipo
+           | BOOLEAN seen_tipo
+
       '''
+
 
 def p_seen_tipo(p):
     "seen_tipo : "
     global currentType
     currentType = p[-1]
-
 
 
 def p_function(p):
@@ -311,11 +358,11 @@ def p_seen_id_function(p):
     dirFuncionesDict[p[-1]] = {'type': currentType}
     currentDirFuncion = p[-1]
 
+
 def p_functionmain(p):
     '''
       functionmain : MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
       '''
-
 
 
 def p_returnfunctionaux(p):
@@ -343,7 +390,7 @@ def p_seen_params_init(p):
     '''
       seen_params_init :
     '''
-    if(not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
+    if (not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
 
 
@@ -368,7 +415,6 @@ def p_bloqueaux(p):
       '''
 
 
-
 def p_estatuto(p):
     '''
       estatuto : asignacion
@@ -377,25 +423,24 @@ def p_estatuto(p):
       '''
 
 
-
 def p_asignacion(p):
     '''
       asignacion : varcte EQUALS expresion SEMICOLON
       '''
 
 
-
 def p_expresion(p):
     '''
-      expresion : exp expresionaux
+      expresion : exp seen_comparacion
+                | exp seen_comparacion expresionaux exp seen_comparacion
       '''
 
 
 def p_expresionaux(p):
     '''
-      expresionaux : GREATERTHAN exp
-                | LESSTHAN exp
-                | NOTEQUALS exp
+      expresionaux : GREATERTHAN seen_operador
+                | LESSTHAN seen_operador
+                | NOTEQUALS seen_operador
                 |
       '''
 
@@ -455,28 +500,42 @@ def p_condicionaux(p):
                   | SEMICOLON seen_end_condicion
       '''
 
+
 def p_seen_right_parentheses_condicion(p):
     '''
         seen_right_parentheses_condicion :
       '''
-
     exp_type = pilaTipos.pop()
-    print(exp_type)
-    if(exp_type != 'boolean'):
+    print('pila tipos condicion', pilaTipos)
+    print('pila operandos condicion', pilaOperandos)
+    print('pila operadores condicion', pilaOperadores)
+    print('pila cuadruplos condicion', cuadruplos)
+
+    if (exp_type != 'boolean'):
         print('ERROR MISMATCH IN CONDITION')
     else:
         result = pilaOperandos.pop()
-        generate_quad(operador = 'GOTOF', left_operando =result, right_operando= '', result='')
+        generate_quad(operador='GOTOF', left_operando=result,
+                      right_operando='', result='')
         pilaSaltos.append(contadorCuadruplos-1)
+        print('condicionasd', pilaSaltos)
+
 
 def p_seen_else(p):
     '''
         seen_else :
       '''
-    generate_quad(operador = 'GOTO', left_operando ='', right_operando= '', result='')
+    print('else operandos: ', pilaOperandos)
+    print('else operadores: ', pilaOperadores)
+    print('else cuadruplos: ', cuadruplos)
+    print('else pila tipos :', pilaTipos)
+    generate_quad(operador='GOTO', left_operando='',
+                  right_operando='', result='')
     false = pilaSaltos.pop()
     pilaSaltos.append(contadorCuadruplos-1)
+
     fill(false, contadorCuadruplos)
+
 
 def p_seen_end_condicion(p):
     '''
@@ -484,6 +543,7 @@ def p_seen_end_condicion(p):
       '''
     end = pilaSaltos.pop()
     fill(end, contadorCuadruplos)
+
 
 def p_factor(p):
     '''
@@ -501,8 +561,8 @@ def p_factoraux(p):
 def p_varcte(p):
     '''
         varcte : ID seen_ID
-                    | INT_CTE
-                    | FLOAT_CTE
+                    | INT_CTE seen_ID
+                    | FLOAT_CTE seen_ID
 
       '''
 
@@ -513,11 +573,12 @@ def p_seen_insert_fondo(p):
       '''
     pilaOperadores.append('(')
 
+
 def p_seen_remove_fondo(p):
     '''
         seen_remove_fondo :
       '''
-    if(pilaOperadores[-1] != '('):
+    if (pilaOperadores[-1] != '('):
         print('Parentesis Mismatch')
     else:
         pilaOperadores.pop()
@@ -527,12 +588,12 @@ def p_seen_ID(p):
     "seen_ID :"
     varId = p[-1]
     tipo = ''
-    if(varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
+    if (varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
         tipo = dirFuncionesDict[currentDirFuncion]['varsTable'][varId]['tipo']
-    elif(varId in dirFuncionesDict[programName]['varsTable']):
+    elif (varId in dirFuncionesDict[programName]['varsTable']):
         tipo = dirFuncionesDict[programName]['varsTable'][varId]['tipo']
 
-    if(tipo == ''):
+    if (tipo == ''):
         print('no se encontró variable', varId)
     pilaOperandos.append(p[-1])
     pilaTipos.append(tipo)
@@ -553,11 +614,12 @@ def p_seen_termino(p):
         right_tipo = pilaTipos.pop()
         left_tipo = pilaTipos.pop()
         operador = pilaOperadores.pop()
-        result_type = getResultType(right_tipo= right_tipo, left_tipo= left_tipo, operador=operador)
+        result_type = getResultType(
+            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
         if (result_type):
             result = nextAvail()
-            cuadruplos.append(generate_quad(
-                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result))
+            generate_quad(operador=operador, left_operando=left_operando,
+                          right_operando=right_operando, result=result)
             pilaOperandos.append(result)
             pilaTipos.append(result_type)
         else:
@@ -574,11 +636,42 @@ def p_seen_factor(p):
         right_tipo = pilaTipos.pop()
         left_tipo = pilaTipos.pop()
         operador = pilaOperadores.pop()
-        result_type = getResultType(right_tipo= right_tipo, left_tipo= left_tipo, operador=operador)
+        result_type = getResultType(
+            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
         if (result_type):
             result = nextAvail()
-            cuadruplos.append(generate_quad(
-                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result))
+            generate_quad(
+                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
+            pilaOperandos.append(result)
+            pilaTipos.append(result_type)
+        else:
+            print('ERROR MISMATCH')
+
+
+def p_seen_comparacion(p):
+    "seen_comparacion :"
+    print('comparacion')
+    print('operadores here', pilaOperadores)
+    if (len(pilaOperadores) == 0):
+        return
+    print('1operandos: ', pilaOperandos)
+    print('1cuadruplos: ', cuadruplos)
+    print('1directorio funciones: ', dirFuncionesDict)
+    print('1pila tipos :', pilaTipos)
+    if pilaOperadores[-1] == '>' or pilaOperadores[-1] == '<' or pilaOperadores[-1] == '!=':
+        right_operando = pilaOperandos.pop()
+        left_operando = pilaOperandos.pop()
+        right_tipo = pilaTipos.pop()
+        left_tipo = pilaTipos.pop()
+        operador = pilaOperadores.pop()
+        result_type = getResultType(
+            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
+        print('testeo', right_operando, left_operando, right_tipo,
+              left_tipo, operador, result_type)
+        if (result_type):
+            result = nextAvail()
+            generate_quad(
+                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
             pilaOperandos.append(result)
             pilaTipos.append(result_type)
         else:
@@ -609,7 +702,9 @@ parser = yacc.yacc()
 
 
 def generate_quad(operador, left_operando, right_operando, result):
-    return [operador, left_operando, right_operando, result]
+    global contadorCuadruplos
+    contadorCuadruplos = contadorCuadruplos + 1
+    cuadruplos.append([operador, left_operando, right_operando, result])
 
 
 def nextAvail():
@@ -620,8 +715,12 @@ def getResultType(right_tipo, left_tipo, operador):
     result_type = cubo_semantico[operador][left_tipo][right_tipo]
     return result_type
 
+
 def fill(numeroCuadruploALlenar, numeroCuadrupASaltar):
-    cuadruplos[numeroCuadruploALlenar][4] = numeroCuadrupASaltar
+    print('fill', numeroCuadrupASaltar, numeroCuadruploALlenar)
+    print('cuadruplos fill', cuadruplos)
+    print('this is the hcuadruplo', cuadruplos[3][3])
+    cuadruplos[numeroCuadruploALlenar][3] = numeroCuadrupASaltar
 
 # Execution
 # IMPORTANT
@@ -632,14 +731,14 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
+    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
     # print(file)
     parser.parse(file)
-    print('operandos: ',pilaOperandos)
-    print('cuadruplos: ',cuadruplos)
-    print('directorio funciones: ',dirFuncionesDict)
-    print('pila tipos :',pilaTipos)
-    #print(json.dumps(dirFuncionesDict, indent=4))
+    print('operandos: ', pilaOperandos)
+    print('cuadruplos: ', cuadruplos)
+    print('directorio funciones: ', dirFuncionesDict)
+    print('pila tipos :', pilaTipos)
+    # print(json.dumps(dirFuncionesDict, indent=4))
 else:
     while True:
         try:

@@ -12,21 +12,10 @@ Function int TestFunction2(int testIntParam1){
 }
 
 Main (){
-  var int testInt3;
-  var boolean testBoolean;
-
-  testInt=5;
-  testInt2=5; 
-  testFloat=5; 
-  testFloat2=5; 
-  testFloat3=testFloat + testInt * testInt2 / (testFloat2 + testFloat);
-  testBoolean=testFloat > testInt;
-
-
   if(testInt > testInt2){
-    testInt=1;
+    testInt=testInt2;
   }else{
-    testInt2=2;
+    testInt2=testInt;
   };
 
   print(testInt2, "HOLA");

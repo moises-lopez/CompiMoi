@@ -2,6 +2,7 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
 Unused terminals:
 
+    BOOLEAN_CTE
     COLON
     NOTEQUAL
     READ
@@ -21,147 +22,153 @@ Rule 9     varsaux -> <empty>
 Rule 10    seen_ID_var -> <empty>
 Rule 11    tipo -> INT seen_tipo
 Rule 12    tipo -> FLOAT seen_tipo
-Rule 13    seen_tipo -> <empty>
-Rule 14    function -> FUNCTION returnfunctionaux ID seen_id_function params bloque
-Rule 15    seen_id_function -> <empty>
-Rule 16    functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
-Rule 17    returnfunctionaux -> tipo
-Rule 18    returnfunctionaux -> VOID seen_void
-Rule 19    seen_void -> <empty>
-Rule 20    params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES
-Rule 21    seen_params_init -> <empty>
-Rule 22    paramsaux -> tipo ID seen_ID_var paramsaux
-Rule 23    paramsaux -> COMMA paramsaux
-Rule 24    paramsaux -> empty
-Rule 25    bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE
-Rule 26    bloqueaux -> estatuto bloqueaux
-Rule 27    bloqueaux -> <empty>
-Rule 28    estatuto -> asignacion
-Rule 29    estatuto -> condicion
-Rule 30    estatuto -> escritura
-Rule 31    asignacion -> varcte EQUALS expresion SEMICOLON
-Rule 32    expresion -> exp expresionaux
-Rule 33    expresionaux -> GREATERTHAN exp
-Rule 34    expresionaux -> LESSTHAN exp
-Rule 35    expresionaux -> NOTEQUALS exp
-Rule 36    expresionaux -> <empty>
-Rule 37    escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
-Rule 38    escrituraaux -> expresion
-Rule 39    escrituraaux -> STRING_CTE
-Rule 40    escrituraaux -> expresion COMMA escrituraaux
-Rule 41    escrituraaux -> STRING_CTE COMMA escrituraaux
-Rule 42    exp -> termino seen_termino
-Rule 43    exp -> termino seen_termino expaux
-Rule 44    expaux -> PLUS seen_operador exp
-Rule 45    expaux -> MINUS seen_operador exp
-Rule 46    termino -> factor seen_factor
-Rule 47    termino -> factor seen_factor terminoaux
-Rule 48    terminoaux -> DIVIDE seen_operador termino
-Rule 49    terminoaux -> MULTIPLY seen_operador termino
-Rule 50    condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
-Rule 51    condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion
-Rule 52    condicionaux -> SEMICOLON seen_end_condicion
-Rule 53    seen_right_parentheses_condicion -> <empty>
-Rule 54    seen_else -> <empty>
-Rule 55    seen_end_condicion -> <empty>
-Rule 56    factor -> factoraux
-Rule 57    factor -> varcte
-Rule 58    factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-Rule 59    varcte -> ID seen_ID
-Rule 60    varcte -> INT_CTE
-Rule 61    varcte -> FLOAT_CTE
-Rule 62    seen_insert_fondo -> <empty>
-Rule 63    seen_remove_fondo -> <empty>
-Rule 64    seen_ID -> <empty>
-Rule 65    seen_operador -> <empty>
-Rule 66    seen_termino -> <empty>
-Rule 67    seen_factor -> <empty>
-Rule 68    arrayIntDefinition -> LEFTBRACKET INT_CTE RIGHTBRACKET
-Rule 69    empty -> <empty>
+Rule 13    tipo -> BOOLEAN seen_tipo
+Rule 14    seen_tipo -> <empty>
+Rule 15    function -> FUNCTION returnfunctionaux ID seen_id_function params bloque
+Rule 16    seen_id_function -> <empty>
+Rule 17    functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
+Rule 18    returnfunctionaux -> tipo
+Rule 19    returnfunctionaux -> VOID seen_void
+Rule 20    seen_void -> <empty>
+Rule 21    params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES
+Rule 22    seen_params_init -> <empty>
+Rule 23    paramsaux -> tipo ID seen_ID_var paramsaux
+Rule 24    paramsaux -> COMMA paramsaux
+Rule 25    paramsaux -> empty
+Rule 26    bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE
+Rule 27    bloqueaux -> estatuto bloqueaux
+Rule 28    bloqueaux -> <empty>
+Rule 29    estatuto -> asignacion
+Rule 30    estatuto -> condicion
+Rule 31    estatuto -> escritura
+Rule 32    asignacion -> varcte EQUALS expresion SEMICOLON
+Rule 33    expresion -> exp seen_comparacion
+Rule 34    expresion -> exp seen_comparacion expresionaux exp seen_comparacion
+Rule 35    expresionaux -> GREATERTHAN seen_operador
+Rule 36    expresionaux -> LESSTHAN seen_operador
+Rule 37    expresionaux -> NOTEQUALS seen_operador
+Rule 38    expresionaux -> <empty>
+Rule 39    escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
+Rule 40    escrituraaux -> expresion
+Rule 41    escrituraaux -> STRING_CTE
+Rule 42    escrituraaux -> expresion COMMA escrituraaux
+Rule 43    escrituraaux -> STRING_CTE COMMA escrituraaux
+Rule 44    exp -> termino seen_termino
+Rule 45    exp -> termino seen_termino expaux
+Rule 46    expaux -> PLUS seen_operador exp
+Rule 47    expaux -> MINUS seen_operador exp
+Rule 48    termino -> factor seen_factor
+Rule 49    termino -> factor seen_factor terminoaux
+Rule 50    terminoaux -> DIVIDE seen_operador termino
+Rule 51    terminoaux -> MULTIPLY seen_operador termino
+Rule 52    condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+Rule 53    condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion
+Rule 54    condicionaux -> SEMICOLON seen_end_condicion
+Rule 55    seen_right_parentheses_condicion -> <empty>
+Rule 56    seen_else -> <empty>
+Rule 57    seen_end_condicion -> <empty>
+Rule 58    factor -> factoraux
+Rule 59    factor -> varcte
+Rule 60    factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+Rule 61    varcte -> ID seen_ID
+Rule 62    varcte -> INT_CTE seen_ID
+Rule 63    varcte -> FLOAT_CTE seen_ID
+Rule 64    seen_insert_fondo -> <empty>
+Rule 65    seen_remove_fondo -> <empty>
+Rule 66    seen_ID -> <empty>
+Rule 67    seen_operador -> <empty>
+Rule 68    seen_termino -> <empty>
+Rule 69    seen_factor -> <empty>
+Rule 70    seen_comparacion -> <empty>
+Rule 71    arrayIntDefinition -> LEFTBRACKET INT_CTE RIGHTBRACKET
+Rule 72    empty -> <empty>
 
 Terminals, with rules where they appear
 
+BOOLEAN              : 13
+BOOLEAN_CTE          : 
 COLON                : 
-COMMA                : 8 23 40 41
-DIVIDE               : 48
-ELSE                 : 51
-EQUALS               : 31
+COMMA                : 8 24 42 43
+DIVIDE               : 50
+ELSE                 : 53
+EQUALS               : 32
 FLOAT                : 12
-FLOAT_CTE            : 61
-FUNCTION             : 14
-GREATERTHAN          : 33
-ID                   : 1 5 8 14 22 59
-IF                   : 50
+FLOAT_CTE            : 63
+FUNCTION             : 15
+GREATERTHAN          : 35
+ID                   : 1 5 8 15 23 61
+IF                   : 52
 INT                  : 11
-INT_CTE              : 60 68
-LEFTBRACE            : 25
-LEFTBRACKET          : 68
-LEFTPARENTHESES      : 16 20 37 50 58
-LESSTHAN             : 34
-MAIN                 : 16
-MINUS                : 45
-MULTIPLY             : 49
+INT_CTE              : 62 71
+LEFTBRACE            : 26
+LEFTBRACKET          : 71
+LEFTPARENTHESES      : 17 21 39 52 60
+LESSTHAN             : 36
+MAIN                 : 17
+MINUS                : 47
+MULTIPLY             : 51
 NOTEQUAL             : 
-NOTEQUALS            : 35
-PLUS                 : 44
-PRINT                : 37
+NOTEQUALS            : 37
+PLUS                 : 46
+PRINT                : 39
 PROGRAMA             : 1
 READ                 : 
-RIGHTBRACE           : 25
-RIGHTBRACKET         : 68
-RIGHTPARENTHESES     : 16 20 37 50 58
-SEMICOLON            : 1 5 31 37 51 52
-STRING_CTE           : 39 41
+RIGHTBRACE           : 26
+RIGHTBRACKET         : 71
+RIGHTPARENTHESES     : 17 21 39 52 60
+SEMICOLON            : 1 5 32 39 53 54
+STRING_CTE           : 41 43
 VAR                  : 5
-VOID                 : 18
+VOID                 : 19
 error                : 
 
 Nonterminals, with rules where they appear
 
 arrayIntDefinition   : 
-asignacion           : 28
-bloque               : 14 16 50 51
-bloqueaux            : 25 26
+asignacion           : 29
+bloque               : 15 17 52 53
+bloqueaux            : 26 27
 calc                 : 0
-condicion            : 29
-condicionaux         : 50
-empty                : 6 24
-escritura            : 30
-escrituraaux         : 37 40 41
-estatuto             : 26
-exp                  : 32 33 34 35 44 45
-expaux               : 43
-expresion            : 31 38 40 50 58
-expresionaux         : 32
-factor               : 46 47
-factoraux            : 56
+condicion            : 30
+condicionaux         : 52
+empty                : 6 25
+escritura            : 31
+escrituraaux         : 39 42 43
+estatuto             : 27
+exp                  : 33 34 34 46 47
+expaux               : 45
+expresion            : 32 40 42 52 60
+expresionaux         : 34
+factor               : 48 49
+factoraux            : 58
 function             : 2
 functionmain         : 1
 modulesaux           : 1 2
-params               : 14
-paramsaux            : 20 22 23
-returnfunctionaux    : 14
-seen_ID              : 59
-seen_ID_var          : 5 8 22
-seen_else            : 51
-seen_end_condicion   : 51 52
-seen_factor          : 46 47
-seen_id_function     : 14
-seen_insert_fondo    : 58
-seen_operador        : 44 45 48 49
-seen_params_init     : 20
+params               : 15
+paramsaux            : 21 23 24
+returnfunctionaux    : 15
+seen_ID              : 61 62 63
+seen_ID_var          : 5 8 23
+seen_comparacion     : 33 34 34
+seen_else            : 53
+seen_end_condicion   : 53 54
+seen_factor          : 48 49
+seen_id_function     : 15
+seen_insert_fondo    : 60
+seen_operador        : 35 36 37 46 47 50 51
+seen_params_init     : 21
 seen_program         : 1
-seen_remove_fondo    : 58
-seen_right_parentheses_condicion : 50
-seen_termino         : 42 43
-seen_tipo            : 11 12
+seen_remove_fondo    : 60
+seen_right_parentheses_condicion : 52
+seen_termino         : 44 45
+seen_tipo            : 11 12 13
 seen_vars            : 5
-seen_void            : 18
-termino              : 42 43 48 49
-terminoaux           : 47
-tipo                 : 5 17 22
-varcte               : 31 57
-vars                 : 1 5 25
+seen_void            : 19
+termino              : 44 45 50 51
+terminoaux           : 49
+tipo                 : 5 18 23
+varcte               : 32 59
+vars                 : 1 5 26
 varsaux              : 5 8
 
 Parsing method: LALR
@@ -209,11 +216,11 @@ state 5
     (1) calc -> PROGRAMA ID seen_program SEMICOLON . vars modulesaux functionmain
     (5) vars -> . VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
     (6) vars -> . empty
-    (69) empty -> .
+    (72) empty -> .
 
     VAR             shift and go to state 7
-    FUNCTION        reduce using rule 69 (empty -> .)
-    MAIN            reduce using rule 69 (empty -> .)
+    FUNCTION        reduce using rule 72 (empty -> .)
+    MAIN            reduce using rule 72 (empty -> .)
 
     vars                           shift and go to state 6
     empty                          shift and go to state 8
@@ -223,7 +230,7 @@ state 6
     (1) calc -> PROGRAMA ID seen_program SEMICOLON vars . modulesaux functionmain
     (2) modulesaux -> . function modulesaux
     (3) modulesaux -> .
-    (14) function -> . FUNCTION returnfunctionaux ID seen_id_function params bloque
+    (15) function -> . FUNCTION returnfunctionaux ID seen_id_function params bloque
 
     MAIN            reduce using rule 3 (modulesaux -> .)
     FUNCTION        shift and go to state 11
@@ -238,6 +245,7 @@ state 7
 
     INT             reduce using rule 7 (seen_vars -> .)
     FLOAT           reduce using rule 7 (seen_vars -> .)
+    BOOLEAN         reduce using rule 7 (seen_vars -> .)
 
     seen_vars                      shift and go to state 12
 
@@ -258,7 +266,7 @@ state 8
 state 9
 
     (1) calc -> PROGRAMA ID seen_program SEMICOLON vars modulesaux . functionmain
-    (16) functionmain -> . MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
+    (17) functionmain -> . MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
 
     MAIN            shift and go to state 14
 
@@ -269,7 +277,7 @@ state 10
     (2) modulesaux -> function . modulesaux
     (2) modulesaux -> . function modulesaux
     (3) modulesaux -> .
-    (14) function -> . FUNCTION returnfunctionaux ID seen_id_function params bloque
+    (15) function -> . FUNCTION returnfunctionaux ID seen_id_function params bloque
 
     MAIN            reduce using rule 3 (modulesaux -> .)
     FUNCTION        shift and go to state 11
@@ -279,15 +287,17 @@ state 10
 
 state 11
 
-    (14) function -> FUNCTION . returnfunctionaux ID seen_id_function params bloque
-    (17) returnfunctionaux -> . tipo
-    (18) returnfunctionaux -> . VOID seen_void
+    (15) function -> FUNCTION . returnfunctionaux ID seen_id_function params bloque
+    (18) returnfunctionaux -> . tipo
+    (19) returnfunctionaux -> . VOID seen_void
     (11) tipo -> . INT seen_tipo
     (12) tipo -> . FLOAT seen_tipo
+    (13) tipo -> . BOOLEAN seen_tipo
 
     VOID            shift and go to state 18
     INT             shift and go to state 19
     FLOAT           shift and go to state 20
+    BOOLEAN         shift and go to state 21
 
     returnfunctionaux              shift and go to state 16
     tipo                           shift and go to state 17
@@ -297,11 +307,13 @@ state 12
     (5) vars -> VAR seen_vars . tipo ID seen_ID_var varsaux SEMICOLON vars
     (11) tipo -> . INT seen_tipo
     (12) tipo -> . FLOAT seen_tipo
+    (13) tipo -> . BOOLEAN seen_tipo
 
     INT             shift and go to state 19
     FLOAT           shift and go to state 20
+    BOOLEAN         shift and go to state 21
 
-    tipo                           shift and go to state 21
+    tipo                           shift and go to state 22
 
 state 13
 
@@ -312,9 +324,9 @@ state 13
 
 state 14
 
-    (16) functionmain -> MAIN . LEFTPARENTHESES RIGHTPARENTHESES bloque
+    (17) functionmain -> MAIN . LEFTPARENTHESES RIGHTPARENTHESES bloque
 
-    LEFTPARENTHESES shift and go to state 22
+    LEFTPARENTHESES shift and go to state 23
 
 
 state 15
@@ -326,90 +338,106 @@ state 15
 
 state 16
 
-    (14) function -> FUNCTION returnfunctionaux . ID seen_id_function params bloque
+    (15) function -> FUNCTION returnfunctionaux . ID seen_id_function params bloque
 
-    ID              shift and go to state 23
+    ID              shift and go to state 24
 
 
 state 17
 
-    (17) returnfunctionaux -> tipo .
+    (18) returnfunctionaux -> tipo .
 
-    ID              reduce using rule 17 (returnfunctionaux -> tipo .)
+    ID              reduce using rule 18 (returnfunctionaux -> tipo .)
 
 
 state 18
 
-    (18) returnfunctionaux -> VOID . seen_void
-    (19) seen_void -> .
+    (19) returnfunctionaux -> VOID . seen_void
+    (20) seen_void -> .
 
-    ID              reduce using rule 19 (seen_void -> .)
+    ID              reduce using rule 20 (seen_void -> .)
 
-    seen_void                      shift and go to state 24
+    seen_void                      shift and go to state 25
 
 state 19
 
     (11) tipo -> INT . seen_tipo
-    (13) seen_tipo -> .
+    (14) seen_tipo -> .
 
-    ID              reduce using rule 13 (seen_tipo -> .)
+    ID              reduce using rule 14 (seen_tipo -> .)
 
-    seen_tipo                      shift and go to state 25
+    seen_tipo                      shift and go to state 26
 
 state 20
 
     (12) tipo -> FLOAT . seen_tipo
-    (13) seen_tipo -> .
+    (14) seen_tipo -> .
 
-    ID              reduce using rule 13 (seen_tipo -> .)
+    ID              reduce using rule 14 (seen_tipo -> .)
 
-    seen_tipo                      shift and go to state 26
+    seen_tipo                      shift and go to state 27
 
 state 21
 
-    (5) vars -> VAR seen_vars tipo . ID seen_ID_var varsaux SEMICOLON vars
+    (13) tipo -> BOOLEAN . seen_tipo
+    (14) seen_tipo -> .
 
-    ID              shift and go to state 27
+    ID              reduce using rule 14 (seen_tipo -> .)
 
+    seen_tipo                      shift and go to state 28
 
 state 22
 
-    (16) functionmain -> MAIN LEFTPARENTHESES . RIGHTPARENTHESES bloque
+    (5) vars -> VAR seen_vars tipo . ID seen_ID_var varsaux SEMICOLON vars
 
-    RIGHTPARENTHESES shift and go to state 28
+    ID              shift and go to state 29
 
 
 state 23
 
-    (14) function -> FUNCTION returnfunctionaux ID . seen_id_function params bloque
-    (15) seen_id_function -> .
+    (17) functionmain -> MAIN LEFTPARENTHESES . RIGHTPARENTHESES bloque
 
-    LEFTPARENTHESES reduce using rule 15 (seen_id_function -> .)
+    RIGHTPARENTHESES shift and go to state 30
 
-    seen_id_function               shift and go to state 29
 
 state 24
 
-    (18) returnfunctionaux -> VOID seen_void .
+    (15) function -> FUNCTION returnfunctionaux ID . seen_id_function params bloque
+    (16) seen_id_function -> .
 
-    ID              reduce using rule 18 (returnfunctionaux -> VOID seen_void .)
+    LEFTPARENTHESES reduce using rule 16 (seen_id_function -> .)
 
+    seen_id_function               shift and go to state 31
 
 state 25
+
+    (19) returnfunctionaux -> VOID seen_void .
+
+    ID              reduce using rule 19 (returnfunctionaux -> VOID seen_void .)
+
+
+state 26
 
     (11) tipo -> INT seen_tipo .
 
     ID              reduce using rule 11 (tipo -> INT seen_tipo .)
 
 
-state 26
+state 27
 
     (12) tipo -> FLOAT seen_tipo .
 
     ID              reduce using rule 12 (tipo -> FLOAT seen_tipo .)
 
 
-state 27
+state 28
+
+    (13) tipo -> BOOLEAN seen_tipo .
+
+    ID              reduce using rule 13 (tipo -> BOOLEAN seen_tipo .)
+
+
+state 29
 
     (5) vars -> VAR seen_vars tipo ID . seen_ID_var varsaux SEMICOLON vars
     (10) seen_ID_var -> .
@@ -417,174 +445,177 @@ state 27
     COMMA           reduce using rule 10 (seen_ID_var -> .)
     SEMICOLON       reduce using rule 10 (seen_ID_var -> .)
 
-    seen_ID_var                    shift and go to state 30
-
-state 28
-
-    (16) functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES . bloque
-    (25) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
-
-    LEFTBRACE       shift and go to state 32
-
-    bloque                         shift and go to state 31
-
-state 29
-
-    (14) function -> FUNCTION returnfunctionaux ID seen_id_function . params bloque
-    (20) params -> . LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES
-
-    LEFTPARENTHESES shift and go to state 34
-
-    params                         shift and go to state 33
+    seen_ID_var                    shift and go to state 32
 
 state 30
+
+    (17) functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES . bloque
+    (26) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
+
+    LEFTBRACE       shift and go to state 34
+
+    bloque                         shift and go to state 33
+
+state 31
+
+    (15) function -> FUNCTION returnfunctionaux ID seen_id_function . params bloque
+    (21) params -> . LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES
+
+    LEFTPARENTHESES shift and go to state 36
+
+    params                         shift and go to state 35
+
+state 32
 
     (5) vars -> VAR seen_vars tipo ID seen_ID_var . varsaux SEMICOLON vars
     (8) varsaux -> . COMMA ID seen_ID_var varsaux
     (9) varsaux -> .
 
-    COMMA           shift and go to state 36
+    COMMA           shift and go to state 38
     SEMICOLON       reduce using rule 9 (varsaux -> .)
 
-    varsaux                        shift and go to state 35
-
-state 31
-
-    (16) functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque .
-
-    $end            reduce using rule 16 (functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque .)
-
-
-state 32
-
-    (25) bloque -> LEFTBRACE . vars bloqueaux RIGHTBRACE
-    (5) vars -> . VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
-    (6) vars -> . empty
-    (69) empty -> .
-
-    VAR             shift and go to state 7
-    IF              reduce using rule 69 (empty -> .)
-    PRINT           reduce using rule 69 (empty -> .)
-    ID              reduce using rule 69 (empty -> .)
-    INT_CTE         reduce using rule 69 (empty -> .)
-    FLOAT_CTE       reduce using rule 69 (empty -> .)
-    RIGHTBRACE      reduce using rule 69 (empty -> .)
-
-    vars                           shift and go to state 37
-    empty                          shift and go to state 8
+    varsaux                        shift and go to state 37
 
 state 33
 
-    (14) function -> FUNCTION returnfunctionaux ID seen_id_function params . bloque
-    (25) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
+    (17) functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque .
 
-    LEFTBRACE       shift and go to state 32
+    $end            reduce using rule 17 (functionmain -> MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque .)
 
-    bloque                         shift and go to state 38
 
 state 34
 
-    (20) params -> LEFTPARENTHESES . seen_params_init paramsaux RIGHTPARENTHESES
-    (21) seen_params_init -> .
+    (26) bloque -> LEFTBRACE . vars bloqueaux RIGHTBRACE
+    (5) vars -> . VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
+    (6) vars -> . empty
+    (72) empty -> .
 
-    COMMA           reduce using rule 21 (seen_params_init -> .)
-    INT             reduce using rule 21 (seen_params_init -> .)
-    FLOAT           reduce using rule 21 (seen_params_init -> .)
-    RIGHTPARENTHESES reduce using rule 21 (seen_params_init -> .)
+    VAR             shift and go to state 7
+    IF              reduce using rule 72 (empty -> .)
+    PRINT           reduce using rule 72 (empty -> .)
+    ID              reduce using rule 72 (empty -> .)
+    INT_CTE         reduce using rule 72 (empty -> .)
+    FLOAT_CTE       reduce using rule 72 (empty -> .)
+    RIGHTBRACE      reduce using rule 72 (empty -> .)
 
-    seen_params_init               shift and go to state 39
+    vars                           shift and go to state 39
+    empty                          shift and go to state 8
 
 state 35
 
-    (5) vars -> VAR seen_vars tipo ID seen_ID_var varsaux . SEMICOLON vars
+    (15) function -> FUNCTION returnfunctionaux ID seen_id_function params . bloque
+    (26) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
 
-    SEMICOLON       shift and go to state 40
+    LEFTBRACE       shift and go to state 34
 
+    bloque                         shift and go to state 40
 
 state 36
 
-    (8) varsaux -> COMMA . ID seen_ID_var varsaux
+    (21) params -> LEFTPARENTHESES . seen_params_init paramsaux RIGHTPARENTHESES
+    (22) seen_params_init -> .
 
-    ID              shift and go to state 41
+    COMMA           reduce using rule 22 (seen_params_init -> .)
+    INT             reduce using rule 22 (seen_params_init -> .)
+    FLOAT           reduce using rule 22 (seen_params_init -> .)
+    BOOLEAN         reduce using rule 22 (seen_params_init -> .)
+    RIGHTPARENTHESES reduce using rule 22 (seen_params_init -> .)
 
+    seen_params_init               shift and go to state 41
 
 state 37
 
-    (25) bloque -> LEFTBRACE vars . bloqueaux RIGHTBRACE
-    (26) bloqueaux -> . estatuto bloqueaux
-    (27) bloqueaux -> .
-    (28) estatuto -> . asignacion
-    (29) estatuto -> . condicion
-    (30) estatuto -> . escritura
-    (31) asignacion -> . varcte EQUALS expresion SEMICOLON
-    (50) condicion -> . IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
-    (37) escritura -> . PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (5) vars -> VAR seen_vars tipo ID seen_ID_var varsaux . SEMICOLON vars
 
-    RIGHTBRACE      reduce using rule 27 (bloqueaux -> .)
-    IF              shift and go to state 48
-    PRINT           shift and go to state 49
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    SEMICOLON       shift and go to state 42
 
-    bloqueaux                      shift and go to state 42
-    estatuto                       shift and go to state 43
-    asignacion                     shift and go to state 44
-    condicion                      shift and go to state 45
-    escritura                      shift and go to state 46
-    varcte                         shift and go to state 47
 
 state 38
 
-    (14) function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .
+    (8) varsaux -> COMMA . ID seen_ID_var varsaux
 
-    FUNCTION        reduce using rule 14 (function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .)
-    MAIN            reduce using rule 14 (function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .)
+    ID              shift and go to state 43
 
 
 state 39
 
-    (20) params -> LEFTPARENTHESES seen_params_init . paramsaux RIGHTPARENTHESES
-    (22) paramsaux -> . tipo ID seen_ID_var paramsaux
-    (23) paramsaux -> . COMMA paramsaux
-    (24) paramsaux -> . empty
-    (11) tipo -> . INT seen_tipo
-    (12) tipo -> . FLOAT seen_tipo
-    (69) empty -> .
+    (26) bloque -> LEFTBRACE vars . bloqueaux RIGHTBRACE
+    (27) bloqueaux -> . estatuto bloqueaux
+    (28) bloqueaux -> .
+    (29) estatuto -> . asignacion
+    (30) estatuto -> . condicion
+    (31) estatuto -> . escritura
+    (32) asignacion -> . varcte EQUALS expresion SEMICOLON
+    (52) condicion -> . IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+    (39) escritura -> . PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    COMMA           shift and go to state 55
-    INT             shift and go to state 19
-    FLOAT           shift and go to state 20
-    RIGHTPARENTHESES reduce using rule 69 (empty -> .)
+    RIGHTBRACE      reduce using rule 28 (bloqueaux -> .)
+    IF              shift and go to state 50
+    PRINT           shift and go to state 51
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
-    paramsaux                      shift and go to state 53
-    tipo                           shift and go to state 54
-    empty                          shift and go to state 56
+    bloqueaux                      shift and go to state 44
+    estatuto                       shift and go to state 45
+    asignacion                     shift and go to state 46
+    condicion                      shift and go to state 47
+    escritura                      shift and go to state 48
+    varcte                         shift and go to state 49
 
 state 40
+
+    (15) function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .
+
+    FUNCTION        reduce using rule 15 (function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .)
+    MAIN            reduce using rule 15 (function -> FUNCTION returnfunctionaux ID seen_id_function params bloque .)
+
+
+state 41
+
+    (21) params -> LEFTPARENTHESES seen_params_init . paramsaux RIGHTPARENTHESES
+    (23) paramsaux -> . tipo ID seen_ID_var paramsaux
+    (24) paramsaux -> . COMMA paramsaux
+    (25) paramsaux -> . empty
+    (11) tipo -> . INT seen_tipo
+    (12) tipo -> . FLOAT seen_tipo
+    (13) tipo -> . BOOLEAN seen_tipo
+    (72) empty -> .
+
+    COMMA           shift and go to state 57
+    INT             shift and go to state 19
+    FLOAT           shift and go to state 20
+    BOOLEAN         shift and go to state 21
+    RIGHTPARENTHESES reduce using rule 72 (empty -> .)
+
+    paramsaux                      shift and go to state 55
+    tipo                           shift and go to state 56
+    empty                          shift and go to state 58
+
+state 42
 
     (5) vars -> VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON . vars
     (5) vars -> . VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
     (6) vars -> . empty
-    (69) empty -> .
+    (72) empty -> .
 
     VAR             shift and go to state 7
-    FUNCTION        reduce using rule 69 (empty -> .)
-    MAIN            reduce using rule 69 (empty -> .)
-    IF              reduce using rule 69 (empty -> .)
-    PRINT           reduce using rule 69 (empty -> .)
-    ID              reduce using rule 69 (empty -> .)
-    INT_CTE         reduce using rule 69 (empty -> .)
-    FLOAT_CTE       reduce using rule 69 (empty -> .)
-    RIGHTBRACE      reduce using rule 69 (empty -> .)
+    FUNCTION        reduce using rule 72 (empty -> .)
+    MAIN            reduce using rule 72 (empty -> .)
+    IF              reduce using rule 72 (empty -> .)
+    PRINT           reduce using rule 72 (empty -> .)
+    ID              reduce using rule 72 (empty -> .)
+    INT_CTE         reduce using rule 72 (empty -> .)
+    FLOAT_CTE       reduce using rule 72 (empty -> .)
+    RIGHTBRACE      reduce using rule 72 (empty -> .)
 
-    vars                           shift and go to state 57
+    vars                           shift and go to state 59
     empty                          shift and go to state 8
 
-state 41
+state 43
 
     (8) varsaux -> COMMA ID . seen_ID_var varsaux
     (10) seen_ID_var -> .
@@ -592,195 +623,213 @@ state 41
     COMMA           reduce using rule 10 (seen_ID_var -> .)
     SEMICOLON       reduce using rule 10 (seen_ID_var -> .)
 
-    seen_ID_var                    shift and go to state 58
-
-state 42
-
-    (25) bloque -> LEFTBRACE vars bloqueaux . RIGHTBRACE
-
-    RIGHTBRACE      shift and go to state 59
-
-
-state 43
-
-    (26) bloqueaux -> estatuto . bloqueaux
-    (26) bloqueaux -> . estatuto bloqueaux
-    (27) bloqueaux -> .
-    (28) estatuto -> . asignacion
-    (29) estatuto -> . condicion
-    (30) estatuto -> . escritura
-    (31) asignacion -> . varcte EQUALS expresion SEMICOLON
-    (50) condicion -> . IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
-    (37) escritura -> . PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
-
-    RIGHTBRACE      reduce using rule 27 (bloqueaux -> .)
-    IF              shift and go to state 48
-    PRINT           shift and go to state 49
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
-
-    estatuto                       shift and go to state 43
-    bloqueaux                      shift and go to state 60
-    asignacion                     shift and go to state 44
-    condicion                      shift and go to state 45
-    escritura                      shift and go to state 46
-    varcte                         shift and go to state 47
+    seen_ID_var                    shift and go to state 60
 
 state 44
 
-    (28) estatuto -> asignacion .
+    (26) bloque -> LEFTBRACE vars bloqueaux . RIGHTBRACE
 
-    IF              reduce using rule 28 (estatuto -> asignacion .)
-    PRINT           reduce using rule 28 (estatuto -> asignacion .)
-    ID              reduce using rule 28 (estatuto -> asignacion .)
-    INT_CTE         reduce using rule 28 (estatuto -> asignacion .)
-    FLOAT_CTE       reduce using rule 28 (estatuto -> asignacion .)
-    RIGHTBRACE      reduce using rule 28 (estatuto -> asignacion .)
+    RIGHTBRACE      shift and go to state 61
 
 
 state 45
 
-    (29) estatuto -> condicion .
+    (27) bloqueaux -> estatuto . bloqueaux
+    (27) bloqueaux -> . estatuto bloqueaux
+    (28) bloqueaux -> .
+    (29) estatuto -> . asignacion
+    (30) estatuto -> . condicion
+    (31) estatuto -> . escritura
+    (32) asignacion -> . varcte EQUALS expresion SEMICOLON
+    (52) condicion -> . IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+    (39) escritura -> . PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    IF              reduce using rule 29 (estatuto -> condicion .)
-    PRINT           reduce using rule 29 (estatuto -> condicion .)
-    ID              reduce using rule 29 (estatuto -> condicion .)
-    INT_CTE         reduce using rule 29 (estatuto -> condicion .)
-    FLOAT_CTE       reduce using rule 29 (estatuto -> condicion .)
-    RIGHTBRACE      reduce using rule 29 (estatuto -> condicion .)
+    RIGHTBRACE      reduce using rule 28 (bloqueaux -> .)
+    IF              shift and go to state 50
+    PRINT           shift and go to state 51
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    estatuto                       shift and go to state 45
+    bloqueaux                      shift and go to state 62
+    asignacion                     shift and go to state 46
+    condicion                      shift and go to state 47
+    escritura                      shift and go to state 48
+    varcte                         shift and go to state 49
 
 state 46
 
-    (30) estatuto -> escritura .
+    (29) estatuto -> asignacion .
 
-    IF              reduce using rule 30 (estatuto -> escritura .)
-    PRINT           reduce using rule 30 (estatuto -> escritura .)
-    ID              reduce using rule 30 (estatuto -> escritura .)
-    INT_CTE         reduce using rule 30 (estatuto -> escritura .)
-    FLOAT_CTE       reduce using rule 30 (estatuto -> escritura .)
-    RIGHTBRACE      reduce using rule 30 (estatuto -> escritura .)
+    IF              reduce using rule 29 (estatuto -> asignacion .)
+    PRINT           reduce using rule 29 (estatuto -> asignacion .)
+    ID              reduce using rule 29 (estatuto -> asignacion .)
+    INT_CTE         reduce using rule 29 (estatuto -> asignacion .)
+    FLOAT_CTE       reduce using rule 29 (estatuto -> asignacion .)
+    RIGHTBRACE      reduce using rule 29 (estatuto -> asignacion .)
 
 
 state 47
 
-    (31) asignacion -> varcte . EQUALS expresion SEMICOLON
+    (30) estatuto -> condicion .
 
-    EQUALS          shift and go to state 61
+    IF              reduce using rule 30 (estatuto -> condicion .)
+    PRINT           reduce using rule 30 (estatuto -> condicion .)
+    ID              reduce using rule 30 (estatuto -> condicion .)
+    INT_CTE         reduce using rule 30 (estatuto -> condicion .)
+    FLOAT_CTE       reduce using rule 30 (estatuto -> condicion .)
+    RIGHTBRACE      reduce using rule 30 (estatuto -> condicion .)
 
 
 state 48
 
-    (50) condicion -> IF . LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+    (31) estatuto -> escritura .
 
-    LEFTPARENTHESES shift and go to state 62
+    IF              reduce using rule 31 (estatuto -> escritura .)
+    PRINT           reduce using rule 31 (estatuto -> escritura .)
+    ID              reduce using rule 31 (estatuto -> escritura .)
+    INT_CTE         reduce using rule 31 (estatuto -> escritura .)
+    FLOAT_CTE       reduce using rule 31 (estatuto -> escritura .)
+    RIGHTBRACE      reduce using rule 31 (estatuto -> escritura .)
 
 
 state 49
 
-    (37) escritura -> PRINT . LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
+    (32) asignacion -> varcte . EQUALS expresion SEMICOLON
 
-    LEFTPARENTHESES shift and go to state 63
+    EQUALS          shift and go to state 63
 
 
 state 50
 
-    (59) varcte -> ID . seen_ID
-    (64) seen_ID -> .
+    (52) condicion -> IF . LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
 
-    EQUALS          reduce using rule 64 (seen_ID -> .)
-    DIVIDE          reduce using rule 64 (seen_ID -> .)
-    MULTIPLY        reduce using rule 64 (seen_ID -> .)
-    PLUS            reduce using rule 64 (seen_ID -> .)
-    MINUS           reduce using rule 64 (seen_ID -> .)
-    GREATERTHAN     reduce using rule 64 (seen_ID -> .)
-    LESSTHAN        reduce using rule 64 (seen_ID -> .)
-    NOTEQUALS       reduce using rule 64 (seen_ID -> .)
-    SEMICOLON       reduce using rule 64 (seen_ID -> .)
-    RIGHTPARENTHESES reduce using rule 64 (seen_ID -> .)
-    COMMA           reduce using rule 64 (seen_ID -> .)
+    LEFTPARENTHESES shift and go to state 64
 
-    seen_ID                        shift and go to state 64
 
 state 51
 
-    (60) varcte -> INT_CTE .
+    (39) escritura -> PRINT . LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON
 
-    EQUALS          reduce using rule 60 (varcte -> INT_CTE .)
-    DIVIDE          reduce using rule 60 (varcte -> INT_CTE .)
-    MULTIPLY        reduce using rule 60 (varcte -> INT_CTE .)
-    PLUS            reduce using rule 60 (varcte -> INT_CTE .)
-    MINUS           reduce using rule 60 (varcte -> INT_CTE .)
-    GREATERTHAN     reduce using rule 60 (varcte -> INT_CTE .)
-    LESSTHAN        reduce using rule 60 (varcte -> INT_CTE .)
-    NOTEQUALS       reduce using rule 60 (varcte -> INT_CTE .)
-    SEMICOLON       reduce using rule 60 (varcte -> INT_CTE .)
-    RIGHTPARENTHESES reduce using rule 60 (varcte -> INT_CTE .)
-    COMMA           reduce using rule 60 (varcte -> INT_CTE .)
+    LEFTPARENTHESES shift and go to state 65
 
 
 state 52
 
-    (61) varcte -> FLOAT_CTE .
+    (61) varcte -> ID . seen_ID
+    (66) seen_ID -> .
 
-    EQUALS          reduce using rule 61 (varcte -> FLOAT_CTE .)
-    DIVIDE          reduce using rule 61 (varcte -> FLOAT_CTE .)
-    MULTIPLY        reduce using rule 61 (varcte -> FLOAT_CTE .)
-    PLUS            reduce using rule 61 (varcte -> FLOAT_CTE .)
-    MINUS           reduce using rule 61 (varcte -> FLOAT_CTE .)
-    GREATERTHAN     reduce using rule 61 (varcte -> FLOAT_CTE .)
-    LESSTHAN        reduce using rule 61 (varcte -> FLOAT_CTE .)
-    NOTEQUALS       reduce using rule 61 (varcte -> FLOAT_CTE .)
-    SEMICOLON       reduce using rule 61 (varcte -> FLOAT_CTE .)
-    RIGHTPARENTHESES reduce using rule 61 (varcte -> FLOAT_CTE .)
-    COMMA           reduce using rule 61 (varcte -> FLOAT_CTE .)
+    EQUALS          reduce using rule 66 (seen_ID -> .)
+    DIVIDE          reduce using rule 66 (seen_ID -> .)
+    MULTIPLY        reduce using rule 66 (seen_ID -> .)
+    PLUS            reduce using rule 66 (seen_ID -> .)
+    MINUS           reduce using rule 66 (seen_ID -> .)
+    GREATERTHAN     reduce using rule 66 (seen_ID -> .)
+    LESSTHAN        reduce using rule 66 (seen_ID -> .)
+    NOTEQUALS       reduce using rule 66 (seen_ID -> .)
+    LEFTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    ID              reduce using rule 66 (seen_ID -> .)
+    INT_CTE         reduce using rule 66 (seen_ID -> .)
+    FLOAT_CTE       reduce using rule 66 (seen_ID -> .)
+    SEMICOLON       reduce using rule 66 (seen_ID -> .)
+    RIGHTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    COMMA           reduce using rule 66 (seen_ID -> .)
 
+    seen_ID                        shift and go to state 66
 
 state 53
 
-    (20) params -> LEFTPARENTHESES seen_params_init paramsaux . RIGHTPARENTHESES
+    (62) varcte -> INT_CTE . seen_ID
+    (66) seen_ID -> .
 
-    RIGHTPARENTHESES shift and go to state 65
+    EQUALS          reduce using rule 66 (seen_ID -> .)
+    DIVIDE          reduce using rule 66 (seen_ID -> .)
+    MULTIPLY        reduce using rule 66 (seen_ID -> .)
+    PLUS            reduce using rule 66 (seen_ID -> .)
+    MINUS           reduce using rule 66 (seen_ID -> .)
+    GREATERTHAN     reduce using rule 66 (seen_ID -> .)
+    LESSTHAN        reduce using rule 66 (seen_ID -> .)
+    NOTEQUALS       reduce using rule 66 (seen_ID -> .)
+    LEFTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    ID              reduce using rule 66 (seen_ID -> .)
+    INT_CTE         reduce using rule 66 (seen_ID -> .)
+    FLOAT_CTE       reduce using rule 66 (seen_ID -> .)
+    SEMICOLON       reduce using rule 66 (seen_ID -> .)
+    RIGHTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    COMMA           reduce using rule 66 (seen_ID -> .)
 
+    seen_ID                        shift and go to state 67
 
 state 54
 
-    (22) paramsaux -> tipo . ID seen_ID_var paramsaux
+    (63) varcte -> FLOAT_CTE . seen_ID
+    (66) seen_ID -> .
 
-    ID              shift and go to state 66
+    EQUALS          reduce using rule 66 (seen_ID -> .)
+    DIVIDE          reduce using rule 66 (seen_ID -> .)
+    MULTIPLY        reduce using rule 66 (seen_ID -> .)
+    PLUS            reduce using rule 66 (seen_ID -> .)
+    MINUS           reduce using rule 66 (seen_ID -> .)
+    GREATERTHAN     reduce using rule 66 (seen_ID -> .)
+    LESSTHAN        reduce using rule 66 (seen_ID -> .)
+    NOTEQUALS       reduce using rule 66 (seen_ID -> .)
+    LEFTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    ID              reduce using rule 66 (seen_ID -> .)
+    INT_CTE         reduce using rule 66 (seen_ID -> .)
+    FLOAT_CTE       reduce using rule 66 (seen_ID -> .)
+    SEMICOLON       reduce using rule 66 (seen_ID -> .)
+    RIGHTPARENTHESES reduce using rule 66 (seen_ID -> .)
+    COMMA           reduce using rule 66 (seen_ID -> .)
 
+    seen_ID                        shift and go to state 68
 
 state 55
 
-    (23) paramsaux -> COMMA . paramsaux
-    (22) paramsaux -> . tipo ID seen_ID_var paramsaux
-    (23) paramsaux -> . COMMA paramsaux
-    (24) paramsaux -> . empty
-    (11) tipo -> . INT seen_tipo
-    (12) tipo -> . FLOAT seen_tipo
-    (69) empty -> .
+    (21) params -> LEFTPARENTHESES seen_params_init paramsaux . RIGHTPARENTHESES
 
-    COMMA           shift and go to state 55
-    INT             shift and go to state 19
-    FLOAT           shift and go to state 20
-    RIGHTPARENTHESES reduce using rule 69 (empty -> .)
+    RIGHTPARENTHESES shift and go to state 69
 
-    paramsaux                      shift and go to state 67
-    tipo                           shift and go to state 54
-    empty                          shift and go to state 56
 
 state 56
 
-    (24) paramsaux -> empty .
+    (23) paramsaux -> tipo . ID seen_ID_var paramsaux
 
-    RIGHTPARENTHESES reduce using rule 24 (paramsaux -> empty .)
+    ID              shift and go to state 70
 
 
 state 57
+
+    (24) paramsaux -> COMMA . paramsaux
+    (23) paramsaux -> . tipo ID seen_ID_var paramsaux
+    (24) paramsaux -> . COMMA paramsaux
+    (25) paramsaux -> . empty
+    (11) tipo -> . INT seen_tipo
+    (12) tipo -> . FLOAT seen_tipo
+    (13) tipo -> . BOOLEAN seen_tipo
+    (72) empty -> .
+
+    COMMA           shift and go to state 57
+    INT             shift and go to state 19
+    FLOAT           shift and go to state 20
+    BOOLEAN         shift and go to state 21
+    RIGHTPARENTHESES reduce using rule 72 (empty -> .)
+
+    paramsaux                      shift and go to state 71
+    tipo                           shift and go to state 56
+    empty                          shift and go to state 58
+
+state 58
+
+    (25) paramsaux -> empty .
+
+    RIGHTPARENTHESES reduce using rule 25 (paramsaux -> empty .)
+
+
+state 59
 
     (5) vars -> VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars .
 
@@ -794,996 +843,1131 @@ state 57
     RIGHTBRACE      reduce using rule 5 (vars -> VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars .)
 
 
-state 58
+state 60
 
     (8) varsaux -> COMMA ID seen_ID_var . varsaux
     (8) varsaux -> . COMMA ID seen_ID_var varsaux
     (9) varsaux -> .
 
-    COMMA           shift and go to state 36
+    COMMA           shift and go to state 38
     SEMICOLON       reduce using rule 9 (varsaux -> .)
 
-    varsaux                        shift and go to state 68
-
-state 59
-
-    (25) bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .
-
-    $end            reduce using rule 25 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
-    FUNCTION        reduce using rule 25 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
-    MAIN            reduce using rule 25 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
-    ELSE            reduce using rule 25 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
-    SEMICOLON       reduce using rule 25 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
-
-
-state 60
-
-    (26) bloqueaux -> estatuto bloqueaux .
-
-    RIGHTBRACE      reduce using rule 26 (bloqueaux -> estatuto bloqueaux .)
-
+    varsaux                        shift and go to state 72
 
 state 61
 
-    (31) asignacion -> varcte EQUALS . expresion SEMICOLON
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (26) bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    $end            reduce using rule 26 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
+    FUNCTION        reduce using rule 26 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
+    MAIN            reduce using rule 26 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
+    ELSE            reduce using rule 26 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
+    SEMICOLON       reduce using rule 26 (bloque -> LEFTBRACE vars bloqueaux RIGHTBRACE .)
 
-    varcte                         shift and go to state 69
-    expresion                      shift and go to state 70
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
 
 state 62
 
-    (50) condicion -> IF LEFTPARENTHESES . expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (27) bloqueaux -> estatuto bloqueaux .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    RIGHTBRACE      reduce using rule 27 (bloqueaux -> estatuto bloqueaux .)
 
-    expresion                      shift and go to state 76
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 63
 
-    (37) escritura -> PRINT LEFTPARENTHESES . escrituraaux RIGHTPARENTHESES SEMICOLON
-    (38) escrituraaux -> . expresion
-    (39) escrituraaux -> . STRING_CTE
-    (40) escrituraaux -> . expresion COMMA escrituraaux
-    (41) escrituraaux -> . STRING_CTE COMMA escrituraaux
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (32) asignacion -> varcte EQUALS . expresion SEMICOLON
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    STRING_CTE      shift and go to state 79
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
-    escrituraaux                   shift and go to state 77
-    expresion                      shift and go to state 78
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
+    varcte                         shift and go to state 73
+    expresion                      shift and go to state 74
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
 
 state 64
 
-    (59) varcte -> ID seen_ID .
+    (52) condicion -> IF LEFTPARENTHESES . expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    EQUALS          reduce using rule 59 (varcte -> ID seen_ID .)
-    DIVIDE          reduce using rule 59 (varcte -> ID seen_ID .)
-    MULTIPLY        reduce using rule 59 (varcte -> ID seen_ID .)
-    PLUS            reduce using rule 59 (varcte -> ID seen_ID .)
-    MINUS           reduce using rule 59 (varcte -> ID seen_ID .)
-    GREATERTHAN     reduce using rule 59 (varcte -> ID seen_ID .)
-    LESSTHAN        reduce using rule 59 (varcte -> ID seen_ID .)
-    NOTEQUALS       reduce using rule 59 (varcte -> ID seen_ID .)
-    SEMICOLON       reduce using rule 59 (varcte -> ID seen_ID .)
-    RIGHTPARENTHESES reduce using rule 59 (varcte -> ID seen_ID .)
-    COMMA           reduce using rule 59 (varcte -> ID seen_ID .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    expresion                      shift and go to state 80
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 65
 
-    (20) params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES .
+    (39) escritura -> PRINT LEFTPARENTHESES . escrituraaux RIGHTPARENTHESES SEMICOLON
+    (40) escrituraaux -> . expresion
+    (41) escrituraaux -> . STRING_CTE
+    (42) escrituraaux -> . expresion COMMA escrituraaux
+    (43) escrituraaux -> . STRING_CTE COMMA escrituraaux
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    LEFTBRACE       reduce using rule 20 (params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES .)
+    STRING_CTE      shift and go to state 83
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    escrituraaux                   shift and go to state 81
+    expresion                      shift and go to state 82
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 66
 
-    (22) paramsaux -> tipo ID . seen_ID_var paramsaux
+    (61) varcte -> ID seen_ID .
+
+    EQUALS          reduce using rule 61 (varcte -> ID seen_ID .)
+    DIVIDE          reduce using rule 61 (varcte -> ID seen_ID .)
+    MULTIPLY        reduce using rule 61 (varcte -> ID seen_ID .)
+    PLUS            reduce using rule 61 (varcte -> ID seen_ID .)
+    MINUS           reduce using rule 61 (varcte -> ID seen_ID .)
+    GREATERTHAN     reduce using rule 61 (varcte -> ID seen_ID .)
+    LESSTHAN        reduce using rule 61 (varcte -> ID seen_ID .)
+    NOTEQUALS       reduce using rule 61 (varcte -> ID seen_ID .)
+    LEFTPARENTHESES reduce using rule 61 (varcte -> ID seen_ID .)
+    ID              reduce using rule 61 (varcte -> ID seen_ID .)
+    INT_CTE         reduce using rule 61 (varcte -> ID seen_ID .)
+    FLOAT_CTE       reduce using rule 61 (varcte -> ID seen_ID .)
+    SEMICOLON       reduce using rule 61 (varcte -> ID seen_ID .)
+    RIGHTPARENTHESES reduce using rule 61 (varcte -> ID seen_ID .)
+    COMMA           reduce using rule 61 (varcte -> ID seen_ID .)
+
+
+state 67
+
+    (62) varcte -> INT_CTE seen_ID .
+
+    EQUALS          reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    DIVIDE          reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    MULTIPLY        reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    PLUS            reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    MINUS           reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    GREATERTHAN     reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    LESSTHAN        reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    NOTEQUALS       reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    LEFTPARENTHESES reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    ID              reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    INT_CTE         reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    FLOAT_CTE       reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    SEMICOLON       reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    RIGHTPARENTHESES reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+    COMMA           reduce using rule 62 (varcte -> INT_CTE seen_ID .)
+
+
+state 68
+
+    (63) varcte -> FLOAT_CTE seen_ID .
+
+    EQUALS          reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    DIVIDE          reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    MULTIPLY        reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    PLUS            reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    MINUS           reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    GREATERTHAN     reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    LESSTHAN        reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    NOTEQUALS       reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    LEFTPARENTHESES reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    ID              reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    INT_CTE         reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    FLOAT_CTE       reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    SEMICOLON       reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    RIGHTPARENTHESES reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+    COMMA           reduce using rule 63 (varcte -> FLOAT_CTE seen_ID .)
+
+
+state 69
+
+    (21) params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES .
+
+    LEFTBRACE       reduce using rule 21 (params -> LEFTPARENTHESES seen_params_init paramsaux RIGHTPARENTHESES .)
+
+
+state 70
+
+    (23) paramsaux -> tipo ID . seen_ID_var paramsaux
     (10) seen_ID_var -> .
 
     COMMA           reduce using rule 10 (seen_ID_var -> .)
     INT             reduce using rule 10 (seen_ID_var -> .)
     FLOAT           reduce using rule 10 (seen_ID_var -> .)
+    BOOLEAN         reduce using rule 10 (seen_ID_var -> .)
     RIGHTPARENTHESES reduce using rule 10 (seen_ID_var -> .)
 
-    seen_ID_var                    shift and go to state 80
+    seen_ID_var                    shift and go to state 84
 
-state 67
+state 71
 
-    (23) paramsaux -> COMMA paramsaux .
+    (24) paramsaux -> COMMA paramsaux .
 
-    RIGHTPARENTHESES reduce using rule 23 (paramsaux -> COMMA paramsaux .)
+    RIGHTPARENTHESES reduce using rule 24 (paramsaux -> COMMA paramsaux .)
 
 
-state 68
+state 72
 
     (8) varsaux -> COMMA ID seen_ID_var varsaux .
 
     SEMICOLON       reduce using rule 8 (varsaux -> COMMA ID seen_ID_var varsaux .)
 
 
-state 69
-
-    (57) factor -> varcte .
-
-    DIVIDE          reduce using rule 57 (factor -> varcte .)
-    MULTIPLY        reduce using rule 57 (factor -> varcte .)
-    PLUS            reduce using rule 57 (factor -> varcte .)
-    MINUS           reduce using rule 57 (factor -> varcte .)
-    GREATERTHAN     reduce using rule 57 (factor -> varcte .)
-    LESSTHAN        reduce using rule 57 (factor -> varcte .)
-    NOTEQUALS       reduce using rule 57 (factor -> varcte .)
-    SEMICOLON       reduce using rule 57 (factor -> varcte .)
-    RIGHTPARENTHESES reduce using rule 57 (factor -> varcte .)
-    COMMA           reduce using rule 57 (factor -> varcte .)
-
-
-state 70
-
-    (31) asignacion -> varcte EQUALS expresion . SEMICOLON
-
-    SEMICOLON       shift and go to state 81
-
-
-state 71
-
-    (32) expresion -> exp . expresionaux
-    (33) expresionaux -> . GREATERTHAN exp
-    (34) expresionaux -> . LESSTHAN exp
-    (35) expresionaux -> . NOTEQUALS exp
-    (36) expresionaux -> .
-
-    GREATERTHAN     shift and go to state 83
-    LESSTHAN        shift and go to state 84
-    NOTEQUALS       shift and go to state 85
-    SEMICOLON       reduce using rule 36 (expresionaux -> .)
-    RIGHTPARENTHESES reduce using rule 36 (expresionaux -> .)
-    COMMA           reduce using rule 36 (expresionaux -> .)
-
-    expresionaux                   shift and go to state 82
-
-state 72
-
-    (42) exp -> termino . seen_termino
-    (43) exp -> termino . seen_termino expaux
-    (66) seen_termino -> .
-
-    PLUS            reduce using rule 66 (seen_termino -> .)
-    MINUS           reduce using rule 66 (seen_termino -> .)
-    GREATERTHAN     reduce using rule 66 (seen_termino -> .)
-    LESSTHAN        reduce using rule 66 (seen_termino -> .)
-    NOTEQUALS       reduce using rule 66 (seen_termino -> .)
-    SEMICOLON       reduce using rule 66 (seen_termino -> .)
-    RIGHTPARENTHESES reduce using rule 66 (seen_termino -> .)
-    COMMA           reduce using rule 66 (seen_termino -> .)
-
-    seen_termino                   shift and go to state 86
-
 state 73
 
-    (46) termino -> factor . seen_factor
-    (47) termino -> factor . seen_factor terminoaux
-    (67) seen_factor -> .
+    (59) factor -> varcte .
 
-    DIVIDE          reduce using rule 67 (seen_factor -> .)
-    MULTIPLY        reduce using rule 67 (seen_factor -> .)
-    PLUS            reduce using rule 67 (seen_factor -> .)
-    MINUS           reduce using rule 67 (seen_factor -> .)
-    GREATERTHAN     reduce using rule 67 (seen_factor -> .)
-    LESSTHAN        reduce using rule 67 (seen_factor -> .)
-    NOTEQUALS       reduce using rule 67 (seen_factor -> .)
-    SEMICOLON       reduce using rule 67 (seen_factor -> .)
-    RIGHTPARENTHESES reduce using rule 67 (seen_factor -> .)
-    COMMA           reduce using rule 67 (seen_factor -> .)
+    DIVIDE          reduce using rule 59 (factor -> varcte .)
+    MULTIPLY        reduce using rule 59 (factor -> varcte .)
+    PLUS            reduce using rule 59 (factor -> varcte .)
+    MINUS           reduce using rule 59 (factor -> varcte .)
+    GREATERTHAN     reduce using rule 59 (factor -> varcte .)
+    LESSTHAN        reduce using rule 59 (factor -> varcte .)
+    NOTEQUALS       reduce using rule 59 (factor -> varcte .)
+    LEFTPARENTHESES reduce using rule 59 (factor -> varcte .)
+    ID              reduce using rule 59 (factor -> varcte .)
+    INT_CTE         reduce using rule 59 (factor -> varcte .)
+    FLOAT_CTE       reduce using rule 59 (factor -> varcte .)
+    SEMICOLON       reduce using rule 59 (factor -> varcte .)
+    RIGHTPARENTHESES reduce using rule 59 (factor -> varcte .)
+    COMMA           reduce using rule 59 (factor -> varcte .)
 
-    seen_factor                    shift and go to state 87
 
 state 74
 
-    (56) factor -> factoraux .
+    (32) asignacion -> varcte EQUALS expresion . SEMICOLON
 
-    DIVIDE          reduce using rule 56 (factor -> factoraux .)
-    MULTIPLY        reduce using rule 56 (factor -> factoraux .)
-    PLUS            reduce using rule 56 (factor -> factoraux .)
-    MINUS           reduce using rule 56 (factor -> factoraux .)
-    GREATERTHAN     reduce using rule 56 (factor -> factoraux .)
-    LESSTHAN        reduce using rule 56 (factor -> factoraux .)
-    NOTEQUALS       reduce using rule 56 (factor -> factoraux .)
-    SEMICOLON       reduce using rule 56 (factor -> factoraux .)
-    RIGHTPARENTHESES reduce using rule 56 (factor -> factoraux .)
-    COMMA           reduce using rule 56 (factor -> factoraux .)
+    SEMICOLON       shift and go to state 85
 
 
 state 75
 
-    (58) factoraux -> LEFTPARENTHESES . seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (62) seen_insert_fondo -> .
+    (33) expresion -> exp . seen_comparacion
+    (34) expresion -> exp . seen_comparacion expresionaux exp seen_comparacion
+    (70) seen_comparacion -> .
 
-    LEFTPARENTHESES reduce using rule 62 (seen_insert_fondo -> .)
-    ID              reduce using rule 62 (seen_insert_fondo -> .)
-    INT_CTE         reduce using rule 62 (seen_insert_fondo -> .)
-    FLOAT_CTE       reduce using rule 62 (seen_insert_fondo -> .)
+    GREATERTHAN     reduce using rule 70 (seen_comparacion -> .)
+    LESSTHAN        reduce using rule 70 (seen_comparacion -> .)
+    NOTEQUALS       reduce using rule 70 (seen_comparacion -> .)
+    LEFTPARENTHESES reduce using rule 70 (seen_comparacion -> .)
+    ID              reduce using rule 70 (seen_comparacion -> .)
+    INT_CTE         reduce using rule 70 (seen_comparacion -> .)
+    FLOAT_CTE       reduce using rule 70 (seen_comparacion -> .)
+    SEMICOLON       reduce using rule 70 (seen_comparacion -> .)
+    RIGHTPARENTHESES reduce using rule 70 (seen_comparacion -> .)
+    COMMA           reduce using rule 70 (seen_comparacion -> .)
 
-    seen_insert_fondo              shift and go to state 88
+    seen_comparacion               shift and go to state 86
 
 state 76
 
-    (50) condicion -> IF LEFTPARENTHESES expresion . RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
+    (44) exp -> termino . seen_termino
+    (45) exp -> termino . seen_termino expaux
+    (68) seen_termino -> .
 
-    RIGHTPARENTHESES shift and go to state 89
+    PLUS            reduce using rule 68 (seen_termino -> .)
+    MINUS           reduce using rule 68 (seen_termino -> .)
+    GREATERTHAN     reduce using rule 68 (seen_termino -> .)
+    LESSTHAN        reduce using rule 68 (seen_termino -> .)
+    NOTEQUALS       reduce using rule 68 (seen_termino -> .)
+    LEFTPARENTHESES reduce using rule 68 (seen_termino -> .)
+    ID              reduce using rule 68 (seen_termino -> .)
+    INT_CTE         reduce using rule 68 (seen_termino -> .)
+    FLOAT_CTE       reduce using rule 68 (seen_termino -> .)
+    SEMICOLON       reduce using rule 68 (seen_termino -> .)
+    RIGHTPARENTHESES reduce using rule 68 (seen_termino -> .)
+    COMMA           reduce using rule 68 (seen_termino -> .)
 
+    seen_termino                   shift and go to state 87
 
 state 77
 
-    (37) escritura -> PRINT LEFTPARENTHESES escrituraaux . RIGHTPARENTHESES SEMICOLON
+    (48) termino -> factor . seen_factor
+    (49) termino -> factor . seen_factor terminoaux
+    (69) seen_factor -> .
 
-    RIGHTPARENTHESES shift and go to state 90
+    DIVIDE          reduce using rule 69 (seen_factor -> .)
+    MULTIPLY        reduce using rule 69 (seen_factor -> .)
+    PLUS            reduce using rule 69 (seen_factor -> .)
+    MINUS           reduce using rule 69 (seen_factor -> .)
+    GREATERTHAN     reduce using rule 69 (seen_factor -> .)
+    LESSTHAN        reduce using rule 69 (seen_factor -> .)
+    NOTEQUALS       reduce using rule 69 (seen_factor -> .)
+    LEFTPARENTHESES reduce using rule 69 (seen_factor -> .)
+    ID              reduce using rule 69 (seen_factor -> .)
+    INT_CTE         reduce using rule 69 (seen_factor -> .)
+    FLOAT_CTE       reduce using rule 69 (seen_factor -> .)
+    SEMICOLON       reduce using rule 69 (seen_factor -> .)
+    RIGHTPARENTHESES reduce using rule 69 (seen_factor -> .)
+    COMMA           reduce using rule 69 (seen_factor -> .)
 
+    seen_factor                    shift and go to state 88
 
 state 78
 
-    (38) escrituraaux -> expresion .
-    (40) escrituraaux -> expresion . COMMA escrituraaux
+    (58) factor -> factoraux .
 
-    RIGHTPARENTHESES reduce using rule 38 (escrituraaux -> expresion .)
-    COMMA           shift and go to state 91
+    DIVIDE          reduce using rule 58 (factor -> factoraux .)
+    MULTIPLY        reduce using rule 58 (factor -> factoraux .)
+    PLUS            reduce using rule 58 (factor -> factoraux .)
+    MINUS           reduce using rule 58 (factor -> factoraux .)
+    GREATERTHAN     reduce using rule 58 (factor -> factoraux .)
+    LESSTHAN        reduce using rule 58 (factor -> factoraux .)
+    NOTEQUALS       reduce using rule 58 (factor -> factoraux .)
+    LEFTPARENTHESES reduce using rule 58 (factor -> factoraux .)
+    ID              reduce using rule 58 (factor -> factoraux .)
+    INT_CTE         reduce using rule 58 (factor -> factoraux .)
+    FLOAT_CTE       reduce using rule 58 (factor -> factoraux .)
+    SEMICOLON       reduce using rule 58 (factor -> factoraux .)
+    RIGHTPARENTHESES reduce using rule 58 (factor -> factoraux .)
+    COMMA           reduce using rule 58 (factor -> factoraux .)
 
 
 state 79
 
-    (39) escrituraaux -> STRING_CTE .
-    (41) escrituraaux -> STRING_CTE . COMMA escrituraaux
+    (60) factoraux -> LEFTPARENTHESES . seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (64) seen_insert_fondo -> .
 
-    RIGHTPARENTHESES reduce using rule 39 (escrituraaux -> STRING_CTE .)
-    COMMA           shift and go to state 92
+    LEFTPARENTHESES reduce using rule 64 (seen_insert_fondo -> .)
+    ID              reduce using rule 64 (seen_insert_fondo -> .)
+    INT_CTE         reduce using rule 64 (seen_insert_fondo -> .)
+    FLOAT_CTE       reduce using rule 64 (seen_insert_fondo -> .)
 
+    seen_insert_fondo              shift and go to state 89
 
 state 80
 
-    (22) paramsaux -> tipo ID seen_ID_var . paramsaux
-    (22) paramsaux -> . tipo ID seen_ID_var paramsaux
-    (23) paramsaux -> . COMMA paramsaux
-    (24) paramsaux -> . empty
-    (11) tipo -> . INT seen_tipo
-    (12) tipo -> . FLOAT seen_tipo
-    (69) empty -> .
+    (52) condicion -> IF LEFTPARENTHESES expresion . RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux
 
-    COMMA           shift and go to state 55
-    INT             shift and go to state 19
-    FLOAT           shift and go to state 20
-    RIGHTPARENTHESES reduce using rule 69 (empty -> .)
+    RIGHTPARENTHESES shift and go to state 90
 
-    tipo                           shift and go to state 54
-    paramsaux                      shift and go to state 93
-    empty                          shift and go to state 56
 
 state 81
 
-    (31) asignacion -> varcte EQUALS expresion SEMICOLON .
+    (39) escritura -> PRINT LEFTPARENTHESES escrituraaux . RIGHTPARENTHESES SEMICOLON
 
-    IF              reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
-    PRINT           reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
-    ID              reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
-    INT_CTE         reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
-    FLOAT_CTE       reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
-    RIGHTBRACE      reduce using rule 31 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    RIGHTPARENTHESES shift and go to state 91
 
 
 state 82
 
-    (32) expresion -> exp expresionaux .
+    (40) escrituraaux -> expresion .
+    (42) escrituraaux -> expresion . COMMA escrituraaux
 
-    SEMICOLON       reduce using rule 32 (expresion -> exp expresionaux .)
-    RIGHTPARENTHESES reduce using rule 32 (expresion -> exp expresionaux .)
-    COMMA           reduce using rule 32 (expresion -> exp expresionaux .)
+    RIGHTPARENTHESES reduce using rule 40 (escrituraaux -> expresion .)
+    COMMA           shift and go to state 92
 
 
 state 83
 
-    (33) expresionaux -> GREATERTHAN . exp
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (41) escrituraaux -> STRING_CTE .
+    (43) escrituraaux -> STRING_CTE . COMMA escrituraaux
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    RIGHTPARENTHESES reduce using rule 41 (escrituraaux -> STRING_CTE .)
+    COMMA           shift and go to state 93
 
-    exp                            shift and go to state 94
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 84
 
-    (34) expresionaux -> LESSTHAN . exp
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (23) paramsaux -> tipo ID seen_ID_var . paramsaux
+    (23) paramsaux -> . tipo ID seen_ID_var paramsaux
+    (24) paramsaux -> . COMMA paramsaux
+    (25) paramsaux -> . empty
+    (11) tipo -> . INT seen_tipo
+    (12) tipo -> . FLOAT seen_tipo
+    (13) tipo -> . BOOLEAN seen_tipo
+    (72) empty -> .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    COMMA           shift and go to state 57
+    INT             shift and go to state 19
+    FLOAT           shift and go to state 20
+    BOOLEAN         shift and go to state 21
+    RIGHTPARENTHESES reduce using rule 72 (empty -> .)
 
-    exp                            shift and go to state 95
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
+    tipo                           shift and go to state 56
+    paramsaux                      shift and go to state 94
+    empty                          shift and go to state 58
 
 state 85
 
-    (35) expresionaux -> NOTEQUALS . exp
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (32) asignacion -> varcte EQUALS expresion SEMICOLON .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    IF              reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    PRINT           reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    ID              reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    INT_CTE         reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    FLOAT_CTE       reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
+    RIGHTBRACE      reduce using rule 32 (asignacion -> varcte EQUALS expresion SEMICOLON .)
 
-    exp                            shift and go to state 96
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 86
 
-    (42) exp -> termino seen_termino .
-    (43) exp -> termino seen_termino . expaux
-    (44) expaux -> . PLUS seen_operador exp
-    (45) expaux -> . MINUS seen_operador exp
+    (33) expresion -> exp seen_comparacion .
+    (34) expresion -> exp seen_comparacion . expresionaux exp seen_comparacion
+    (35) expresionaux -> . GREATERTHAN seen_operador
+    (36) expresionaux -> . LESSTHAN seen_operador
+    (37) expresionaux -> . NOTEQUALS seen_operador
+    (38) expresionaux -> .
 
-    GREATERTHAN     reduce using rule 42 (exp -> termino seen_termino .)
-    LESSTHAN        reduce using rule 42 (exp -> termino seen_termino .)
-    NOTEQUALS       reduce using rule 42 (exp -> termino seen_termino .)
-    SEMICOLON       reduce using rule 42 (exp -> termino seen_termino .)
-    RIGHTPARENTHESES reduce using rule 42 (exp -> termino seen_termino .)
-    COMMA           reduce using rule 42 (exp -> termino seen_termino .)
-    PLUS            shift and go to state 98
-    MINUS           shift and go to state 99
+    SEMICOLON       reduce using rule 33 (expresion -> exp seen_comparacion .)
+    RIGHTPARENTHESES reduce using rule 33 (expresion -> exp seen_comparacion .)
+    COMMA           reduce using rule 33 (expresion -> exp seen_comparacion .)
+    GREATERTHAN     shift and go to state 96
+    LESSTHAN        shift and go to state 97
+    NOTEQUALS       shift and go to state 98
+    LEFTPARENTHESES reduce using rule 38 (expresionaux -> .)
+    ID              reduce using rule 38 (expresionaux -> .)
+    INT_CTE         reduce using rule 38 (expresionaux -> .)
+    FLOAT_CTE       reduce using rule 38 (expresionaux -> .)
 
-    expaux                         shift and go to state 97
+    expresionaux                   shift and go to state 95
 
 state 87
 
-    (46) termino -> factor seen_factor .
-    (47) termino -> factor seen_factor . terminoaux
-    (48) terminoaux -> . DIVIDE seen_operador termino
-    (49) terminoaux -> . MULTIPLY seen_operador termino
+    (44) exp -> termino seen_termino .
+    (45) exp -> termino seen_termino . expaux
+    (46) expaux -> . PLUS seen_operador exp
+    (47) expaux -> . MINUS seen_operador exp
 
-    PLUS            reduce using rule 46 (termino -> factor seen_factor .)
-    MINUS           reduce using rule 46 (termino -> factor seen_factor .)
-    GREATERTHAN     reduce using rule 46 (termino -> factor seen_factor .)
-    LESSTHAN        reduce using rule 46 (termino -> factor seen_factor .)
-    NOTEQUALS       reduce using rule 46 (termino -> factor seen_factor .)
-    SEMICOLON       reduce using rule 46 (termino -> factor seen_factor .)
-    RIGHTPARENTHESES reduce using rule 46 (termino -> factor seen_factor .)
-    COMMA           reduce using rule 46 (termino -> factor seen_factor .)
-    DIVIDE          shift and go to state 101
-    MULTIPLY        shift and go to state 102
+    GREATERTHAN     reduce using rule 44 (exp -> termino seen_termino .)
+    LESSTHAN        reduce using rule 44 (exp -> termino seen_termino .)
+    NOTEQUALS       reduce using rule 44 (exp -> termino seen_termino .)
+    LEFTPARENTHESES reduce using rule 44 (exp -> termino seen_termino .)
+    ID              reduce using rule 44 (exp -> termino seen_termino .)
+    INT_CTE         reduce using rule 44 (exp -> termino seen_termino .)
+    FLOAT_CTE       reduce using rule 44 (exp -> termino seen_termino .)
+    SEMICOLON       reduce using rule 44 (exp -> termino seen_termino .)
+    RIGHTPARENTHESES reduce using rule 44 (exp -> termino seen_termino .)
+    COMMA           reduce using rule 44 (exp -> termino seen_termino .)
+    PLUS            shift and go to state 100
+    MINUS           shift and go to state 101
 
-    terminoaux                     shift and go to state 100
+    expaux                         shift and go to state 99
 
 state 88
 
-    (58) factoraux -> LEFTPARENTHESES seen_insert_fondo . expresion RIGHTPARENTHESES seen_remove_fondo
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (48) termino -> factor seen_factor .
+    (49) termino -> factor seen_factor . terminoaux
+    (50) terminoaux -> . DIVIDE seen_operador termino
+    (51) terminoaux -> . MULTIPLY seen_operador termino
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    PLUS            reduce using rule 48 (termino -> factor seen_factor .)
+    MINUS           reduce using rule 48 (termino -> factor seen_factor .)
+    GREATERTHAN     reduce using rule 48 (termino -> factor seen_factor .)
+    LESSTHAN        reduce using rule 48 (termino -> factor seen_factor .)
+    NOTEQUALS       reduce using rule 48 (termino -> factor seen_factor .)
+    LEFTPARENTHESES reduce using rule 48 (termino -> factor seen_factor .)
+    ID              reduce using rule 48 (termino -> factor seen_factor .)
+    INT_CTE         reduce using rule 48 (termino -> factor seen_factor .)
+    FLOAT_CTE       reduce using rule 48 (termino -> factor seen_factor .)
+    SEMICOLON       reduce using rule 48 (termino -> factor seen_factor .)
+    RIGHTPARENTHESES reduce using rule 48 (termino -> factor seen_factor .)
+    COMMA           reduce using rule 48 (termino -> factor seen_factor .)
+    DIVIDE          shift and go to state 103
+    MULTIPLY        shift and go to state 104
 
-    expresion                      shift and go to state 103
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
+    terminoaux                     shift and go to state 102
 
 state 89
 
-    (50) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES . seen_right_parentheses_condicion bloque condicionaux
-    (53) seen_right_parentheses_condicion -> .
+    (60) factoraux -> LEFTPARENTHESES seen_insert_fondo . expresion RIGHTPARENTHESES seen_remove_fondo
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    LEFTBRACE       reduce using rule 53 (seen_right_parentheses_condicion -> .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
-    seen_right_parentheses_condicion shift and go to state 104
+    expresion                      shift and go to state 105
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 90
 
-    (37) escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES . SEMICOLON
+    (52) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES . seen_right_parentheses_condicion bloque condicionaux
+    (55) seen_right_parentheses_condicion -> .
 
-    SEMICOLON       shift and go to state 105
+    LEFTBRACE       reduce using rule 55 (seen_right_parentheses_condicion -> .)
 
+    seen_right_parentheses_condicion shift and go to state 106
 
 state 91
 
-    (40) escrituraaux -> expresion COMMA . escrituraaux
-    (38) escrituraaux -> . expresion
-    (39) escrituraaux -> . STRING_CTE
-    (40) escrituraaux -> . expresion COMMA escrituraaux
-    (41) escrituraaux -> . STRING_CTE COMMA escrituraaux
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (39) escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES . SEMICOLON
 
-    STRING_CTE      shift and go to state 79
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    SEMICOLON       shift and go to state 107
 
-    expresion                      shift and go to state 78
-    escrituraaux                   shift and go to state 106
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 92
 
-    (41) escrituraaux -> STRING_CTE COMMA . escrituraaux
-    (38) escrituraaux -> . expresion
-    (39) escrituraaux -> . STRING_CTE
-    (40) escrituraaux -> . expresion COMMA escrituraaux
-    (41) escrituraaux -> . STRING_CTE COMMA escrituraaux
-    (32) expresion -> . exp expresionaux
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (42) escrituraaux -> expresion COMMA . escrituraaux
+    (40) escrituraaux -> . expresion
+    (41) escrituraaux -> . STRING_CTE
+    (42) escrituraaux -> . expresion COMMA escrituraaux
+    (43) escrituraaux -> . STRING_CTE COMMA escrituraaux
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    STRING_CTE      shift and go to state 79
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    STRING_CTE      shift and go to state 83
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
-    escrituraaux                   shift and go to state 107
-    expresion                      shift and go to state 78
-    exp                            shift and go to state 71
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
+    expresion                      shift and go to state 82
+    escrituraaux                   shift and go to state 108
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 93
 
-    (22) paramsaux -> tipo ID seen_ID_var paramsaux .
+    (43) escrituraaux -> STRING_CTE COMMA . escrituraaux
+    (40) escrituraaux -> . expresion
+    (41) escrituraaux -> . STRING_CTE
+    (42) escrituraaux -> . expresion COMMA escrituraaux
+    (43) escrituraaux -> . STRING_CTE COMMA escrituraaux
+    (33) expresion -> . exp seen_comparacion
+    (34) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    RIGHTPARENTHESES reduce using rule 22 (paramsaux -> tipo ID seen_ID_var paramsaux .)
+    STRING_CTE      shift and go to state 83
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    escrituraaux                   shift and go to state 109
+    expresion                      shift and go to state 82
+    exp                            shift and go to state 75
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 94
 
-    (33) expresionaux -> GREATERTHAN exp .
+    (23) paramsaux -> tipo ID seen_ID_var paramsaux .
 
-    SEMICOLON       reduce using rule 33 (expresionaux -> GREATERTHAN exp .)
-    RIGHTPARENTHESES reduce using rule 33 (expresionaux -> GREATERTHAN exp .)
-    COMMA           reduce using rule 33 (expresionaux -> GREATERTHAN exp .)
+    RIGHTPARENTHESES reduce using rule 23 (paramsaux -> tipo ID seen_ID_var paramsaux .)
 
 
 state 95
 
-    (34) expresionaux -> LESSTHAN exp .
+    (34) expresion -> exp seen_comparacion expresionaux . exp seen_comparacion
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    SEMICOLON       reduce using rule 34 (expresionaux -> LESSTHAN exp .)
-    RIGHTPARENTHESES reduce using rule 34 (expresionaux -> LESSTHAN exp .)
-    COMMA           reduce using rule 34 (expresionaux -> LESSTHAN exp .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    exp                            shift and go to state 110
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 96
 
-    (35) expresionaux -> NOTEQUALS exp .
+    (35) expresionaux -> GREATERTHAN . seen_operador
+    (67) seen_operador -> .
 
-    SEMICOLON       reduce using rule 35 (expresionaux -> NOTEQUALS exp .)
-    RIGHTPARENTHESES reduce using rule 35 (expresionaux -> NOTEQUALS exp .)
-    COMMA           reduce using rule 35 (expresionaux -> NOTEQUALS exp .)
-
-
-state 97
-
-    (43) exp -> termino seen_termino expaux .
-
-    GREATERTHAN     reduce using rule 43 (exp -> termino seen_termino expaux .)
-    LESSTHAN        reduce using rule 43 (exp -> termino seen_termino expaux .)
-    NOTEQUALS       reduce using rule 43 (exp -> termino seen_termino expaux .)
-    SEMICOLON       reduce using rule 43 (exp -> termino seen_termino expaux .)
-    RIGHTPARENTHESES reduce using rule 43 (exp -> termino seen_termino expaux .)
-    COMMA           reduce using rule 43 (exp -> termino seen_termino expaux .)
-
-
-state 98
-
-    (44) expaux -> PLUS . seen_operador exp
-    (65) seen_operador -> .
-
-    LEFTPARENTHESES reduce using rule 65 (seen_operador -> .)
-    ID              reduce using rule 65 (seen_operador -> .)
-    INT_CTE         reduce using rule 65 (seen_operador -> .)
-    FLOAT_CTE       reduce using rule 65 (seen_operador -> .)
-
-    seen_operador                  shift and go to state 108
-
-state 99
-
-    (45) expaux -> MINUS . seen_operador exp
-    (65) seen_operador -> .
-
-    LEFTPARENTHESES reduce using rule 65 (seen_operador -> .)
-    ID              reduce using rule 65 (seen_operador -> .)
-    INT_CTE         reduce using rule 65 (seen_operador -> .)
-    FLOAT_CTE       reduce using rule 65 (seen_operador -> .)
-
-    seen_operador                  shift and go to state 109
-
-state 100
-
-    (47) termino -> factor seen_factor terminoaux .
-
-    PLUS            reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    MINUS           reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    GREATERTHAN     reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    LESSTHAN        reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    NOTEQUALS       reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    SEMICOLON       reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    RIGHTPARENTHESES reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-    COMMA           reduce using rule 47 (termino -> factor seen_factor terminoaux .)
-
-
-state 101
-
-    (48) terminoaux -> DIVIDE . seen_operador termino
-    (65) seen_operador -> .
-
-    LEFTPARENTHESES reduce using rule 65 (seen_operador -> .)
-    ID              reduce using rule 65 (seen_operador -> .)
-    INT_CTE         reduce using rule 65 (seen_operador -> .)
-    FLOAT_CTE       reduce using rule 65 (seen_operador -> .)
-
-    seen_operador                  shift and go to state 110
-
-state 102
-
-    (49) terminoaux -> MULTIPLY . seen_operador termino
-    (65) seen_operador -> .
-
-    LEFTPARENTHESES reduce using rule 65 (seen_operador -> .)
-    ID              reduce using rule 65 (seen_operador -> .)
-    INT_CTE         reduce using rule 65 (seen_operador -> .)
-    FLOAT_CTE       reduce using rule 65 (seen_operador -> .)
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
 
     seen_operador                  shift and go to state 111
 
+state 97
+
+    (36) expresionaux -> LESSTHAN . seen_operador
+    (67) seen_operador -> .
+
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
+
+    seen_operador                  shift and go to state 112
+
+state 98
+
+    (37) expresionaux -> NOTEQUALS . seen_operador
+    (67) seen_operador -> .
+
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
+
+    seen_operador                  shift and go to state 113
+
+state 99
+
+    (45) exp -> termino seen_termino expaux .
+
+    GREATERTHAN     reduce using rule 45 (exp -> termino seen_termino expaux .)
+    LESSTHAN        reduce using rule 45 (exp -> termino seen_termino expaux .)
+    NOTEQUALS       reduce using rule 45 (exp -> termino seen_termino expaux .)
+    LEFTPARENTHESES reduce using rule 45 (exp -> termino seen_termino expaux .)
+    ID              reduce using rule 45 (exp -> termino seen_termino expaux .)
+    INT_CTE         reduce using rule 45 (exp -> termino seen_termino expaux .)
+    FLOAT_CTE       reduce using rule 45 (exp -> termino seen_termino expaux .)
+    SEMICOLON       reduce using rule 45 (exp -> termino seen_termino expaux .)
+    RIGHTPARENTHESES reduce using rule 45 (exp -> termino seen_termino expaux .)
+    COMMA           reduce using rule 45 (exp -> termino seen_termino expaux .)
+
+
+state 100
+
+    (46) expaux -> PLUS . seen_operador exp
+    (67) seen_operador -> .
+
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
+
+    seen_operador                  shift and go to state 114
+
+state 101
+
+    (47) expaux -> MINUS . seen_operador exp
+    (67) seen_operador -> .
+
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
+
+    seen_operador                  shift and go to state 115
+
+state 102
+
+    (49) termino -> factor seen_factor terminoaux .
+
+    PLUS            reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    MINUS           reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    GREATERTHAN     reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    LESSTHAN        reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    NOTEQUALS       reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    LEFTPARENTHESES reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    ID              reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    INT_CTE         reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    FLOAT_CTE       reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    SEMICOLON       reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    RIGHTPARENTHESES reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+    COMMA           reduce using rule 49 (termino -> factor seen_factor terminoaux .)
+
+
 state 103
 
-    (58) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion . RIGHTPARENTHESES seen_remove_fondo
+    (50) terminoaux -> DIVIDE . seen_operador termino
+    (67) seen_operador -> .
 
-    RIGHTPARENTHESES shift and go to state 112
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
 
+    seen_operador                  shift and go to state 116
 
 state 104
 
-    (50) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion . bloque condicionaux
-    (25) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
+    (51) terminoaux -> MULTIPLY . seen_operador termino
+    (67) seen_operador -> .
 
-    LEFTBRACE       shift and go to state 32
+    LEFTPARENTHESES reduce using rule 67 (seen_operador -> .)
+    ID              reduce using rule 67 (seen_operador -> .)
+    INT_CTE         reduce using rule 67 (seen_operador -> .)
+    FLOAT_CTE       reduce using rule 67 (seen_operador -> .)
 
-    bloque                         shift and go to state 113
+    seen_operador                  shift and go to state 117
 
 state 105
 
-    (37) escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .
+    (60) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion . RIGHTPARENTHESES seen_remove_fondo
 
-    IF              reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
-    PRINT           reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
-    ID              reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
-    INT_CTE         reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
-    FLOAT_CTE       reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
-    RIGHTBRACE      reduce using rule 37 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    RIGHTPARENTHESES shift and go to state 118
 
 
 state 106
 
-    (40) escrituraaux -> expresion COMMA escrituraaux .
+    (52) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion . bloque condicionaux
+    (26) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
 
-    RIGHTPARENTHESES reduce using rule 40 (escrituraaux -> expresion COMMA escrituraaux .)
+    LEFTBRACE       shift and go to state 34
 
+    bloque                         shift and go to state 119
 
 state 107
 
-    (41) escrituraaux -> STRING_CTE COMMA escrituraaux .
+    (39) escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .
 
-    RIGHTPARENTHESES reduce using rule 41 (escrituraaux -> STRING_CTE COMMA escrituraaux .)
+    IF              reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    PRINT           reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    ID              reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    INT_CTE         reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    FLOAT_CTE       reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
+    RIGHTBRACE      reduce using rule 39 (escritura -> PRINT LEFTPARENTHESES escrituraaux RIGHTPARENTHESES SEMICOLON .)
 
 
 state 108
 
-    (44) expaux -> PLUS seen_operador . exp
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (42) escrituraaux -> expresion COMMA escrituraaux .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    RIGHTPARENTHESES reduce using rule 42 (escrituraaux -> expresion COMMA escrituraaux .)
 
-    exp                            shift and go to state 114
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 109
 
-    (45) expaux -> MINUS seen_operador . exp
-    (42) exp -> . termino seen_termino
-    (43) exp -> . termino seen_termino expaux
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (43) escrituraaux -> STRING_CTE COMMA escrituraaux .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    RIGHTPARENTHESES reduce using rule 43 (escrituraaux -> STRING_CTE COMMA escrituraaux .)
 
-    exp                            shift and go to state 115
-    termino                        shift and go to state 72
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 110
 
-    (48) terminoaux -> DIVIDE seen_operador . termino
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (34) expresion -> exp seen_comparacion expresionaux exp . seen_comparacion
+    (70) seen_comparacion -> .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    SEMICOLON       reduce using rule 70 (seen_comparacion -> .)
+    RIGHTPARENTHESES reduce using rule 70 (seen_comparacion -> .)
+    COMMA           reduce using rule 70 (seen_comparacion -> .)
 
-    termino                        shift and go to state 116
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
+    seen_comparacion               shift and go to state 120
 
 state 111
 
-    (49) terminoaux -> MULTIPLY seen_operador . termino
-    (46) termino -> . factor seen_factor
-    (47) termino -> . factor seen_factor terminoaux
-    (56) factor -> . factoraux
-    (57) factor -> . varcte
-    (58) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
-    (59) varcte -> . ID seen_ID
-    (60) varcte -> . INT_CTE
-    (61) varcte -> . FLOAT_CTE
+    (35) expresionaux -> GREATERTHAN seen_operador .
 
-    LEFTPARENTHESES shift and go to state 75
-    ID              shift and go to state 50
-    INT_CTE         shift and go to state 51
-    FLOAT_CTE       shift and go to state 52
+    LEFTPARENTHESES reduce using rule 35 (expresionaux -> GREATERTHAN seen_operador .)
+    ID              reduce using rule 35 (expresionaux -> GREATERTHAN seen_operador .)
+    INT_CTE         reduce using rule 35 (expresionaux -> GREATERTHAN seen_operador .)
+    FLOAT_CTE       reduce using rule 35 (expresionaux -> GREATERTHAN seen_operador .)
 
-    termino                        shift and go to state 117
-    factor                         shift and go to state 73
-    factoraux                      shift and go to state 74
-    varcte                         shift and go to state 69
 
 state 112
 
-    (58) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES . seen_remove_fondo
-    (63) seen_remove_fondo -> .
+    (36) expresionaux -> LESSTHAN seen_operador .
 
-    DIVIDE          reduce using rule 63 (seen_remove_fondo -> .)
-    MULTIPLY        reduce using rule 63 (seen_remove_fondo -> .)
-    PLUS            reduce using rule 63 (seen_remove_fondo -> .)
-    MINUS           reduce using rule 63 (seen_remove_fondo -> .)
-    GREATERTHAN     reduce using rule 63 (seen_remove_fondo -> .)
-    LESSTHAN        reduce using rule 63 (seen_remove_fondo -> .)
-    NOTEQUALS       reduce using rule 63 (seen_remove_fondo -> .)
-    SEMICOLON       reduce using rule 63 (seen_remove_fondo -> .)
-    RIGHTPARENTHESES reduce using rule 63 (seen_remove_fondo -> .)
-    COMMA           reduce using rule 63 (seen_remove_fondo -> .)
+    LEFTPARENTHESES reduce using rule 36 (expresionaux -> LESSTHAN seen_operador .)
+    ID              reduce using rule 36 (expresionaux -> LESSTHAN seen_operador .)
+    INT_CTE         reduce using rule 36 (expresionaux -> LESSTHAN seen_operador .)
+    FLOAT_CTE       reduce using rule 36 (expresionaux -> LESSTHAN seen_operador .)
 
-    seen_remove_fondo              shift and go to state 118
 
 state 113
 
-    (50) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque . condicionaux
-    (51) condicionaux -> . ELSE seen_else bloque SEMICOLON seen_end_condicion
-    (52) condicionaux -> . SEMICOLON seen_end_condicion
+    (37) expresionaux -> NOTEQUALS seen_operador .
 
-    ELSE            shift and go to state 120
-    SEMICOLON       shift and go to state 121
+    LEFTPARENTHESES reduce using rule 37 (expresionaux -> NOTEQUALS seen_operador .)
+    ID              reduce using rule 37 (expresionaux -> NOTEQUALS seen_operador .)
+    INT_CTE         reduce using rule 37 (expresionaux -> NOTEQUALS seen_operador .)
+    FLOAT_CTE       reduce using rule 37 (expresionaux -> NOTEQUALS seen_operador .)
 
-    condicionaux                   shift and go to state 119
 
 state 114
 
-    (44) expaux -> PLUS seen_operador exp .
+    (46) expaux -> PLUS seen_operador . exp
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    GREATERTHAN     reduce using rule 44 (expaux -> PLUS seen_operador exp .)
-    LESSTHAN        reduce using rule 44 (expaux -> PLUS seen_operador exp .)
-    NOTEQUALS       reduce using rule 44 (expaux -> PLUS seen_operador exp .)
-    SEMICOLON       reduce using rule 44 (expaux -> PLUS seen_operador exp .)
-    RIGHTPARENTHESES reduce using rule 44 (expaux -> PLUS seen_operador exp .)
-    COMMA           reduce using rule 44 (expaux -> PLUS seen_operador exp .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    exp                            shift and go to state 121
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 115
 
-    (45) expaux -> MINUS seen_operador exp .
+    (47) expaux -> MINUS seen_operador . exp
+    (44) exp -> . termino seen_termino
+    (45) exp -> . termino seen_termino expaux
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    GREATERTHAN     reduce using rule 45 (expaux -> MINUS seen_operador exp .)
-    LESSTHAN        reduce using rule 45 (expaux -> MINUS seen_operador exp .)
-    NOTEQUALS       reduce using rule 45 (expaux -> MINUS seen_operador exp .)
-    SEMICOLON       reduce using rule 45 (expaux -> MINUS seen_operador exp .)
-    RIGHTPARENTHESES reduce using rule 45 (expaux -> MINUS seen_operador exp .)
-    COMMA           reduce using rule 45 (expaux -> MINUS seen_operador exp .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    exp                            shift and go to state 122
+    termino                        shift and go to state 76
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 116
 
-    (48) terminoaux -> DIVIDE seen_operador termino .
+    (50) terminoaux -> DIVIDE seen_operador . termino
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    PLUS            reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    MINUS           reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    GREATERTHAN     reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    LESSTHAN        reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    NOTEQUALS       reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    SEMICOLON       reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    RIGHTPARENTHESES reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
-    COMMA           reduce using rule 48 (terminoaux -> DIVIDE seen_operador termino .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    termino                        shift and go to state 123
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 117
 
-    (49) terminoaux -> MULTIPLY seen_operador termino .
+    (51) terminoaux -> MULTIPLY seen_operador . termino
+    (48) termino -> . factor seen_factor
+    (49) termino -> . factor seen_factor terminoaux
+    (58) factor -> . factoraux
+    (59) factor -> . varcte
+    (60) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (61) varcte -> . ID seen_ID
+    (62) varcte -> . INT_CTE seen_ID
+    (63) varcte -> . FLOAT_CTE seen_ID
 
-    PLUS            reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    MINUS           reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    GREATERTHAN     reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    LESSTHAN        reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    NOTEQUALS       reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    SEMICOLON       reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    RIGHTPARENTHESES reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
-    COMMA           reduce using rule 49 (terminoaux -> MULTIPLY seen_operador termino .)
+    LEFTPARENTHESES shift and go to state 79
+    ID              shift and go to state 52
+    INT_CTE         shift and go to state 53
+    FLOAT_CTE       shift and go to state 54
 
+    termino                        shift and go to state 124
+    factor                         shift and go to state 77
+    factoraux                      shift and go to state 78
+    varcte                         shift and go to state 73
 
 state 118
 
-    (58) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .
+    (60) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES . seen_remove_fondo
+    (65) seen_remove_fondo -> .
 
-    DIVIDE          reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    MULTIPLY        reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    PLUS            reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    MINUS           reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    GREATERTHAN     reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    LESSTHAN        reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    NOTEQUALS       reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    SEMICOLON       reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    RIGHTPARENTHESES reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
-    COMMA           reduce using rule 58 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    DIVIDE          reduce using rule 65 (seen_remove_fondo -> .)
+    MULTIPLY        reduce using rule 65 (seen_remove_fondo -> .)
+    PLUS            reduce using rule 65 (seen_remove_fondo -> .)
+    MINUS           reduce using rule 65 (seen_remove_fondo -> .)
+    GREATERTHAN     reduce using rule 65 (seen_remove_fondo -> .)
+    LESSTHAN        reduce using rule 65 (seen_remove_fondo -> .)
+    NOTEQUALS       reduce using rule 65 (seen_remove_fondo -> .)
+    LEFTPARENTHESES reduce using rule 65 (seen_remove_fondo -> .)
+    ID              reduce using rule 65 (seen_remove_fondo -> .)
+    INT_CTE         reduce using rule 65 (seen_remove_fondo -> .)
+    FLOAT_CTE       reduce using rule 65 (seen_remove_fondo -> .)
+    SEMICOLON       reduce using rule 65 (seen_remove_fondo -> .)
+    RIGHTPARENTHESES reduce using rule 65 (seen_remove_fondo -> .)
+    COMMA           reduce using rule 65 (seen_remove_fondo -> .)
 
+    seen_remove_fondo              shift and go to state 125
 
 state 119
 
-    (50) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .
+    (52) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque . condicionaux
+    (53) condicionaux -> . ELSE seen_else bloque SEMICOLON seen_end_condicion
+    (54) condicionaux -> . SEMICOLON seen_end_condicion
 
-    IF              reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
-    PRINT           reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
-    ID              reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
-    INT_CTE         reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
-    FLOAT_CTE       reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
-    RIGHTBRACE      reduce using rule 50 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    ELSE            shift and go to state 127
+    SEMICOLON       shift and go to state 128
 
+    condicionaux                   shift and go to state 126
 
 state 120
 
-    (51) condicionaux -> ELSE . seen_else bloque SEMICOLON seen_end_condicion
-    (54) seen_else -> .
+    (34) expresion -> exp seen_comparacion expresionaux exp seen_comparacion .
 
-    LEFTBRACE       reduce using rule 54 (seen_else -> .)
+    SEMICOLON       reduce using rule 34 (expresion -> exp seen_comparacion expresionaux exp seen_comparacion .)
+    RIGHTPARENTHESES reduce using rule 34 (expresion -> exp seen_comparacion expresionaux exp seen_comparacion .)
+    COMMA           reduce using rule 34 (expresion -> exp seen_comparacion expresionaux exp seen_comparacion .)
 
-    seen_else                      shift and go to state 122
 
 state 121
 
-    (52) condicionaux -> SEMICOLON . seen_end_condicion
-    (55) seen_end_condicion -> .
+    (46) expaux -> PLUS seen_operador exp .
 
-    IF              reduce using rule 55 (seen_end_condicion -> .)
-    PRINT           reduce using rule 55 (seen_end_condicion -> .)
-    ID              reduce using rule 55 (seen_end_condicion -> .)
-    INT_CTE         reduce using rule 55 (seen_end_condicion -> .)
-    FLOAT_CTE       reduce using rule 55 (seen_end_condicion -> .)
-    RIGHTBRACE      reduce using rule 55 (seen_end_condicion -> .)
+    GREATERTHAN     reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    LESSTHAN        reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    NOTEQUALS       reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    LEFTPARENTHESES reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    ID              reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    INT_CTE         reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    FLOAT_CTE       reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    SEMICOLON       reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    RIGHTPARENTHESES reduce using rule 46 (expaux -> PLUS seen_operador exp .)
+    COMMA           reduce using rule 46 (expaux -> PLUS seen_operador exp .)
 
-    seen_end_condicion             shift and go to state 123
 
 state 122
 
-    (51) condicionaux -> ELSE seen_else . bloque SEMICOLON seen_end_condicion
-    (25) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
+    (47) expaux -> MINUS seen_operador exp .
 
-    LEFTBRACE       shift and go to state 32
+    GREATERTHAN     reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    LESSTHAN        reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    NOTEQUALS       reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    LEFTPARENTHESES reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    ID              reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    INT_CTE         reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    FLOAT_CTE       reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    SEMICOLON       reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    RIGHTPARENTHESES reduce using rule 47 (expaux -> MINUS seen_operador exp .)
+    COMMA           reduce using rule 47 (expaux -> MINUS seen_operador exp .)
 
-    bloque                         shift and go to state 124
 
 state 123
 
-    (52) condicionaux -> SEMICOLON seen_end_condicion .
+    (50) terminoaux -> DIVIDE seen_operador termino .
 
-    IF              reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
-    PRINT           reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
-    ID              reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
-    INT_CTE         reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
-    FLOAT_CTE       reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
-    RIGHTBRACE      reduce using rule 52 (condicionaux -> SEMICOLON seen_end_condicion .)
+    PLUS            reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    MINUS           reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    GREATERTHAN     reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    LESSTHAN        reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    NOTEQUALS       reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    LEFTPARENTHESES reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    ID              reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    INT_CTE         reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    FLOAT_CTE       reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    SEMICOLON       reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    RIGHTPARENTHESES reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
+    COMMA           reduce using rule 50 (terminoaux -> DIVIDE seen_operador termino .)
 
 
 state 124
 
-    (51) condicionaux -> ELSE seen_else bloque . SEMICOLON seen_end_condicion
+    (51) terminoaux -> MULTIPLY seen_operador termino .
 
-    SEMICOLON       shift and go to state 125
+    PLUS            reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    MINUS           reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    GREATERTHAN     reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    LESSTHAN        reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    NOTEQUALS       reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    LEFTPARENTHESES reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    ID              reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    INT_CTE         reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    FLOAT_CTE       reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    SEMICOLON       reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    RIGHTPARENTHESES reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
+    COMMA           reduce using rule 51 (terminoaux -> MULTIPLY seen_operador termino .)
 
 
 state 125
 
-    (51) condicionaux -> ELSE seen_else bloque SEMICOLON . seen_end_condicion
-    (55) seen_end_condicion -> .
+    (60) factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .
 
-    IF              reduce using rule 55 (seen_end_condicion -> .)
-    PRINT           reduce using rule 55 (seen_end_condicion -> .)
-    ID              reduce using rule 55 (seen_end_condicion -> .)
-    INT_CTE         reduce using rule 55 (seen_end_condicion -> .)
-    FLOAT_CTE       reduce using rule 55 (seen_end_condicion -> .)
-    RIGHTBRACE      reduce using rule 55 (seen_end_condicion -> .)
+    DIVIDE          reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    MULTIPLY        reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    PLUS            reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    MINUS           reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    GREATERTHAN     reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    LESSTHAN        reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    NOTEQUALS       reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    LEFTPARENTHESES reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    ID              reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    INT_CTE         reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    FLOAT_CTE       reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    SEMICOLON       reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    RIGHTPARENTHESES reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
+    COMMA           reduce using rule 60 (factoraux -> LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo .)
 
-    seen_end_condicion             shift and go to state 126
 
 state 126
 
-    (51) condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .
+    (52) condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .
 
-    IF              reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
-    PRINT           reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
-    ID              reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
-    INT_CTE         reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
-    FLOAT_CTE       reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
-    RIGHTBRACE      reduce using rule 51 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    IF              reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    PRINT           reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    ID              reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    INT_CTE         reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    FLOAT_CTE       reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+    RIGHTBRACE      reduce using rule 52 (condicion -> IF LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_condicion bloque condicionaux .)
+
+
+state 127
+
+    (53) condicionaux -> ELSE . seen_else bloque SEMICOLON seen_end_condicion
+    (56) seen_else -> .
+
+    LEFTBRACE       reduce using rule 56 (seen_else -> .)
+
+    seen_else                      shift and go to state 129
+
+state 128
+
+    (54) condicionaux -> SEMICOLON . seen_end_condicion
+    (57) seen_end_condicion -> .
+
+    IF              reduce using rule 57 (seen_end_condicion -> .)
+    PRINT           reduce using rule 57 (seen_end_condicion -> .)
+    ID              reduce using rule 57 (seen_end_condicion -> .)
+    INT_CTE         reduce using rule 57 (seen_end_condicion -> .)
+    FLOAT_CTE       reduce using rule 57 (seen_end_condicion -> .)
+    RIGHTBRACE      reduce using rule 57 (seen_end_condicion -> .)
+
+    seen_end_condicion             shift and go to state 130
+
+state 129
+
+    (53) condicionaux -> ELSE seen_else . bloque SEMICOLON seen_end_condicion
+    (26) bloque -> . LEFTBRACE vars bloqueaux RIGHTBRACE
+
+    LEFTBRACE       shift and go to state 34
+
+    bloque                         shift and go to state 131
+
+state 130
+
+    (54) condicionaux -> SEMICOLON seen_end_condicion .
+
+    IF              reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+    PRINT           reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+    ID              reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+    INT_CTE         reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+    FLOAT_CTE       reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+    RIGHTBRACE      reduce using rule 54 (condicionaux -> SEMICOLON seen_end_condicion .)
+
+
+state 131
+
+    (53) condicionaux -> ELSE seen_else bloque . SEMICOLON seen_end_condicion
+
+    SEMICOLON       shift and go to state 132
+
+
+state 132
+
+    (53) condicionaux -> ELSE seen_else bloque SEMICOLON . seen_end_condicion
+    (57) seen_end_condicion -> .
+
+    IF              reduce using rule 57 (seen_end_condicion -> .)
+    PRINT           reduce using rule 57 (seen_end_condicion -> .)
+    ID              reduce using rule 57 (seen_end_condicion -> .)
+    INT_CTE         reduce using rule 57 (seen_end_condicion -> .)
+    FLOAT_CTE       reduce using rule 57 (seen_end_condicion -> .)
+    RIGHTBRACE      reduce using rule 57 (seen_end_condicion -> .)
+
+    seen_end_condicion             shift and go to state 133
+
+state 133
+
+    (53) condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .
+
+    IF              reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    PRINT           reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    ID              reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    INT_CTE         reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    FLOAT_CTE       reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
+    RIGHTBRACE      reduce using rule 53 (condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .)
 
