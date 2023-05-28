@@ -22,7 +22,6 @@ Main (){
   testFloat3=testFloat + testInt * testInt2 / (testFloat2 + testFloat);
   testBoolean=testFloat > testInt;
 
-
   if(testInt > testInt2){
     testInt=testInt;
   }else{
