@@ -24,9 +24,11 @@ Main (){
 
   if(testInt > testInt2){
     testInt=testInt;
-  }else{
-    testInt2=testInt;
   };
+  testBoolean=testFloat > testInt;
 
+  while(testInt > testInt2){
+    testInt=testInt2;
+  };
   print(testInt2, "HOLA");
 }

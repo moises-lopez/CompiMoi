@@ -12,5 +12,7 @@ Function int TestFunction2(int testIntParam1){
 }
 
 Main (){
-  testInt = testInt2;
+  while(testInt > testInt2){
+    testInt=testInt2;
+  };
 }

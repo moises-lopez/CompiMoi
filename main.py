@@ -121,6 +121,7 @@ reserved = {
     'var': 'VAR',
     'if': 'IF',
     'else': 'ELSE',
+    'while': 'WHILE',
     'int': 'INT',
     'float': 'FLOAT',
     'boolean': 'BOOLEAN',
@@ -205,6 +206,11 @@ def t_IF(t):
 
 def t_FOR(t):
     r'for'
+    return t
+
+
+def t_WHILE(t):
+    r'while'
     return t
 
 
@@ -420,6 +426,8 @@ def p_estatuto(p):
       estatuto : asignacion
               | condicion
               | escritura
+              | while
+
       '''
 
 
@@ -530,10 +538,6 @@ def p_seen_right_parentheses_condicion(p):
         seen_right_parentheses_condicion :
       '''
     exp_type = pilaTipos.pop()
-    print('pila tipos condicion', pilaTipos)
-    print('pila operandos condicion', pilaOperandos)
-    print('pila operadores condicion', pilaOperadores)
-    print('pila cuadruplos condicion', cuadruplos)
 
     if (exp_type != 'boolean'):
         print('ERROR MISMATCH IN CONDITION')
@@ -542,17 +546,12 @@ def p_seen_right_parentheses_condicion(p):
         generate_quad(operador='GOTOF', left_operando=result,
                       right_operando='', result='')
         pilaSaltos.append(contadorCuadruplos-1)
-        print('condicionasd', pilaSaltos)
 
 
 def p_seen_else(p):
     '''
         seen_else :
       '''
-    print('else operandos: ', pilaOperandos)
-    print('else operadores: ', pilaOperadores)
-    print('else cuadruplos: ', cuadruplos)
-    print('else pila tipos :', pilaTipos)
     generate_quad(operador='GOTO', left_operando='',
                   right_operando='', result='')
     false = pilaSaltos.pop()
@@ -702,6 +701,44 @@ def p_seen_comparacion(p):
             print('ERROR MISMATCH')
 
 
+def p_while(p):
+    '''
+        while : WHILE seen_while LEFTPARENTHESES expresion RIGHTPARENTHESES seen_right_parentheses_while bloque SEMICOLON seen_end_while
+    '''
+
+
+def p_seen_while(p):
+    '''
+        seen_while : 
+    '''
+    pilaSaltos.append(contadorCuadruplos)
+
+
+def p_seen_right_parentheses_while(p):
+    '''
+        seen_right_parentheses_while : 
+    '''
+    exp_type = pilaTipos.pop()
+    if (exp_type != 'boolean'):
+        print('ERROR MISMATCH WHILE')
+    else:
+        result = pilaOperandos.pop()
+        generate_quad(operador='GOTOF', left_operando=result,
+                      right_operando='', result='')
+        pilaSaltos.append(contadorCuadruplos-1)
+
+
+def p_seen_end_while(p):
+    '''
+        seen_end_while : 
+    '''
+    end = pilaSaltos.pop()
+    returnQuad = pilaSaltos.pop()
+    generate_quad(operador='GOTO', left_operando='',
+                  right_operando='', result=returnQuad)
+    fill(numeroCuadrupASaltar=contadorCuadruplos, numeroCuadruploALlenar=end)
+
+
 def p_arrayIntDefinition(p):
     '''
         arrayIntDefinition : LEFTBRACKET INT_CTE RIGHTBRACKET
@@ -755,7 +792,7 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test.txt").read()
+    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
     # print(file)
     parser.parse(file)
     print('operandos: ', pilaOperandos)
