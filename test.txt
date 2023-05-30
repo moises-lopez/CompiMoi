@@ -17,9 +17,9 @@ Main (){
   var boolean testBoolean;
 
   testInt=5;
-  testInt2=5; 
-  testFloat=5; 
-  testFloat2=5; 
+  testInt2=6; 
+  testFloat=5.1; 
+  testFloat2=6.2; 
   testFloat3=testFloat + testInt * testInt2 / (testFloat2 + testFloat);
   testBoolean=testFloat > testInt;
 

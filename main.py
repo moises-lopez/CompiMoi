@@ -2,7 +2,9 @@ import ply.lex as lex
 import ply.yacc as yacc
 import sys
 import json
+from virtualMemory import VirtualMemory
 
+virtualMemoryManager = VirtualMemory()
 cuadruplos = [[]]
 pilaOperadores = []
 pilaOperandos = []
@@ -15,7 +17,6 @@ currentVars = []
 programName = ''
 pilaSaltos = []
 contadorCuadruplos = 1
-currentTempsCounter = {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}
 cubo_semantico = {
     '*': {
         'float': {
@@ -299,7 +300,7 @@ def p_seen_program(p):
     "seen_program : "
     global currentDirFuncion
     global programName
-    dirFuncionesDict[p[-1]] = {'type': 'Program'}
+    dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'global'}
     currentDirFuncion = p[-1]
     programName = p[-1]
 
@@ -317,7 +318,7 @@ def p_seen_vars(p):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
     if not ('size' in dirFuncionesDict[currentDirFuncion]):
         dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0}}
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
 
 
 def p_seen_vars_end(p):
@@ -349,9 +350,11 @@ def p_seen_ID_var(p):
     except (NameError, AttributeError) as e:
         print(e)
         pass
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
+    address = virtualMemoryManager.getNextAddressAvailable(
+        dirFuncionesDict[currentDirFuncion]['scope'], currentType)
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
+        'tipo': currentType, 'address': address}
     dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
-
 
 
 def p_tipo(p):
@@ -380,7 +383,7 @@ def p_seen_id_function(p):
         seen_id_function :
     '''
     global currentDirFuncion
-    dirFuncionesDict[p[-1]] = {'type': currentType}
+    dirFuncionesDict[p[-1]] = {'type': currentType, 'scope': 'local'}
     currentDirFuncion = p[-1]
 
 
@@ -388,15 +391,10 @@ def p_seen_function_end(p):
     '''
         seen_function_end :
     '''
-    global currentTempsCounter
     # dirFuncionesDict[currentDirFuncion]['varsTable'] = {} DESCOMENTAR, POR EL MOMENTO LO DEJO ASí PARA LOGGEARLO AL FINAL
-    generate_quad(operador='ENDFUNC', left_operando='', right_operando='', result='')
-    return
-    for key in currentTempsCounter:
-        if key == 'total':
-            return
-        dirFuncionesDict[currentDirFuncion]['size']['temporal'][key] += currentTempsCounter[key]
-    currentTempsCounter = {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}
+    virtualMemoryManager.dumpLocalVirtualMemory()
+    generate_quad(operador='ENDFUNC', left_operando='',
+                  right_operando='', result='')
 
 
 def p_functionmain(p):
@@ -408,8 +406,9 @@ def p_functionmain(p):
 def p_seen_function_main(p):
     "seen_function_main : "
     global currentDirFuncion
-    dirFuncionesDict[p[-1]] = {'type': 'Program'}
+    dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'local'}
     currentDirFuncion = p[-1]
+
 
 def p_returnfunctionaux(p):
     '''
@@ -440,7 +439,7 @@ def p_seen_params_init(p):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
         dirFuncionesDict[currentDirFuncion]['paramsTable'] = []
         dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0}}
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
 
 
 def p_seen_params_end(p):
@@ -473,10 +472,13 @@ def p_seen_ID_params(p):
     except (NameError, AttributeError) as e:
         print(e)
         pass
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
+    address = virtualMemoryManager.getNextAddressAvailable(
+        dirFuncionesDict[currentDirFuncion]['scope'], currentType)
+
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
+        'tipo': currentType, 'address': address}
     dirFuncionesDict[currentDirFuncion]['paramsTable'].append(currentType)
     dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
-
 
 
 def p_bloque(p):
@@ -663,16 +665,20 @@ def p_varcte(p):
 
 def p_seen_CTE_INT(p):
     "seen_CTE_INT :"
-    constante = p[-1]
-    if (varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
-        tipo = dirFuncionesDict[currentDirFuncion]['varsTable'][varId]['tipo']
-    elif (varId in dirFuncionesDict[programName]['varsTable']):
-        tipo = dirFuncionesDict[programName]['varsTable'][varId]['tipo']
+    constant = p[-1]
+    address = virtualMemoryManager.setConstantInVirtualMemory(str(constant))
 
-    if (tipo == ''):
-        print('no se encontró variable', varId)
-    pilaOperandos.append(p[-1])
-    pilaTipos.append(tipo)
+    pilaOperandos.append(address)
+    pilaTipos.append('int')
+
+
+def p_seen_CTE_FLOAT(p):
+    "seen_CTE_FLOAT :"
+    constant = p[-1]
+    address = virtualMemoryManager.setConstantInVirtualMemory(str(constant))
+
+    pilaOperandos.append(address)
+    pilaTipos.append('float')
 
 
 def p_seen_insert_fondo(p):
@@ -854,9 +860,10 @@ def generate_quad(operador, left_operando, right_operando, result):
 
 
 def nextAvail(tempType):
+    print(dirFuncionesDict[currentDirFuncion])
     dirFuncionesDict[currentDirFuncion]['size']['temporal'][tempType] += 1
     dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'] += 1
-    return 't' + str(currentTempsCounter["total"])
+    return 't' + str(dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'])
 
 
 def getResultType(right_tipo, left_tipo, operador):
@@ -880,14 +887,15 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
+    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test.txt").read()
     parser.parse(file)
     print('operandos: ', pilaOperandos)
     print('cuadruplos: ', cuadruplos)
     print('directorio funciones: ', dirFuncionesDict)
     print('pila tipos :', pilaTipos)
 elif option == "2":
-    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test2.txt").read()
+    file = open(
+        "C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
     parser.parse(file)
     print('operandos: ', pilaOperandos)
     print('cuadruplos: ', cuadruplos)
