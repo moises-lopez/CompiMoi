@@ -15,6 +15,7 @@ currentVars = []
 programName = ''
 pilaSaltos = []
 contadorCuadruplos = 1
+currentTempsCounter = {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}
 cubo_semantico = {
     '*': {
         'float': {
@@ -274,6 +275,7 @@ def t_error(t):
 
 lexer = lex.lex()
 
+
 # Aqui se define la gramatica
 # Los reglas de gramatica usan los tokens definidos en la parte de arriba
 # Esta gramatica se basa en la actividad pasada con algunas modificaciones
@@ -311,8 +313,24 @@ def p_vars(p):
 def p_seen_vars(p):
     "seen_vars : "
 
-    if (not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
+    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+    if not ('size' in dirFuncionesDict[currentDirFuncion]):
+        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0}}
+
+
+def p_seen_vars_end(p):
+    "seen_vars_end : "
+    print()
+    for key in dirFuncionesDict[currentDirFuncion]['varsTable']:
+        if dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'int':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['int'] += 1
+        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'float':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['float'] += 1
+        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'boolean':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['boolean'] += 1
+    dirFuncionesDict[currentDirFuncion]['functionStart'] = contadorCuadruplos
 
 
 def p_varsaux(p):
@@ -331,8 +349,9 @@ def p_seen_ID_var(p):
     except (NameError, AttributeError) as e:
         print(e)
         pass
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
-        'tipo': currentType}
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
+    dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
+
 
 
 def p_tipo(p):
@@ -352,7 +371,7 @@ def p_seen_tipo(p):
 
 def p_function(p):
     '''
-      function : FUNCTION returnfunctionaux ID seen_id_function params bloque
+      function : FUNCTION returnfunctionaux ID seen_id_function params bloque seen_function_end
       '''
 
 
@@ -365,11 +384,32 @@ def p_seen_id_function(p):
     currentDirFuncion = p[-1]
 
 
+def p_seen_function_end(p):
+    '''
+        seen_function_end :
+    '''
+    global currentTempsCounter
+    # dirFuncionesDict[currentDirFuncion]['varsTable'] = {} DESCOMENTAR, POR EL MOMENTO LO DEJO ASí PARA LOGGEARLO AL FINAL
+    generate_quad(operador='ENDFUNC', left_operando='', right_operando='', result='')
+    return
+    for key in currentTempsCounter:
+        if key == 'total':
+            return
+        dirFuncionesDict[currentDirFuncion]['size']['temporal'][key] += currentTempsCounter[key]
+    currentTempsCounter = {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}
+
+
 def p_functionmain(p):
     '''
-      functionmain : MAIN LEFTPARENTHESES RIGHTPARENTHESES bloque
+      functionmain : MAIN seen_function_main LEFTPARENTHESES RIGHTPARENTHESES bloque
       '''
 
+
+def p_seen_function_main(p):
+    "seen_function_main : "
+    global currentDirFuncion
+    dirFuncionesDict[p[-1]] = {'type': 'Program'}
+    currentDirFuncion = p[-1]
 
 def p_returnfunctionaux(p):
     '''
@@ -398,14 +438,45 @@ def p_seen_params_init(p):
     '''
     if (not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
         dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+        dirFuncionesDict[currentDirFuncion]['paramsTable'] = []
+        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0}}
+
+
+def p_seen_params_end(p):
+    '''
+      seen_params_end :
+    '''
+    for key in dirFuncionesDict[currentDirFuncion]['varsTable']:
+        if dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'int':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['int'] += 1
+        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'float':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['float'] += 1
+        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'boolean':
+            dirFuncionesDict[currentDirFuncion]['size']['local']['boolean'] += 1
 
 
 def p_paramsaux(p):
     '''
-      paramsaux : tipo ID seen_ID_var paramsaux
+      paramsaux : tipo ID seen_ID_params paramsaux
                 | COMMA paramsaux
                 | empty
     '''
+
+
+def p_seen_ID_params(p):
+    " seen_ID_params : "
+    currentVar = p[-1]
+    try:
+        if (currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
+            print('Redeclaration on variable', currentVar)
+    except (NameError, AttributeError) as e:
+        print(e)
+        pass
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {'tipo': currentType}
+    dirFuncionesDict[currentDirFuncion]['paramsTable'].append(currentType)
+    dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
+
 
 
 def p_bloque(p):
@@ -545,7 +616,7 @@ def p_seen_right_parentheses_condicion(p):
         result = pilaOperandos.pop()
         generate_quad(operador='GOTOF', left_operando=result,
                       right_operando='', result='')
-        pilaSaltos.append(contadorCuadruplos-1)
+        pilaSaltos.append(contadorCuadruplos - 1)
 
 
 def p_seen_else(p):
@@ -555,7 +626,7 @@ def p_seen_else(p):
     generate_quad(operador='GOTO', left_operando='',
                   right_operando='', result='')
     false = pilaSaltos.pop()
-    pilaSaltos.append(contadorCuadruplos-1)
+    pilaSaltos.append(contadorCuadruplos - 1)
 
     fill(false, contadorCuadruplos)
 
@@ -584,10 +655,24 @@ def p_factoraux(p):
 def p_varcte(p):
     '''
         varcte : ID seen_ID
-                    | INT_CTE seen_ID
-                    | FLOAT_CTE seen_ID
+                    | INT_CTE seen_CTE_INT
+                    | FLOAT_CTE seen_CTE_FLOAT
 
       '''
+
+
+def p_seen_CTE_INT(p):
+    "seen_CTE_INT :"
+    constante = p[-1]
+    if (varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
+        tipo = dirFuncionesDict[currentDirFuncion]['varsTable'][varId]['tipo']
+    elif (varId in dirFuncionesDict[programName]['varsTable']):
+        tipo = dirFuncionesDict[programName]['varsTable'][varId]['tipo']
+
+    if (tipo == ''):
+        print('no se encontró variable', varId)
+    pilaOperandos.append(p[-1])
+    pilaTipos.append(tipo)
 
 
 def p_seen_insert_fondo(p):
@@ -640,7 +725,7 @@ def p_seen_termino(p):
         result_type = getResultType(
             right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
         if (result_type):
-            result = nextAvail()
+            result = nextAvail(result_type)
             generate_quad(operador=operador, left_operando=left_operando,
                           right_operando=right_operando, result=result)
             pilaOperandos.append(result)
@@ -662,7 +747,7 @@ def p_seen_factor(p):
         result_type = getResultType(
             right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
         if (result_type):
-            result = nextAvail()
+            result = nextAvail(result_type)
             generate_quad(
                 operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
             pilaOperandos.append(result)
@@ -692,7 +777,7 @@ def p_seen_comparacion(p):
         print('testeo', right_operando, left_operando, right_tipo,
               left_tipo, operador, result_type)
         if (result_type):
-            result = nextAvail()
+            result = nextAvail(result_type)
             generate_quad(
                 operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
             pilaOperandos.append(result)
@@ -725,7 +810,7 @@ def p_seen_right_parentheses_while(p):
         result = pilaOperandos.pop()
         generate_quad(operador='GOTOF', left_operando=result,
                       right_operando='', result='')
-        pilaSaltos.append(contadorCuadruplos-1)
+        pilaSaltos.append(contadorCuadruplos - 1)
 
 
 def p_seen_end_while(p):
@@ -768,8 +853,10 @@ def generate_quad(operador, left_operando, right_operando, result):
     cuadruplos.append([operador, left_operando, right_operando, result])
 
 
-def nextAvail():
-    return 't1'
+def nextAvail(tempType):
+    dirFuncionesDict[currentDirFuncion]['size']['temporal'][tempType] += 1
+    dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'] += 1
+    return 't' + str(currentTempsCounter["total"])
 
 
 def getResultType(right_tipo, left_tipo, operador):
@@ -783,6 +870,7 @@ def fill(numeroCuadruploALlenar, numeroCuadrupASaltar):
     print('this is the hcuadruplo', cuadruplos[3][3])
     cuadruplos[numeroCuadruploALlenar][3] = numeroCuadrupASaltar
 
+
 # Execution
 # IMPORTANT
 # https://lingojam.com/TexttoOneLine
@@ -792,14 +880,19 @@ print("1-Load Example from TXT")
 print("2-Input code manually")
 option = input("Option : ")
 if option == "1":
-    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
-    # print(file)
+    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
     parser.parse(file)
     print('operandos: ', pilaOperandos)
     print('cuadruplos: ', cuadruplos)
     print('directorio funciones: ', dirFuncionesDict)
     print('pila tipos :', pilaTipos)
-    # print(json.dumps(dirFuncionesDict, indent=4))
+elif option == "2":
+    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test2.txt").read()
+    parser.parse(file)
+    print('operandos: ', pilaOperandos)
+    print('cuadruplos: ', cuadruplos)
+    print('directorio funciones: ', dirFuncionesDict)
+    print('pila tipos :', pilaTipos)
 else:
     while True:
         try:
