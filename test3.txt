@@ -1,5 +1,5 @@
 Programa patito;
-var int a, b;
+var int a, b, A[1 12], B[1 2, 3 6, 0 1];
 var float f;
 
 Function void uno(int a){

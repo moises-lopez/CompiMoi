@@ -19,6 +19,11 @@ pilaSaltos = []
 contadorCuadruplos = 1
 parameterCounter = 0
 pilaFunctionCall = []
+isArray = False
+currentVarId = ''
+DIM = 1
+R = 1
+currentLimSup = 0
 cubo_semantico = {
     '*': {
         'float': {
@@ -115,6 +120,7 @@ tokens = [
     'LESSTHAN',
     'GREATERTHAN',
     'NOTEQUAL',
+    'THREEDOTS'
 ]
 
 reserved = {
@@ -153,6 +159,7 @@ t_LESSTHAN = r'\<'
 t_GREATERTHAN = r'\>'
 t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
+t_THREEDOTS = r'\.\.\.'
 t_ignore = ' \n'
 
 
@@ -321,9 +328,113 @@ def p_seen_program(p):
 
 
 def p_vars(p):
-    ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars 
+    ''' vars : VAR seen_vars tipo varsAuxDeclaration SEMICOLON vars 
                 | empty
     '''
+
+
+def p_varsAuxDeclaration(p):
+    '''
+        varsAuxDeclaration : idOrArrayDeclaration seen_end_declaration COMMA varsAuxDeclaration
+                        | idOrArrayDeclaration seen_end_declaration
+    '''
+
+
+def p_seen_end_declaration(p):
+    '''
+        seen_end_declaration : 
+    '''
+    global currentVarId
+    currentVarId = ''
+
+
+def p_idOrArrayDeclaration(p):
+    '''
+        idOrArrayDeclaration : ID seen_ID_var
+                            | ID seen_ID_var LEFTBRACKET seen_lBracket_array arrayDimesionAux RIGHTBRACKET seen_rBracket_array
+    '''
+
+
+def p_arrayDimesionAux(p):
+    '''
+        arrayDimesionAux : INT_CTE seen_lim_inf INT_CTE seen_lim_sup
+                  |  INT_CTE seen_lim_inf INT_CTE seen_lim_sup COMMA seen_extra_dimension_array arrayDimesionAux
+    '''
+
+
+def p_seen_extra_dimension_array(p):
+    '''
+        seen_extra_dimension_array : 
+    '''
+    global DIM
+    DIM += 1
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'].append({
+    })
+
+
+def p_seen_lim_inf(p):
+    '''
+        seen_lim_inf : 
+    '''
+    liDim = p[-1]
+
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim'] = liDim
+
+
+def p_seen_lim_sup(p):
+    '''
+        seen_lim_sup : 
+    '''
+    global R
+    liDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim']
+    lsDim = p[-1]
+    R = (lsDim - liDim + 1) * R
+    print('HOLA', DIM)
+
+    print(dirFuncionesDict[currentDirFuncion]
+          ['varsTable'][currentVarId]['dimensions'][DIM - 1])
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['lsDim'] = lsDim
+    print(dirFuncionesDict[currentDirFuncion]
+          ['varsTable'][currentVarId]['dimensions'][DIM - 1])
+
+
+def p_seen_lBracket_array(p):
+    '''
+        seen_lBracket_array : 
+    '''
+    global isArray
+    global DIM
+    global R
+    isArray = True
+
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'] = []
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'].append({
+    })
+
+    DIM = 1
+    R = 1
+
+
+def p_seen_rBracket_array(p):
+    '''
+        seen_rBracket_array : 
+    '''
+    global R
+    DIM = 1
+    offset = 0
+    size = R
+    for dimensions in dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions']:
+        liDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim']
+        print(dirFuncionesDict[currentDirFuncion]['varsTable'])
+        lsDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['lsDim']
+
+        m = R / (lsDim - liDim + 1)
+        dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['m'] = m
+        R = m
+        offset = offset + liDim * m
+        DIM += 1
+    K = offset
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 2]['m'] = K * -1
 
 
 def p_seen_vars(p):
@@ -357,16 +468,17 @@ def p_varsaux(p):
 
 def p_seen_ID_var(p):
     " seen_ID_var : "
-    currentVar = p[-1]
+    global currentVarId
+    currentVarId = p[-1]
     try:
-        if (currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
-            print('Redeclaration on variable', currentVar)
+        if (currentVarId in dirFuncionesDict[currentDirFuncion]['varsTable']):
+            print('Redeclaration on variable', currentVarId)
     except (NameError, AttributeError) as e:
         print(e)
         pass
     address = virtualMemoryManager.getNextAddressAvailable(
         dirFuncionesDict[currentDirFuncion]['scope'], currentType)
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
+    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId] = {
         'tipo': currentType, 'address': address}
     dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
 
@@ -946,6 +1058,7 @@ def p_seen_rightp_fCall(p):
     functionCalled = pilaFunctionCall.pop()
     generate_quad(operador='GOSUB', left_operando=functionCalled,
                   right_operando='', result=dirFuncionesDict[functionCalled]['addressStart'])
+
 
 # Mensaje de error sintactico
 
