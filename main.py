@@ -17,6 +17,8 @@ currentVars = []
 programName = ''
 pilaSaltos = []
 contadorCuadruplos = 1
+parameterCounter = 0
+pilaFunctionCall = []
 cubo_semantico = {
     '*': {
         'float': {
@@ -130,6 +132,7 @@ reserved = {
     'read': 'READ',
     'print': 'PRINT',
     '<>': 'NOTEQUALS',
+    'call': 'CALL'
 }
 
 tokens += reserved.values()
@@ -227,7 +230,12 @@ def t_ELSE(t):
 
 
 def t_DO(t):
-    r'do'
+    r'\b(do)\b'
+    return t
+
+
+def t_CALL(t):
+    r'\b(call)\b'
     return t
 
 
@@ -303,10 +311,17 @@ def p_seen_program(p):
     dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'global'}
     currentDirFuncion = p[-1]
     programName = p[-1]
+    generate_quad(operador='GOTO', left_operando='',
+                  right_operando='', result='')
+    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
+        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+    if not ('size' in dirFuncionesDict[currentDirFuncion]):
+        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
 
 
 def p_vars(p):
-    ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars
+    ''' vars : VAR seen_vars tipo ID seen_ID_var varsaux SEMICOLON vars 
                 | empty
     '''
 
@@ -323,7 +338,6 @@ def p_seen_vars(p):
 
 def p_seen_vars_end(p):
     "seen_vars_end : "
-    print()
     for key in dirFuncionesDict[currentDirFuncion]['varsTable']:
         if dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'int':
             dirFuncionesDict[currentDirFuncion]['size']['local']['int'] += 1
@@ -408,6 +422,12 @@ def p_seen_function_main(p):
     global currentDirFuncion
     dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'local'}
     currentDirFuncion = p[-1]
+    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
+        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+    if not ('size' in dirFuncionesDict[currentDirFuncion]):
+        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
+                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
+    fill(1, contadorCuadruplos)
 
 
 def p_returnfunctionaux(p):
@@ -483,8 +503,15 @@ def p_seen_ID_params(p):
 
 def p_bloque(p):
     '''
-      bloque : LEFTBRACE vars bloqueaux RIGHTBRACE
+      bloque : LEFTBRACE vars seen_start_bloqueaux bloqueaux RIGHTBRACE
     '''
+
+
+def p_seen_start_bloqueaux(p):
+    '''
+      seen_start_bloqueaux : 
+    '''
+    dirFuncionesDict[currentDirFuncion]['addressStart'] = contadorCuadruplos
 
 
 def p_bloqueaux(p):
@@ -500,6 +527,7 @@ def p_estatuto(p):
               | condicion
               | escritura
               | while
+              | functionCall
 
       '''
 
@@ -558,11 +586,25 @@ def p_escritura(p):
 
 def p_escrituraaux(p):
     '''
-      escrituraaux : expresion
-                  | STRING_CTE
-                  | expresion COMMA escrituraaux
-                  | STRING_CTE COMMA escrituraaux
+      escrituraaux : escrituraaux2
+                  | escrituraaux2 COMMA escrituraaux
       '''
+
+
+def p_escrituraaux2(p):
+    '''
+      escrituraaux2 : expresion seen_print_cuadruplo
+                    | STRING_CTE seen_print_cuadruplo
+      '''
+
+
+def p_seen_print_cuadruplo(p):
+    '''
+      seen_print_cuadruplo : 
+      '''
+    valueToPrint = pilaOperandos.pop()
+    generate_quad(operador='PRINT', left_operando='',
+                  right_operando='', result=valueToPrint)
 
 
 def p_exp(p):
@@ -764,14 +806,8 @@ def p_seen_factor(p):
 
 def p_seen_comparacion(p):
     "seen_comparacion :"
-    print('comparacion')
-    print('operadores here', pilaOperadores)
     if (len(pilaOperadores) == 0):
         return
-    print('1operandos: ', pilaOperandos)
-    print('1cuadruplos: ', cuadruplos)
-    print('1directorio funciones: ', dirFuncionesDict)
-    print('1pila tipos :', pilaTipos)
     if pilaOperadores[-1] == '>' or pilaOperadores[-1] == '<' or pilaOperadores[-1] == '!=':
         right_operando = pilaOperandos.pop()
         left_operando = pilaOperandos.pop()
@@ -780,8 +816,6 @@ def p_seen_comparacion(p):
         operador = pilaOperadores.pop()
         result_type = getResultType(
             right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
-        print('testeo', right_operando, left_operando, right_tipo,
-              left_tipo, operador, result_type)
         if (result_type):
             result = nextAvail(result_type)
             generate_quad(
@@ -830,11 +864,88 @@ def p_seen_end_while(p):
     fill(numeroCuadrupASaltar=contadorCuadruplos, numeroCuadruploALlenar=end)
 
 
-def p_arrayIntDefinition(p):
+def p_functionCall(p):
     '''
-        arrayIntDefinition : LEFTBRACKET INT_CTE RIGHTBRACKET
+        functionCall : ID seen_fCall_id LEFTPARENTHESES seen_leftp_fCall paramsFunctionCall seen_end_paramsFCall RIGHTPARENTHESES seen_rightp_fCall SEMICOLON
     '''
 
+
+def p_seen_fCall_id(p):
+    '''
+        seen_fCall_id : 
+    '''
+    functionName = p[-1]
+    pilaFunctionCall.append(functionName)
+    if functionName not in dirFuncionesDict:
+        print('ERROR FUNCTION NOT DECLARED')
+
+
+def p_seen_leftp_fCall(p):
+    '''
+        seen_leftp_fCall : 
+    '''
+    global parameterCounter
+    functionName = p[-3]
+    generate_quad(operador='ERA', left_operando='',
+                  right_operando='', result=functionName)
+
+
+def p_paramsFunctionCall(p):
+    '''
+        paramsFunctionCall : expresion seen_parameter_fCall COMMA seen_comma_params_fCall paramsFunctionCall 
+                        | expresion seen_parameter_fCall
+    '''
+
+
+def p_seen_parameter_fCall(p):
+    '''
+        seen_parameter_fCall : 
+    '''
+    print('parameter fcall', pilaOperandos)
+    print('parameter fcall', pilaTipos)
+    argument = pilaOperandos.pop()
+    argumentType = pilaTipos.pop()
+    functionCalled = pilaFunctionCall[-1]
+    print('before?', argument)
+    print('cuadruplos', cuadruplos)
+    print('params TAble', len(dirFuncionesDict[functionCalled]['paramsTable']))
+    print('paramCounter', parameterCounter)
+    if (len(dirFuncionesDict[functionCalled]['paramsTable']) <= parameterCounter):
+        print('ERROR TOO MANY PARAMETERS')
+
+    if (argumentType != dirFuncionesDict[functionCalled]['paramsTable'][parameterCounter]):
+        print('ERROR PARAMETER MISMATCH')
+    generate_quad(operador='PARAMETER', left_operando='',
+                  right_operando=argument, result=parameterCounter)
+
+
+def p_seen_comma_params_fCall(p):
+    '''
+        seen_comma_params_fCall : 
+    '''
+    global parameterCounter
+    print('incrementing')
+    parameterCounter += 1
+
+
+def p_seen_end_paramsFCall(p):
+    '''
+        seen_end_paramsFCall : 
+    '''
+    functionCalled = pilaFunctionCall[-1]
+    if (len(dirFuncionesDict[functionCalled]['paramsTable']) > parameterCounter):
+        print('ERROR NOT ALL PARAMETERS')
+
+
+def p_seen_rightp_fCall(p):
+    '''
+        seen_rightp_fCall : 
+    '''
+    global parameterCounter
+    parameterCounter = 0
+    functionCalled = pilaFunctionCall.pop()
+    generate_quad(operador='GOSUB', left_operando=functionCalled,
+                  right_operando='', result=dirFuncionesDict[functionCalled]['addressStart'])
 
 # Mensaje de error sintactico
 
@@ -860,7 +971,6 @@ def generate_quad(operador, left_operando, right_operando, result):
 
 
 def nextAvail(tempType):
-    print(dirFuncionesDict[currentDirFuncion])
     dirFuncionesDict[currentDirFuncion]['size']['temporal'][tempType] += 1
     dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'] += 1
     return 't' + str(dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'])
@@ -872,9 +982,6 @@ def getResultType(right_tipo, left_tipo, operador):
 
 
 def fill(numeroCuadruploALlenar, numeroCuadrupASaltar):
-    print('fill', numeroCuadrupASaltar, numeroCuadruploALlenar)
-    print('cuadruplos fill', cuadruplos)
-    print('this is the hcuadruplo', cuadruplos[3][3])
     cuadruplos[numeroCuadruploALlenar][3] = numeroCuadrupASaltar
 
 
@@ -898,6 +1005,18 @@ elif option == "2":
         "C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
     parser.parse(file)
     print('operandos: ', pilaOperandos)
+    print('cuadruplos: ', cuadruplos)
+    print('directorio funciones: ', dirFuncionesDict)
+    print('pila tipos :', pilaTipos)
+elif option == "3":
+    file = open(
+        "C:/Users/Moi/Documents/GitHub/CompiMoi/test3.txt").read()
+    parser.parse(file)
+    print('operandos: ', pilaOperandos)
+    cont = 0
+    for cuadruplo in cuadruplos:
+        print(cont, cuadruplo)
+        cont += 1
     print('cuadruplos: ', cuadruplos)
     print('directorio funciones: ', dirFuncionesDict)
     print('pila tipos :', pilaTipos)
