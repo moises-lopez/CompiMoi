@@ -3,99 +3,13 @@ import ply.yacc as yacc
 import sys
 import json
 from virtualMemory import VirtualMemory
+from compilerManager import CompilerManager
+from scopes import Scope
+from varTypes import VarType
 
 virtualMemoryManager = VirtualMemory()
-cuadruplos = [[]]
-pilaOperadores = []
-pilaOperandos = []
-pilaTipos = []
-dirFuncionesDict = {}
-currentDirFuncion = ''
-currentVarTable = ''
-currentType = ''
-currentVars = []
-programName = ''
-pilaSaltos = []
-contadorCuadruplos = 1
-parameterCounter = 0
-pilaFunctionCall = []
-isArray = False
-currentVarId = ''
-DIM = 1
-R = 1
-currentLimSup = 0
-cubo_semantico = {
-    '*': {
-        'float': {
-            'int': 'float',
-            'float': 'float'
-        },
-        'int': {
-            'int': 'int',
-            'float': 'float'
-        }
-    },
-    '/': {
-        'float': {
-            'int': 'float',
-            'float': 'float'
-        },
-        'int': {
-            'int': 'int',
-            'float': 'float'
-        }
-    },
-    '-': {
-        'float': {
-            'int': 'float',
-            'float': 'float'
-        },
-        'int': {
-            'int': 'int',
-            'float': 'float'
-        }
-    },
-    '+': {
-        'float': {
-            'int': 'float',
-            'float': 'float'
-        },
-        'int': {
-            'int': 'int',
-            'float': 'float'
-        }
-    },
-    '<': {
-        'float': {
-            'int': 'boolean',
-            'float': 'boolean'
-        },
-        'int': {
-            'int': 'boolean',
-            'float': 'boolean'
-        }
-    },
-    '>': {
-        'float': {
-            'int': 'boolean',
-            'float': 'boolean'
-        },
-        'int': {
-            'int': 'boolean',
-            'float': 'boolean'
-        }
-    },
-    '!=': {
-        'float': {
-            'int': 'boolean',
-            'float': 'boolean'
-        },
-        'int': {
-            'int': 'boolean',
-            'float': 'boolean'
-        }
-    },
-}
+compilerManager = CompilerManager()
+
 
 tokens = [
     'INT_CTE',
@@ -313,18 +227,10 @@ def p_modulesaux(p):
 
 def p_seen_program(p):
     "seen_program : "
-    global currentDirFuncion
-    global programName
-    dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'global'}
-    currentDirFuncion = p[-1]
     programName = p[-1]
-    generate_quad(operador='GOTO', left_operando='',
-                  right_operando='', result='')
-    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
-    if not ('size' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
+    compilerManager.setProgramName(programName)
+    compilerManager.setCurrentFunction(programName)
+    compilerManager.addFunctionToDir(programName, Scope.GLOBAL, 'Program')
 
 
 def p_vars(p):
@@ -344,8 +250,7 @@ def p_seen_end_declaration(p):
     '''
         seen_end_declaration : 
     '''
-    global currentVarId
-    currentVarId = ''
+    compilerManager.setCurrentVarId('')
 
 
 def p_idOrArrayDeclaration(p):
@@ -366,97 +271,48 @@ def p_seen_extra_dimension_array(p):
     '''
         seen_extra_dimension_array : 
     '''
-    global DIM
-    DIM += 1
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'].append({
-    })
+    compilerManager.incrementDimention()
 
 
 def p_seen_lim_inf(p):
     '''
         seen_lim_inf : 
     '''
-    liDim = p[-1]
-
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim'] = liDim
+    lowerLimit = p[-1]
+    compilerManager.setLowerLimitCurrentDimention(lowerLimit)
 
 
 def p_seen_lim_sup(p):
     '''
         seen_lim_sup : 
     '''
-    global R
-    liDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim']
-    lsDim = p[-1]
-    R = (lsDim - liDim + 1) * R
-    print('HOLA', DIM)
-
-    print(dirFuncionesDict[currentDirFuncion]
-          ['varsTable'][currentVarId]['dimensions'][DIM - 1])
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['lsDim'] = lsDim
-    print(dirFuncionesDict[currentDirFuncion]
-          ['varsTable'][currentVarId]['dimensions'][DIM - 1])
+    upperLimit = p[-1]
+    compilerManager.setUpperLimitCurrentDimention(upperLimit)
+    compilerManager.computeR()
 
 
 def p_seen_lBracket_array(p):
     '''
         seen_lBracket_array : 
     '''
-    global isArray
-    global DIM
-    global R
-    isArray = True
-
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'] = []
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'].append({
-    })
-
-    DIM = 1
-    R = 1
+    compilerManager.initArrayDeclaration()
 
 
 def p_seen_rBracket_array(p):
     '''
         seen_rBracket_array : 
     '''
-    global R
-    DIM = 1
-    offset = 0
-    size = R
-    for dimensions in dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions']:
-        liDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['liDim']
-        print(dirFuncionesDict[currentDirFuncion]['varsTable'])
-        lsDim = dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['lsDim']
-
-        m = R / (lsDim - liDim + 1)
-        dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 1]['m'] = m
-        R = m
-        offset = offset + liDim * m
-        DIM += 1
-    K = offset
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId]['dimensions'][DIM - 2]['m'] = K * -1
+    compilerManager.endArrayDeclaration()
 
 
 def p_seen_vars(p):
     "seen_vars : "
-
-    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
-    if not ('size' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
-
-
-def p_seen_vars_end(p):
-    "seen_vars_end : "
-    for key in dirFuncionesDict[currentDirFuncion]['varsTable']:
-        if dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'int':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['int'] += 1
-        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'float':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['float'] += 1
-        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'boolean':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['boolean'] += 1
-    dirFuncionesDict[currentDirFuncion]['functionStart'] = contadorCuadruplos
+    # TODO: MAYBE NEEDED
+    # if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
+    #    dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
+    # if not ('size' in dirFuncionesDict[currentDirFuncion]):
+    #    dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
+    #                                                   'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
 
 
 def p_varsaux(p):
@@ -468,19 +324,9 @@ def p_varsaux(p):
 
 def p_seen_ID_var(p):
     " seen_ID_var : "
-    global currentVarId
-    currentVarId = p[-1]
-    try:
-        if (currentVarId in dirFuncionesDict[currentDirFuncion]['varsTable']):
-            print('Redeclaration on variable', currentVarId)
-    except (NameError, AttributeError) as e:
-        print(e)
-        pass
-    address = virtualMemoryManager.getNextAddressAvailable(
-        dirFuncionesDict[currentDirFuncion]['scope'], currentType)
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVarId] = {
-        'tipo': currentType, 'address': address}
-    dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
+
+    varId = p[-1]
+    compilerManager.addVariableToVarTable(varId, False)
 
 
 def p_tipo(p):
@@ -494,8 +340,9 @@ def p_tipo(p):
 
 def p_seen_tipo(p):
     "seen_tipo : "
-    global currentType
+
     currentType = p[-1]
+    compilerManager.setCurrentType(currentType)
 
 
 def p_function(p):
@@ -508,19 +355,16 @@ def p_seen_id_function(p):
     '''
         seen_id_function :
     '''
-    global currentDirFuncion
-    dirFuncionesDict[p[-1]] = {'type': currentType, 'scope': 'local'}
-    currentDirFuncion = p[-1]
+    functionName = p[-1]
+    compilerManager.addFunctionToDir(functionName, Scope.LOCAL, 'Function')
+    compilerManager.setCurrentFunction(functionName)
 
 
 def p_seen_function_end(p):
     '''
         seen_function_end :
     '''
-    # dirFuncionesDict[currentDirFuncion]['varsTable'] = {} DESCOMENTAR, POR EL MOMENTO LO DEJO ASí PARA LOGGEARLO AL FINAL
-    virtualMemoryManager.dumpLocalVirtualMemory()
-    generate_quad(operador='ENDFUNC', left_operando='',
-                  right_operando='', result='')
+    compilerManager.endFunction()
 
 
 def p_functionmain(p):
@@ -531,15 +375,10 @@ def p_functionmain(p):
 
 def p_seen_function_main(p):
     "seen_function_main : "
-    global currentDirFuncion
-    dirFuncionesDict[p[-1]] = {'type': 'Program', 'scope': 'local'}
-    currentDirFuncion = p[-1]
-    if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
-    if not ('size' in dirFuncionesDict[currentDirFuncion]):
-        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
-    fill(1, contadorCuadruplos)
+    programName = p[-1]
+    compilerManager.setCurrentFunction(programName)
+    compilerManager.addFunctionToDir(programName, Scope.LOCAL, 'Main')
+    compilerManager.fillQuad(1, compilerManager.quadrupleCounter)
 
 
 def p_returnfunctionaux(p):
@@ -553,8 +392,7 @@ def p_seen_void(p):
     '''
         seen_void :
     '''
-    global currentType
-    currentType = 'void'
+    compilerManager.setCurrentType(VarType.VOID)
 
 
 def p_params(p):
@@ -567,24 +405,7 @@ def p_seen_params_init(p):
     '''
       seen_params_init :
     '''
-    if (not ('varsTable' in dirFuncionesDict[currentDirFuncion])):
-        dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
-        dirFuncionesDict[currentDirFuncion]['paramsTable'] = []
-        dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-                                                       'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
-
-
-def p_seen_params_end(p):
-    '''
-      seen_params_end :
-    '''
-    for key in dirFuncionesDict[currentDirFuncion]['varsTable']:
-        if dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'int':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['int'] += 1
-        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'float':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['float'] += 1
-        elif dirFuncionesDict[currentDirFuncion]['varsTable'][key]['tipo'] == 'boolean':
-            dirFuncionesDict[currentDirFuncion]['size']['local']['boolean'] += 1
+    compilerManager.addParamsTableToCurrentFunction()
 
 
 def p_paramsaux(p):
@@ -597,20 +418,22 @@ def p_paramsaux(p):
 
 def p_seen_ID_params(p):
     " seen_ID_params : "
-    currentVar = p[-1]
-    try:
-        if (currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
-            print('Redeclaration on variable', currentVar)
-    except (NameError, AttributeError) as e:
-        print(e)
-        pass
-    address = virtualMemoryManager.getNextAddressAvailable(
-        dirFuncionesDict[currentDirFuncion]['scope'], currentType)
+    varId = p[-1]
+    compilerManager.addVariableToVarTable(varId, True)
 
-    dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
-        'tipo': currentType, 'address': address}
-    dirFuncionesDict[currentDirFuncion]['paramsTable'].append(currentType)
-    dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
+    # try: TODO: MAYBE NEEDED
+    #    if (currentVar in dirFuncionesDict[currentDirFuncion]['varsTable']):
+    #        print('Redeclaration on variable', currentVar)
+    # except (NameError, AttributeError) as e:
+    #    print(e)
+    #    pass
+    # address = virtualMemoryManager.getNextAddressAvailable(
+    #    dirFuncionesDict[currentDirFuncion]['scope'], currentType)
+
+    # dirFuncionesDict[currentDirFuncion]['varsTable'][currentVar] = {
+    #    'tipo': currentType, 'address': address}
+    # dirFuncionesDict[currentDirFuncion]['paramsTable'].append(currentType)
+    # dirFuncionesDict[currentDirFuncion]['size']['local'][currentType] += 1
 
 
 def p_bloque(p):
@@ -623,7 +446,7 @@ def p_seen_start_bloqueaux(p):
     '''
       seen_start_bloqueaux : 
     '''
-    dirFuncionesDict[currentDirFuncion]['addressStart'] = contadorCuadruplos
+    compilerManager.addFunctionStartAddress()
 
 
 def p_bloqueaux(p):
@@ -654,24 +477,15 @@ def p_seen_equals(p):
     '''
       seen_equals :
       '''
-    pilaOperadores.append(p[-1])
+    operator = p[-1]
+    compilerManager.addOperatorToStack(operator)
 
 
 def p_seen_final_asignacion(p):
     '''
       seen_final_asignacion :
       '''
-    right_operando = pilaOperandos.pop()
-    left_operando = pilaOperandos.pop()
-    right_tipo = pilaTipos.pop()
-    left_tipo = pilaTipos.pop()
-    operador = pilaOperadores.pop()
-
-    if (right_tipo == left_tipo):
-        generate_quad(operador=operador, left_operando=right_operando,
-                      right_operando='', result=left_operando)
-    else:
-        print('ERROR MISMATCH')
+    compilerManager.createAssignationQuad()
 
 
 def p_expresion(p):
@@ -714,9 +528,7 @@ def p_seen_print_cuadruplo(p):
     '''
       seen_print_cuadruplo : 
       '''
-    valueToPrint = pilaOperandos.pop()
-    generate_quad(operador='PRINT', left_operando='',
-                  right_operando='', result=valueToPrint)
+    compilerManager.createPrintQuad()
 
 
 def p_exp(p):
@@ -764,35 +576,21 @@ def p_seen_right_parentheses_condicion(p):
     '''
         seen_right_parentheses_condicion :
       '''
-    exp_type = pilaTipos.pop()
-
-    if (exp_type != 'boolean'):
-        print('ERROR MISMATCH IN CONDITION')
-    else:
-        result = pilaOperandos.pop()
-        generate_quad(operador='GOTOF', left_operando=result,
-                      right_operando='', result='')
-        pilaSaltos.append(contadorCuadruplos - 1)
+    compilerManager.handleConditionStart()
 
 
 def p_seen_else(p):
     '''
         seen_else :
       '''
-    generate_quad(operador='GOTO', left_operando='',
-                  right_operando='', result='')
-    false = pilaSaltos.pop()
-    pilaSaltos.append(contadorCuadruplos - 1)
-
-    fill(false, contadorCuadruplos)
+    compilerManager.handleConditionElse()
 
 
 def p_seen_end_condicion(p):
     '''
         seen_end_condicion :
       '''
-    end = pilaSaltos.pop()
-    fill(end, contadorCuadruplos)
+    compilerManager.handleConditionEnd()
 
 
 def p_factor(p):
@@ -820,122 +618,53 @@ def p_varcte(p):
 def p_seen_CTE_INT(p):
     "seen_CTE_INT :"
     constant = p[-1]
-    address = virtualMemoryManager.setConstantInVirtualMemory(str(constant))
-
-    pilaOperandos.append(address)
-    pilaTipos.append('int')
+    compilerManager.handleConstant(constant, VarType.INT)
 
 
 def p_seen_CTE_FLOAT(p):
     "seen_CTE_FLOAT :"
     constant = p[-1]
-    address = virtualMemoryManager.setConstantInVirtualMemory(str(constant))
-
-    pilaOperandos.append(address)
-    pilaTipos.append('float')
+    compilerManager.handleConstant(constant, VarType.FLOAT)
 
 
 def p_seen_insert_fondo(p):
     '''
         seen_insert_fondo :
       '''
-    pilaOperadores.append('(')
+    compilerManager.addOperatorToStack('(')  # TODO: IMPROVE
 
 
 def p_seen_remove_fondo(p):
     '''
         seen_remove_fondo :
       '''
-    if (pilaOperadores[-1] != '('):
-        print('Parentesis Mismatch')
-    else:
-        pilaOperadores.pop()
 
 
 def p_seen_ID(p):
     "seen_ID :"
     varId = p[-1]
-    tipo = ''
-    if (varId in dirFuncionesDict[currentDirFuncion]['varsTable']):
-        tipo = dirFuncionesDict[currentDirFuncion]['varsTable'][varId]['tipo']
-    elif (varId in dirFuncionesDict[programName]['varsTable']):
-        tipo = dirFuncionesDict[programName]['varsTable'][varId]['tipo']
-
-    if (tipo == ''):
-        print('no se encontró variable', varId)
-    pilaOperandos.append(p[-1])
-    pilaTipos.append(tipo)
+    compilerManager.addVariableToStack(varId)
 
 
 def p_seen_operador(p):
     "seen_operador :"
-    pilaOperadores.append(p[-1])
+    operator = p[-1]
+    compilerManager.addOperatorToStack(operator)
 
 
 def p_seen_termino(p):
     "seen_termino :"
-    if (len(pilaOperadores) == 0):
-        return
-    if pilaOperadores[-1] == '+' or pilaOperadores[-1] == '-':
-        right_operando = pilaOperandos.pop()
-        left_operando = pilaOperandos.pop()
-        right_tipo = pilaTipos.pop()
-        left_tipo = pilaTipos.pop()
-        operador = pilaOperadores.pop()
-        result_type = getResultType(
-            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
-        if (result_type):
-            result = nextAvail(result_type)
-            generate_quad(operador=operador, left_operando=left_operando,
-                          right_operando=right_operando, result=result)
-            pilaOperandos.append(result)
-            pilaTipos.append(result_type)
-        else:
-            print('ERROR MISMATCH')
+    compilerManager.handleTermino()
 
 
 def p_seen_factor(p):
     "seen_factor :"
-    if (len(pilaOperadores) == 0):
-        return
-    if pilaOperadores[-1] == '*' or pilaOperadores[-1] == '/':
-        right_operando = pilaOperandos.pop()
-        left_operando = pilaOperandos.pop()
-        right_tipo = pilaTipos.pop()
-        left_tipo = pilaTipos.pop()
-        operador = pilaOperadores.pop()
-        result_type = getResultType(
-            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
-        if (result_type):
-            result = nextAvail(result_type)
-            generate_quad(
-                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
-            pilaOperandos.append(result)
-            pilaTipos.append(result_type)
-        else:
-            print('ERROR MISMATCH')
+    compilerManager.handleFactor()
 
 
 def p_seen_comparacion(p):
     "seen_comparacion :"
-    if (len(pilaOperadores) == 0):
-        return
-    if pilaOperadores[-1] == '>' or pilaOperadores[-1] == '<' or pilaOperadores[-1] == '!=':
-        right_operando = pilaOperandos.pop()
-        left_operando = pilaOperandos.pop()
-        right_tipo = pilaTipos.pop()
-        left_tipo = pilaTipos.pop()
-        operador = pilaOperadores.pop()
-        result_type = getResultType(
-            right_tipo=right_tipo, left_tipo=left_tipo, operador=operador)
-        if (result_type):
-            result = nextAvail(result_type)
-            generate_quad(
-                operador=operador, left_operando=left_operando, right_operando=right_operando, result=result)
-            pilaOperandos.append(result)
-            pilaTipos.append(result_type)
-        else:
-            print('ERROR MISMATCH')
+    compilerManager.handleComparation()
 
 
 def p_while(p):
@@ -948,32 +677,21 @@ def p_seen_while(p):
     '''
         seen_while : 
     '''
-    pilaSaltos.append(contadorCuadruplos)
+    compilerManager.addJumpToCurrentQuadruple()
 
 
 def p_seen_right_parentheses_while(p):
     '''
         seen_right_parentheses_while : 
     '''
-    exp_type = pilaTipos.pop()
-    if (exp_type != 'boolean'):
-        print('ERROR MISMATCH WHILE')
-    else:
-        result = pilaOperandos.pop()
-        generate_quad(operador='GOTOF', left_operando=result,
-                      right_operando='', result='')
-        pilaSaltos.append(contadorCuadruplos - 1)
+    compilerManager.handleWhileStart()
 
 
 def p_seen_end_while(p):
     '''
         seen_end_while : 
     '''
-    end = pilaSaltos.pop()
-    returnQuad = pilaSaltos.pop()
-    generate_quad(operador='GOTO', left_operando='',
-                  right_operando='', result=returnQuad)
-    fill(numeroCuadrupASaltar=contadorCuadruplos, numeroCuadruploALlenar=end)
+    compilerManager.handleWhileEnd()
 
 
 def p_functionCall(p):
@@ -987,25 +705,21 @@ def p_seen_fCall_id(p):
         seen_fCall_id : 
     '''
     functionName = p[-1]
-    pilaFunctionCall.append(functionName)
-    if functionName not in dirFuncionesDict:
-        print('ERROR FUNCTION NOT DECLARED')
+    compilerManager.handleFunctionCall(functionName)
 
 
 def p_seen_leftp_fCall(p):
     '''
         seen_leftp_fCall : 
     '''
-    global parameterCounter
     functionName = p[-3]
-    generate_quad(operador='ERA', left_operando='',
-                  right_operando='', result=functionName)
+    compilerManager.handleFunctionCallJump(functionName)
 
 
 def p_paramsFunctionCall(p):
     '''
         paramsFunctionCall : expresion seen_parameter_fCall COMMA seen_comma_params_fCall paramsFunctionCall 
-                        | expresion seen_parameter_fCall
+                        | expresion seen_parameter_fCall seen_comma_params_fCall
     '''
 
 
@@ -1013,51 +727,28 @@ def p_seen_parameter_fCall(p):
     '''
         seen_parameter_fCall : 
     '''
-    print('parameter fcall', pilaOperandos)
-    print('parameter fcall', pilaTipos)
-    argument = pilaOperandos.pop()
-    argumentType = pilaTipos.pop()
-    functionCalled = pilaFunctionCall[-1]
-    print('before?', argument)
-    print('cuadruplos', cuadruplos)
-    print('params TAble', len(dirFuncionesDict[functionCalled]['paramsTable']))
-    print('paramCounter', parameterCounter)
-    if (len(dirFuncionesDict[functionCalled]['paramsTable']) <= parameterCounter):
-        print('ERROR TOO MANY PARAMETERS')
-
-    if (argumentType != dirFuncionesDict[functionCalled]['paramsTable'][parameterCounter]):
-        print('ERROR PARAMETER MISMATCH')
-    generate_quad(operador='PARAMETER', left_operando='',
-                  right_operando=argument, result=parameterCounter)
+    compilerManager.handleFunctionParameter()
 
 
 def p_seen_comma_params_fCall(p):
     '''
         seen_comma_params_fCall : 
     '''
-    global parameterCounter
-    print('incrementing')
-    parameterCounter += 1
+    compilerManager.incrementParameterCounter()
 
 
 def p_seen_end_paramsFCall(p):
     '''
         seen_end_paramsFCall : 
     '''
-    functionCalled = pilaFunctionCall[-1]
-    if (len(dirFuncionesDict[functionCalled]['paramsTable']) > parameterCounter):
-        print('ERROR NOT ALL PARAMETERS')
+    compilerManager.checkNoParametersLeft()
 
 
 def p_seen_rightp_fCall(p):
     '''
         seen_rightp_fCall : 
     '''
-    global parameterCounter
-    parameterCounter = 0
-    functionCalled = pilaFunctionCall.pop()
-    generate_quad(operador='GOSUB', left_operando=functionCalled,
-                  right_operando='', result=dirFuncionesDict[functionCalled]['addressStart'])
+    compilerManager.handleEndOfFunctionCall()
 
 
 # Mensaje de error sintactico
@@ -1077,62 +768,37 @@ def p_empty(p):
 parser = yacc.yacc()
 
 
-def generate_quad(operador, left_operando, right_operando, result):
-    global contadorCuadruplos
-    contadorCuadruplos = contadorCuadruplos + 1
-    cuadruplos.append([operador, left_operando, right_operando, result])
-
-
-def nextAvail(tempType):
-    dirFuncionesDict[currentDirFuncion]['size']['temporal'][tempType] += 1
-    dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'] += 1
-    return 't' + str(dirFuncionesDict[currentDirFuncion]['size']['temporal']['total'])
-
-
-def getResultType(right_tipo, left_tipo, operador):
-    result_type = cubo_semantico[operador][left_tipo][right_tipo]
-    return result_type
-
-
-def fill(numeroCuadruploALlenar, numeroCuadrupASaltar):
-    cuadruplos[numeroCuadruploALlenar][3] = numeroCuadrupASaltar
-
-
-# Execution
-# IMPORTANT
-# https://lingojam.com/TexttoOneLine
-
-
 print("1-Load Example from TXT")
 print("2-Input code manually")
+print('sCOPE', Scope.GLOBAL)
 option = input("Option : ")
 if option == "1":
     file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test.txt").read()
     parser.parse(file)
-    print('operandos: ', pilaOperandos)
-    print('cuadruplos: ', cuadruplos)
-    print('directorio funciones: ', dirFuncionesDict)
-    print('pila tipos :', pilaTipos)
+    print('operandos: ', compilerManager.operandsStack)
+    print('compilerManager.quadruples: ', compilerManager.quadruples)
+    print('directorio funciones: ', compilerManager.functionDirectory)
+    print('pila tipos :', compilerManager.typesStack)
 elif option == "2":
     file = open(
         "C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
     parser.parse(file)
-    print('operandos: ', pilaOperandos)
-    print('cuadruplos: ', cuadruplos)
-    print('directorio funciones: ', dirFuncionesDict)
-    print('pila tipos :', pilaTipos)
+    print('operandos: ', compilerManager.operandsStack)
+    print('compilerManager.quadruples: ', compilerManager.quadruples)
+    print('directorio funciones: ', compilerManager.functionDirectory)
+    print('pila tipos :', compilerManager.typesStack)
 elif option == "3":
     file = open(
         "C:/Users/Moi/Documents/GitHub/CompiMoi/test3.txt").read()
     parser.parse(file)
-    print('operandos: ', pilaOperandos)
+    print('operandos: ', compilerManager.operandsStack)
     cont = 0
-    for cuadruplo in cuadruplos:
+    for cuadruplo in compilerManager.quadruples:
         print(cont, cuadruplo)
         cont += 1
-    print('cuadruplos: ', cuadruplos)
-    print('directorio funciones: ', dirFuncionesDict)
-    print('pila tipos :', pilaTipos)
+    print('compilerManager.quadruples: ', compilerManager.quadruples)
+    print('directorio funciones: ', compilerManager.functionDirectory)
+    print('pila tipos :', compilerManager.typesStack)
 else:
     while True:
         try:
