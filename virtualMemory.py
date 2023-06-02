@@ -62,7 +62,6 @@ class VirtualMemory:
 
     def setConstantInVirtualMemory(self, constantId):
         address = self.getNextAddressAvailable(Scope.CONSTANT, '')
-
         self.virtualMemoryObject[Scope.CONSTANT][constantId] = address
         return address
 
@@ -164,6 +163,12 @@ class VirtualMemory:
             address = START_CONSTANTS + self.constantCounter
             self.constantCounter += 1
             return address
+
+    def setValueToAddress(self, address, value):
+        self.virtualMemoryArray[address] = value
+
+    def getValueOfAddress(self, address, value):
+        return self.virtualMemoryArray[address]
 
 
 def getConstantStartOfAddresses(type, scope):

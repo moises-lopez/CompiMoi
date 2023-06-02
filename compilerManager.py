@@ -3,6 +3,7 @@ from scopes import Scope
 from quadOperators import QuadOperator
 from varTypes import VarType
 from semanticCube import SemanticCube
+from paramsVm import ParamsVm
 
 
 class CompilerManager:
@@ -26,6 +27,7 @@ class CompilerManager:
         self.R = 1
         self.virtualMemoryManager = VirtualMemory()
         self.semanticCubeManager = SemanticCube()
+        self.paramsVm = ParamsVm()
 
     def addFunctionToDir(self, functionName, scope, type):
         self.functionDirectory[functionName] = {
@@ -37,6 +39,7 @@ class CompilerManager:
                      Scope.GLOBAL: {'int': 0, 'float': 0, 'boolean': 0}
                      }
         }
+        self.paramsVm.initFunctionSize(functionName)
         if (type == 'Program'):
             self.addQuadruple(QuadOperator.GOTO, '', '', '')
 
@@ -48,7 +51,22 @@ class CompilerManager:
 
     def addQuadruple(self, operator, leftOperand, rightOperand, result):
         self.quadrupleCounter += 1
-        self.quadruples.append([operator, leftOperand, rightOperand, result])
+        leftOperandAddress = self.getOperandAddress(leftOperand)
+        rightOperandAddress = self.getOperandAddress(rightOperand)
+        resultAddress = self.getOperandAddress(result)
+
+        self.quadruples.append(
+            [operator, leftOperandAddress, rightOperandAddress, resultAddress])
+
+    def getOperandAddress(self, operand):
+        if (type(operand) == int):
+            return operand
+        address = operand
+        if operand in self.functionDirectory[self.currentFunction]['varsTable']:
+            address = self.functionDirectory[self.currentFunction]['varsTable'][operand]['address']
+        if operand in self.functionDirectory[self.programName]['varsTable']:
+            address = self.functionDirectory[self.programName]['varsTable'][operand]['address']
+        return address
 
     def setCurrentVarId(self, varId):
         self.currentVarId = varId
@@ -128,6 +146,9 @@ class CompilerManager:
 
         self.addTypeAndAddressToVar(self.currentType, address)
         self.incrementVariableCounter(scope, self.currentType)
+        self.paramsVm.addToFunctionSize(
+            scope, self.currentFunction, 1, [address])
+
         if (isParam):
             self.functionDirectory[self.currentFunction]['paramsTable'].append(
                 self.currentType)
@@ -175,6 +196,7 @@ class CompilerManager:
 
     def createPrintQuad(self):  # TODO: HANDLE TYPE
         valueToPrint = self.operandsStack.pop()
+        typeToPrint = self.typesStack.pop()
         self.addQuadruple(QuadOperator.PRINT, '', '', valueToPrint)
 
     def handleConditionStart(self):
@@ -203,6 +225,7 @@ class CompilerManager:
 
         self.operandsStack.append(address)
         self.typesStack.append(type)
+        self.paramsVm.addConstant(constant, address)
 
     def endOfExpresionParentheses(self):
         if (self.operandsStack[-1] != '('):  # TODO: IMPROVE
@@ -337,4 +360,12 @@ class CompilerManager:
     def nextAvail(self, type):
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL][type] += 1
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL]['total'] += 1
-        return 't' + str(self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL]['total'])
+        varId = 't' + \
+            str(self.functionDirectory[self.currentFunction]
+                ['size'][Scope.TEMPORAL]['total'])
+        self.currentVarId = varId
+        address = self.virtualMemoryManager.getNextAddressAvailable(
+            Scope.TEMPORAL, type)
+        self.addTypeAndAddressToVar(type, address)
+        self.paramsVm.addToFunctionSize('', self.currentFunction, 1, [address])
+        return varId

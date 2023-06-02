@@ -6,10 +6,11 @@ from virtualMemory import VirtualMemory
 from compilerManager import CompilerManager
 from scopes import Scope
 from varTypes import VarType
+from virtualMachine import VirtualMachine
 
 virtualMemoryManager = VirtualMemory()
 compilerManager = CompilerManager()
-
+virtualMachineManager = VirtualMachine()
 
 tokens = [
     'INT_CTE',
@@ -799,6 +800,10 @@ elif option == "3":
     print('compilerManager.quadruples: ', compilerManager.quadruples)
     print('directorio funciones: ', compilerManager.functionDirectory)
     print('pila tipos :', compilerManager.typesStack)
+    compilerManager.paramsVm.printParamsVm()
+    virtualMachineManager.init(
+        compilerManager.quadruples, compilerManager.paramsVm)
+
 else:
     while True:
         try:
