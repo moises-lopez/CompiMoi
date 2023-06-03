@@ -125,7 +125,7 @@ class VirtualMemory:
                 address = START_GLOBAL_VARS_CHAR + self.globalCharCounter
                 self.globalCharCounter += 1
                 return address
-        elif scope == Scope.LOCAL:
+        elif scope == Scope.LOCAL or scope == Scope.MAIN:
             if type == 'int':
                 address = START_LOCAL_VARS_INT + self.localIntCounter
                 self.localIntCounter += 1

@@ -1,22 +1,59 @@
 from paramsVm import ParamsVm
-import numpy as np
 
 
 class ExecutionMemory:
     def __init__(self, paramsVm: ParamsVm):
-        print('///////')
+        globalMemoryContext = {}
+        mainMemoryContext = {}
+        for address in paramsVm.GlobalSize['arrayAddresses']:
+            globalMemoryContext[address] = None
 
-        print(paramsVm.GlobalSize['size'])
-        self.globalMemory = np.empty([paramsVm.GlobalSize['size']])
-        print('global memory', self.globalMemory)
-        self.localMemory = []
+        for address in paramsVm.MainSize['arrayAddresses']:
+            mainMemoryContext[address] = None
 
-        for function in paramsVm.FunctionsSize:
-            self.localMemory.extend(
-                np.empty(paramsVm.FunctionsSize[function]['size']))
-
+        self.globalMemory = globalMemoryContext
+        self.localMemory = [mainMemoryContext]
         self.constantTable = paramsVm.Constants['constantDictionary']
-        print(len(self.globalMemory), len(self.localMemory), self.constantTable)
+        print(self.localMemory)
 
-    def initGlobalMemory(self, globalMemoryVariables):
-        print()
+    def addLocalMemory(self, functionMemoryData):
+        print('before', self.localMemory)
+        functionMemoryContext = {}
+        for address in functionMemoryData['arrayAddresses']:
+            functionMemoryContext[address] = None
+
+        self.localMemory.append(functionMemoryContext)
+        print('after', self.localMemory)
+        print('/////////')
+
+
+    def setValueToAddress(self, value, address):
+        currentFunctionContext = self.localMemory[-1]
+        if address in currentFunctionContext:
+            self.localMemory[-1][address] = value
+            return
+        self.globalMemory[address] = value
+
+    def getValueOfAddress(self, address):
+        currentFunctionContext = self.localMemory[-1]
+        if address in currentFunctionContext:
+            value = self.localMemory[-1][address]
+        elif address in self.globalMemory:
+            value = self.globalMemory[address]
+        else:
+            value = self.constantTable[address]
+        return value
+
+    def setFunctionParameter(self, value, parameterNumber):
+        cont = 0
+        targetAddress = ''
+        for address in self.localMemory[-1]:
+            targetAddress = address
+            if(cont == parameterNumber):
+                break
+            cont += 1
+
+        self.setValueToAddress(value, targetAddress)
+
+    def freeCurrentLocalMemory(self):
+        self.localMemory.pop()

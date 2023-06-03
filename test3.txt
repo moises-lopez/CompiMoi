@@ -1,28 +1,15 @@
 Programa patito;
-var int a, b;
-var float f;
 
-Function void uno(int a){
-    a= a+b*a;
-    print(a, b, a+b);
-}
-
-Function void dos(int a, int b, float g){
-    var int i;
-    i=b;
-    while(i>0){
-        a=a+b*i+b;
-        uno(i*2);
-        print(a);
-        i=i-1;
+Function void uno(int i){
+    while(i < 10){
+        i = i + 1;
     };
+    print(i);
 }
+
+
 
 Main(){
-    a=3;
-    b=a+1;
-    print(a, b);
-    f=3.14;
-    dos(a+b*2, b, f*3);
-    print(a,b,f*2+1);
+    var int a;
+    uno(1);
 }

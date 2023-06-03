@@ -23,6 +23,7 @@ tokens = [
     'DIVIDE',
     'MULTIPLY',
     'EQUALS',
+    'ASIGNATION',
     'COMMA',
     'SEMICOLON',
     'COLON',
@@ -35,7 +36,9 @@ tokens = [
     'LESSTHAN',
     'GREATERTHAN',
     'NOTEQUAL',
-    'THREEDOTS'
+    'THREEDOTS',
+    'RETURN',
+    'AT'
 ]
 
 reserved = {
@@ -52,7 +55,7 @@ reserved = {
     'boolean': 'BOOLEAN',
     'read': 'READ',
     'print': 'PRINT',
-    '<>': 'NOTEQUALS',
+    '!=': 'NOTEQUALS',
     'call': 'CALL'
 }
 
@@ -62,7 +65,8 @@ t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'\/'
-t_EQUALS = r'\='
+t_EQUALS = r'\=\='
+t_ASIGNATION = r'\='
 t_COMMA = r'\,'
 t_SEMICOLON = r'\;'
 t_COLON = r'\:'
@@ -72,9 +76,11 @@ t_LEFTBRACE = r'\{'
 t_RIGHTBRACE = r'\}'
 t_LESSTHAN = r'\<'
 t_GREATERTHAN = r'\>'
+t_NOTEQUALS = r'\!\='
 t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
 t_THREEDOTS = r'\.\.\.'
+t_AT = r'\@'
 t_ignore = ' \n'
 
 
@@ -188,6 +194,10 @@ def t_READ(t):
 
 def t_PRINT(t):
     r'print'
+    return t
+
+def t_RETURN(t):
+    r'return'
     return t
 
 
@@ -370,15 +380,20 @@ def p_seen_function_end(p):
 
 def p_functionmain(p):
     '''
-      functionmain : MAIN seen_function_main LEFTPARENTHESES RIGHTPARENTHESES bloque
+      functionmain : MAIN seen_function_main LEFTPARENTHESES RIGHTPARENTHESES bloque seen_end_program
       '''
+
+
+def p_seen_end_program(p):
+    "seen_end_program : "
+    compilerManager.handleEndOfProgram()
 
 
 def p_seen_function_main(p):
     "seen_function_main : "
     programName = p[-1]
     compilerManager.setCurrentFunction(programName)
-    compilerManager.addFunctionToDir(programName, Scope.LOCAL, 'Main')
+    compilerManager.addFunctionToDir(programName, Scope.MAIN, 'Main')
     compilerManager.fillQuad(1, compilerManager.quadrupleCounter)
 
 
@@ -439,8 +454,22 @@ def p_seen_ID_params(p):
 
 def p_bloque(p):
     '''
-      bloque : LEFTBRACE vars seen_start_bloqueaux bloqueaux RIGHTBRACE
+      bloque : LEFTBRACE seen_start_bloqueaux vars bloqueaux returnaux RIGHTBRACE
     '''
+
+
+def p_returnaux(p):
+    '''
+      returnaux : RETURN expresion seen_return_function SEMICOLON
+                |
+    '''
+
+
+def p_seen_return_function(p):
+    '''
+      seen_return_function :
+    '''
+    compilerManager.handleReturnFunction()
 
 
 def p_seen_start_bloqueaux(p):
@@ -470,7 +499,7 @@ def p_estatuto(p):
 
 def p_asignacion(p):
     '''
-      asignacion : varcte EQUALS seen_equals expresion seen_final_asignacion SEMICOLON
+      asignacion : varcte ASIGNATION seen_equals expresion seen_final_asignacion SEMICOLON
       '''
 
 
@@ -501,6 +530,7 @@ def p_expresionaux(p):
       expresionaux : GREATERTHAN seen_operador
                 | LESSTHAN seen_operador
                 | NOTEQUALS seen_operador
+                | EQUALS seen_operador
                 |
       '''
 
@@ -701,11 +731,14 @@ def p_functionCall(p):
     '''
 
 
+
 def p_seen_fCall_id(p):
     '''
         seen_fCall_id : 
     '''
     functionName = p[-1]
+    print(functionName)
+
     compilerManager.handleFunctionCall(functionName)
 
 
@@ -774,7 +807,7 @@ print("2-Input code manually")
 print('sCOPE', Scope.GLOBAL)
 option = input("Option : ")
 if option == "1":
-    file = open("C:/Users/Moi/Documents/GitHub/CompiMoi/test.txt").read()
+    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
     parser.parse(file)
     print('operandos: ', compilerManager.operandsStack)
     print('compilerManager.quadruples: ', compilerManager.quadruples)
@@ -782,7 +815,7 @@ if option == "1":
     print('pila tipos :', compilerManager.typesStack)
 elif option == "2":
     file = open(
-        "C:/Users/Moi/Documents/GitHub/CompiMoi/test2.txt").read()
+        "/Users/moiseslopez/Documents/compi2s2/CompiMoi/test2.txt").read()
     parser.parse(file)
     print('operandos: ', compilerManager.operandsStack)
     print('compilerManager.quadruples: ', compilerManager.quadruples)
@@ -790,19 +823,21 @@ elif option == "2":
     print('pila tipos :', compilerManager.typesStack)
 elif option == "3":
     file = open(
-        "C:/Users/Moi/Documents/GitHub/CompiMoi/test3.txt").read()
+        "/Users/moiseslopez/Documents/compi2s2/CompiMoi/test3.txt").read()
     parser.parse(file)
     print('operandos: ', compilerManager.operandsStack)
     cont = 0
     for cuadruplo in compilerManager.quadruples:
         print(cont, cuadruplo)
         cont += 1
-    print('compilerManager.quadruples: ', compilerManager.quadruples)
     print('directorio funciones: ', compilerManager.functionDirectory)
     print('pila tipos :', compilerManager.typesStack)
+    print('pila operandos:', compilerManager.operandsStack)
+    print('pila typos:', compilerManager.typesStack)
     compilerManager.paramsVm.printParamsVm()
     virtualMachineManager.init(
         compilerManager.quadruples, compilerManager.paramsVm)
+    virtualMachineManager.run()
 
 else:
     while True:

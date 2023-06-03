@@ -6,6 +6,7 @@ class Scope(str, Enum):
     LOCAL = 'Local',
     TEMPORAL = 'Temporal',
     CONSTANT = 'Constant'
+    MAIN = 'Main'
 
     def __str__(self):
         return self.value

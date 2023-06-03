@@ -9,7 +9,8 @@ class QuadOperator(str, Enum):
     PRINT = 'PRINT',
     ERA = 'ERA',
     PARAMETER = 'PARAMETER',
-    GOSUB = 'GOSUB'
+    GOSUB = 'GOSUB',
+    END = 'END'
 
     def __str__(self):
         return self.value

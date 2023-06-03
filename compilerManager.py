@@ -36,10 +36,15 @@ class CompilerManager:
             'varsTable': {},
             'size': {Scope.LOCAL: {'int': 0, 'float': 0, 'boolean': 0},
                      Scope.TEMPORAL: {'int': 0, 'float': 0, 'boolean': 0, 'total': 0},
-                     Scope.GLOBAL: {'int': 0, 'float': 0, 'boolean': 0}
+                     Scope.GLOBAL: {'int': 0, 'float': 0, 'boolean': 0},
+                     Scope.MAIN: {'int': 0, 'float': 0, 'boolean': 0},
                      }
         }
-        self.paramsVm.initFunctionSize(functionName)
+        if(type == 'Function'):
+            self.paramsVm.initFunctionSize(functionName)
+            if(self.currentType != VarType.VOID):
+                self.addVariableToVarTable(functionName, False)
+
         if (type == 'Program'):
             self.addQuadruple(QuadOperator.GOTO, '', '', '')
 
@@ -53,7 +58,9 @@ class CompilerManager:
         self.quadrupleCounter += 1
         leftOperandAddress = self.getOperandAddress(leftOperand)
         rightOperandAddress = self.getOperandAddress(rightOperand)
-        resultAddress = self.getOperandAddress(result)
+        resultAddress = result
+        if operator != QuadOperator.ERA:
+            resultAddress = self.getOperandAddress(result)
 
         self.quadruples.append(
             [operator, leftOperandAddress, rightOperandAddress, resultAddress])
@@ -143,7 +150,6 @@ class CompilerManager:
         scope = self.functionDirectory[self.currentFunction]['scope']
         address = self.virtualMemoryManager.getNextAddressAvailable(
             scope, self.currentType)
-
         self.addTypeAndAddressToVar(self.currentType, address)
         self.incrementVariableCounter(scope, self.currentType)
         self.paramsVm.addToFunctionSize(
@@ -166,8 +172,22 @@ class CompilerManager:
     def endFunction(self):
         # dirFuncionesDict[currentFunction]['varsTable'] = {} DESCOMENTAR, POR EL MOMENTO LO DEJO ASí PARA LOGGEARLO AL FINAL
         self.virtualMemoryManager.dumpLocalVirtualMemory()
-
         self.addQuadruple(QuadOperator.ENDFUNC, '', '', '')
+
+    def handleReturnFunction(self):
+        type = self.typesStack.pop()
+        print(self.functionDirectory[self.programName]['varsTable'])
+        expectedType = VarType.VOID
+        if self.currentFunction in self.functionDirectory[self.programName]['varsTable']:
+            expectedType = self.functionDirectory[self.programName]['varsTable'][self.currentFunction]['type']
+        if expectedType == VarType.VOID:
+            print('FUNCTION SHOULD NO RETURN ANYTHING')#TODO: HANDLE ERROR
+        print('types handle return', type, expectedType)
+        if type != expectedType:
+            print('ERROR TYPE MISMATCH') #TODO: HANDLE ERROR
+        leftOperand = self.operandsStack.pop()
+
+        self.addQuadruple('=', leftOperand, '', self.currentFunction)
 
     def fillQuad(self, quadToFill, valueToFill):
         self.quadruples[quadToFill][3] = valueToFill
@@ -176,6 +196,8 @@ class CompilerManager:
         self.functionDirectory[self.currentFunction]['paramsTable'] = []
 
     def addFunctionStartAddress(self):
+        if 'addressStart' in self.functionDirectory[self.currentFunction]:
+            return
         self.functionDirectory[self.currentFunction]['addressStart'] = self.quadrupleCounter
 
     def addOperatorToStack(self, operator):
@@ -357,9 +379,16 @@ class CompilerManager:
         self.addQuadruple(QuadOperator.GOSUB, functionCalled, '',
                           self.functionDirectory[functionCalled]['addressStart'])
 
+        if(functionCalled in self.functionDirectory[self.programName]['varsTable']):
+            type = self.functionDirectory[self.programName]['varsTable'][functionCalled]['type']
+            result = self.nextAvail(type)
+            self.addQuadruple('=', functionCalled, '', result)
+
     def nextAvail(self, type):
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL][type] += 1
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL]['total'] += 1
+        scope = self.functionDirectory[self.currentFunction]['scope']
+
         varId = 't' + \
             str(self.functionDirectory[self.currentFunction]
                 ['size'][Scope.TEMPORAL]['total'])
@@ -367,5 +396,8 @@ class CompilerManager:
         address = self.virtualMemoryManager.getNextAddressAvailable(
             Scope.TEMPORAL, type)
         self.addTypeAndAddressToVar(type, address)
-        self.paramsVm.addToFunctionSize('', self.currentFunction, 1, [address])
+        self.paramsVm.addToFunctionSize(scope, self.currentFunction, 1, [address])
         return varId
+
+    def handleEndOfProgram(self):
+        self.addQuadruple(QuadOperator.END, '', '', '')

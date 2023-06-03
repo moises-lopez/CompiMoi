@@ -71,6 +71,16 @@ class SemanticCube:
                     'float': 'boolean'
                 }
             },
+            '==': {
+                'float': {
+                    'int': 'boolean',
+                    'float': 'boolean'
+                },
+                'int': {
+                    'int': 'boolean',
+                    'float': 'boolean'
+                }
+            },
         }
 
     def getResultType(self, rightType, leftType, operator):
