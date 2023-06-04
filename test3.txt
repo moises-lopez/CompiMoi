@@ -1,15 +1,5 @@
 Programa patito;
-
-Function void uno(int i){
-    while(i < 10){
-        i = i + 1;
-    };
-    print(i);
-}
-
-
+var int A[1 10, 0 1], b;
 
 Main(){
-    var int a;
-    uno(1);
 }

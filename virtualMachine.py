@@ -44,10 +44,11 @@ class VirtualMachine:
 
             if operator == QuadOperator.PRINT:
                 value = self.executionMemory.getValueOfAddress(result)
-                print(value)
+                print('PRINTING', value)
 
             if operator == QuadOperator.GOSUB:
                 self.instructionPointerStack.append(self.instructionPointer)
+                self.executionMemory.incrementCurrentLocalMemoryPointer()
                 self.instructionPointer = result
 
             if operator == QuadOperator.ERA:
@@ -89,6 +90,16 @@ class VirtualMachine:
             if operator == '<':
                 leftValue, rightValue = self.getValuesOfAddresses(leftOperand, rightOperand)
                 tempResult = leftValue < rightValue
+                self.executionMemory.setValueToAddress(tempResult, result)
+
+            if operator == '<=':
+                leftValue, rightValue = self.getValuesOfAddresses(leftOperand, rightOperand)
+                tempResult = leftValue <= rightValue
+                self.executionMemory.setValueToAddress(tempResult, result)
+
+            if operator == '==':
+                leftValue, rightValue = self.getValuesOfAddresses(leftOperand, rightOperand)
+                tempResult = leftValue == rightValue
                 self.executionMemory.setValueToAddress(tempResult, result)
 
             if operator == '=':

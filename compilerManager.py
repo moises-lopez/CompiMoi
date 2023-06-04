@@ -138,6 +138,18 @@ class CompilerManager:
         self.K = offset
         self.functionDirectory[self.currentFunction][
             'varsTable'][self.currentVarId]['dimentionNodes'][self.DIM - 2]['m'] = self.K * -1
+        scope = self.functionDirectory[self.currentFunction]['scope']
+
+        arrayAddresses = self.getAddressesOfAnArray(scope, size - 1, self.currentType)
+        self.paramsVm.updateVariableFunctionSize(scope, self.currentFunction, size - 1, arrayAddresses)
+
+    def getAddressesOfAnArray(self, scope, size, type):
+        arrayAddresses = []
+        print(scope, type)
+        for cont in range(size):
+            arrayAddresses.append(self.virtualMemoryManager.getNextAddressAvailable(scope, type))
+            print(arrayAddresses)
+        return arrayAddresses
 
     def addVariableToVarTable(self, varId, isParam):
         self.currentVarId = varId
@@ -182,7 +194,6 @@ class CompilerManager:
             expectedType = self.functionDirectory[self.programName]['varsTable'][self.currentFunction]['type']
         if expectedType == VarType.VOID:
             print('FUNCTION SHOULD NO RETURN ANYTHING')#TODO: HANDLE ERROR
-        print('types handle return', type, expectedType)
         if type != expectedType:
             print('ERROR TYPE MISMATCH') #TODO: HANDLE ERROR
         leftOperand = self.operandsStack.pop()
@@ -223,7 +234,6 @@ class CompilerManager:
 
     def handleConditionStart(self):
         typeExpected = self.typesStack.pop()
-
         if (typeExpected != VarType.BOOLEAN):
             print('ERROR MISMATCH IN CONDITION')  # TODO: HANDLE ERROR
         else:
@@ -311,7 +321,7 @@ class CompilerManager:
         if (len(self.operatorsStack) == 0):
             return
 
-        if self.operatorsStack[-1] == '>' or self.operatorsStack[-1] == '<' or self.operatorsStack[-1] == '!=' or self.operatorsStack[-1] == '==':  # TODO: IMPROVE
+        if self.operatorsStack[-1] == '>' or self.operatorsStack[-1] == '<' or self.operatorsStack[-1] == '!=' or self.operatorsStack[-1] == '==' or self.operatorsStack[-1] == '<=':  # TODO: IMPROVE
             rightOperand = self.operandsStack.pop()
             leftOperand = self.operandsStack.pop()
             rightType = self.typesStack.pop()
@@ -346,12 +356,15 @@ class CompilerManager:
         self.fillQuad(end, self.quadrupleCounter)
 
     def handleFunctionCall(self, functionName):
+        self.operatorsStack.append('(')
+
         if functionName not in self.functionDirectory:
             print('ERROR FUNCTION NOT DECLARED')  # TODO: HANDLE ERRO
         self.functionCallStack.append(functionName)
 
     def handleFunctionCallJump(self, functionName):
         self.addQuadruple(QuadOperator.ERA, '', '', functionName)
+
 
     def handleFunctionParameter(self):
         argument = self.operandsStack.pop()
@@ -382,7 +395,12 @@ class CompilerManager:
         if(functionCalled in self.functionDirectory[self.programName]['varsTable']):
             type = self.functionDirectory[self.programName]['varsTable'][functionCalled]['type']
             result = self.nextAvail(type)
+            self.operandsStack.append(result)
+            self.typesStack.append(type)
             self.addQuadruple('=', functionCalled, '', result)
+
+        if self.operatorsStack[-1] == '(':
+            self.operatorsStack.pop()
 
     def nextAvail(self, type):
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL][type] += 1

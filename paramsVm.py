@@ -30,6 +30,18 @@ class ParamsVm:
             self.FunctionsSize[functionName]['arrayAddresses'].extend(
                 addresses)
 
+    def updateVariableFunctionSize(self, scope, functionName, size, addresses):
+        if (scope == Scope.GLOBAL):
+            self.GlobalSize['size'] += size
+            self.GlobalSize['arrayAddresses'].extend(addresses)
+        elif (scope == Scope.MAIN):
+            self.MainSize['size'] += size
+            self.MainSize['arrayAddresses'].extend(addresses)
+        else:
+            self.FunctionsSize[functionName]['size'] += size
+            self.FunctionsSize[functionName]['arrayAddresses'].extend(
+                addresses)
+
     def printParamsVm(self):
         print('GlobalSize', self.GlobalSize)
         print('FunctionsSize', self.FunctionsSize)

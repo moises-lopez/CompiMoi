@@ -14,30 +14,35 @@ class ExecutionMemory:
         self.globalMemory = globalMemoryContext
         self.localMemory = [mainMemoryContext]
         self.constantTable = paramsVm.Constants['constantDictionary']
+        self.currentLocalMemoryPointer = 0
         print(self.localMemory)
 
     def addLocalMemory(self, functionMemoryData):
-        print('before', self.localMemory)
         functionMemoryContext = {}
         for address in functionMemoryData['arrayAddresses']:
             functionMemoryContext[address] = None
 
         self.localMemory.append(functionMemoryContext)
-        print('after', self.localMemory)
-        print('/////////')
 
 
     def setValueToAddress(self, value, address):
-        currentFunctionContext = self.localMemory[-1]
+        currentFunctionContext = self.localMemory[self.currentLocalMemoryPointer]
         if address in currentFunctionContext:
+            self.localMemory[self.currentLocalMemoryPointer][address] = value
+            return
+        self.globalMemory[address] = value
+
+    def setValueToParameterAddress(self, value, address):
+        parameterFunctionContext = self.localMemory[-1]
+        if address in parameterFunctionContext:
             self.localMemory[-1][address] = value
             return
         self.globalMemory[address] = value
 
     def getValueOfAddress(self, address):
-        currentFunctionContext = self.localMemory[-1]
+        currentFunctionContext = self.localMemory[self.currentLocalMemoryPointer]
         if address in currentFunctionContext:
-            value = self.localMemory[-1][address]
+            value = self.localMemory[self.currentLocalMemoryPointer][address]
         elif address in self.globalMemory:
             value = self.globalMemory[address]
         else:
@@ -53,7 +58,11 @@ class ExecutionMemory:
                 break
             cont += 1
 
-        self.setValueToAddress(value, targetAddress)
+        self.setValueToParameterAddress(value, targetAddress)
 
     def freeCurrentLocalMemory(self):
         self.localMemory.pop()
+        self.currentLocalMemoryPointer -= 1
+
+    def incrementCurrentLocalMemoryPointer(self):
+        self.currentLocalMemoryPointer = len(self.localMemory) - 1

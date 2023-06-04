@@ -34,6 +34,7 @@ tokens = [
     'LEFTBRACKET',
     'RIGHTBRACKET',
     'LESSTHAN',
+    'LESSTHANOREQUALS',
     'GREATERTHAN',
     'NOTEQUAL',
     'THREEDOTS',
@@ -75,6 +76,7 @@ t_RIGHTPARENTHESES = r'\)'
 t_LEFTBRACE = r'\{'
 t_RIGHTBRACE = r'\}'
 t_LESSTHAN = r'\<'
+t_LESSTHANOREQUALS = r'\<\='
 t_GREATERTHAN = r'\>'
 t_NOTEQUALS = r'\!\='
 t_LEFTBRACKET = r'\['
@@ -492,7 +494,7 @@ def p_estatuto(p):
               | condicion
               | escritura
               | while
-              | functionCall
+              | functionCall SEMICOLON
 
       '''
 
@@ -529,6 +531,7 @@ def p_expresionaux(p):
     '''
       expresionaux : GREATERTHAN seen_operador
                 | LESSTHAN seen_operador
+                | LESSTHANOREQUALS seen_operador
                 | NOTEQUALS seen_operador
                 | EQUALS seen_operador
                 |
@@ -607,6 +610,7 @@ def p_seen_right_parentheses_condicion(p):
     '''
         seen_right_parentheses_condicion :
       '''
+    print('seen_right_parentheses_condicion')
     compilerManager.handleConditionStart()
 
 
@@ -642,7 +646,7 @@ def p_varcte(p):
         varcte : ID seen_ID
                     | INT_CTE seen_CTE_INT
                     | FLOAT_CTE seen_CTE_FLOAT
-
+                    | functionCall
       '''
 
 
@@ -680,6 +684,7 @@ def p_seen_ID(p):
 def p_seen_operador(p):
     "seen_operador :"
     operator = p[-1]
+    print('operator seen', operator)
     compilerManager.addOperatorToStack(operator)
 
 
@@ -695,6 +700,7 @@ def p_seen_factor(p):
 
 def p_seen_comparacion(p):
     "seen_comparacion :"
+
     compilerManager.handleComparation()
 
 
@@ -727,7 +733,7 @@ def p_seen_end_while(p):
 
 def p_functionCall(p):
     '''
-        functionCall : ID seen_fCall_id LEFTPARENTHESES seen_leftp_fCall paramsFunctionCall seen_end_paramsFCall RIGHTPARENTHESES seen_rightp_fCall SEMICOLON
+        functionCall : AT ID seen_fCall_id LEFTPARENTHESES seen_leftp_fCall paramsFunctionCall seen_end_paramsFCall RIGHTPARENTHESES seen_rightp_fCall
     '''
 
 
@@ -737,7 +743,6 @@ def p_seen_fCall_id(p):
         seen_fCall_id : 
     '''
     functionName = p[-1]
-    print(functionName)
 
     compilerManager.handleFunctionCall(functionName)
 
