@@ -24,3 +24,8 @@ Quinto Avance\
 Se terminó generación de código de módulos y de estatutos no lineales\
 Se hizo primer draft de memoria virtual que está funcionando\
 Se toman en cuenta constantes y se guardan en memoria virtual, se usa su dirección para operaciones
+
+Sexto Avance\
+Se terminó máquina virtual para expresiones, estatutos no lineales, functiones\
+Se agregó acceso y declaración de Arrays\
+Se terminó memoria de execución dise;o
