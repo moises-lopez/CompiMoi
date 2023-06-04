@@ -15,6 +15,8 @@ class CompilerManager:
         self.operandsStack = []
         self.typesStack = []
         self.jumpsStack = []
+        self.dimentionsStack = []
+        self.currentDimentionNode = []
         self.currentFunction = ''
         self.currentVarTable = ''
         self.currentType = ''
@@ -145,10 +147,8 @@ class CompilerManager:
 
     def getAddressesOfAnArray(self, scope, size, type):
         arrayAddresses = []
-        print(scope, type)
         for cont in range(size):
             arrayAddresses.append(self.virtualMemoryManager.getNextAddressAvailable(scope, type))
-            print(arrayAddresses)
         return arrayAddresses
 
     def addVariableToVarTable(self, varId, isParam):
@@ -258,6 +258,12 @@ class CompilerManager:
         self.operandsStack.append(address)
         self.typesStack.append(type)
         self.paramsVm.addConstant(constant, address)
+
+    def handleConstantNotOperand(self, constant):
+        address = self.virtualMemoryManager.setConstantInVirtualMemory(
+            str(constant))
+        self.paramsVm.addConstant(constant, address)
+        return address
 
     def endOfExpresionParentheses(self):
         if (self.operandsStack[-1] != '('):  # TODO: IMPROVE
@@ -401,6 +407,8 @@ class CompilerManager:
 
         if self.operatorsStack[-1] == '(':
             self.operatorsStack.pop()
+        else:
+            print('ERROR FUNCTION CALL') #TODO: HANDLE ERROR
 
     def nextAvail(self, type):
         self.functionDirectory[self.currentFunction]['size'][Scope.TEMPORAL][type] += 1
@@ -419,3 +427,77 @@ class CompilerManager:
 
     def handleEndOfProgram(self):
         self.addQuadruple(QuadOperator.END, '', '', '')
+
+    def handleInitArrayAccessing(self):
+        varId = self.operandsStack.pop()
+        type = self.typesStack.pop()
+
+        if varId not in self.functionDirectory[self.currentFunction]['varsTable'] and varId not in self.functionDirectory[self.programName]['varsTable']:
+            print('NOT POSSIBLE TO ACCESS THIS ARRAY') #TODO: HANDLE ERROR
+        self.DIM = 1
+        self.dimentionsStack.append({'varId': varId, 'DIM': self.DIM})
+        self.operatorsStack.append('(')
+
+    def handleSeenExpresionArray(self):
+        currentDimention = self.dimentionsStack[-1]['DIM']
+        currentVarId = self.dimentionsStack[-1]['varId']
+        currentDimentionNode = self.getArrayDimentionNode(currentVarId, currentDimention)
+        lowerLimit = currentDimentionNode['lowerLimit']
+        upperLimit = currentDimentionNode['upperLimit']
+        m = currentDimentionNode['m']
+
+        self.addQuadruple(QuadOperator.VERIFY, self.operandsStack[-1], lowerLimit, upperLimit)
+        if not currentDimentionNode['isFinal']:
+            aux = self.operandsStack.pop()
+            result = self.nextAvail(VarType.INT)
+            self.addQuadruple('*', aux, m, result)
+            self.operandsStack.append(result)
+        if currentDimention > 1:
+            aux2 = self.operandsStack.pop()
+            aux1 = self.operandsStack.pop()
+            result = self.nextAvail(VarType.INT)
+            self.addQuadruple('+', aux1, aux2, result)
+            self.operandsStack.append(result)
+
+    def handleIncrementCurrentArrayDimention(self):
+        self.dimentionsStack[-1]['DIM'] += 1
+
+    def handleEndArrayAccessing(self):
+        currentDimention = self.dimentionsStack[-1]['DIM']
+        currentVarId = self.dimentionsStack[-1]['varId']
+        currentDimentionNode = self.getArrayDimentionNode(currentVarId, currentDimention)
+        aux1 = self.operandsStack.pop()
+        result = self.nextAvail(VarType.INT)
+        result2 = self.nextAvail(VarType.INT)
+        K = currentDimentionNode['m']
+
+        initialAddress = self.getInitialAddressOfAnArray(currentVarId)
+        self.addQuadruple('+', aux1, K, result)
+        self.addQuadruple('+', result, initialAddress, result2)
+        self.operandsStack.append('(' + result2 + ')')
+
+        if self.operatorsStack[-1] == '(':
+            self.operatorsStack.pop()
+        else:
+            print('ERROR ARRAY ACCESS') #TODO: HANDLE ERROR
+
+        self.dimentionsStack.pop()
+
+    def getArrayDimentionNode(self, varId, dimention):
+        dimention -= 1
+        if varId in self.functionDirectory[self.currentFunction]['varsTable']:
+            dimentionNode = self.functionDirectory[self.currentFunction]['varsTable'][varId]['dimentionNodes'][dimention]
+            if len(self.functionDirectory[self.currentFunction]['varsTable'][varId]['dimentionNodes']) <= dimention + 1:
+                dimentionNode['isFinal'] = True
+        else:
+            dimentionNode = self.functionDirectory[self.programName]['varsTable'][varId]['dimentionNodes'][dimention]
+            if len(self.functionDirectory[self.programName]['varsTable'][varId]['dimentionNodes']) <= dimention + 1:
+                dimentionNode['isFinal'] = True
+
+        return dimentionNode
+
+    def getInitialAddressOfAnArray(self, varId):
+        if varId in self.functionDirectory[self.currentFunction]['varsTable']:
+            return self.functionDirectory[self.currentFunction]['varsTable'][varId]['address']
+        elif varId in self.functionDirectory[self.programName]['varsTable']:
+            return self.functionDirectory[self.programName]['varsTable'][varId]['address']

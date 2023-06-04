@@ -61,6 +61,8 @@ class VirtualMemory:
         self.constantCounter = 0
 
     def setConstantInVirtualMemory(self, constantId):
+        if constantId in self.virtualMemoryObject[Scope.CONSTANT]:
+            return self.virtualMemoryObject[Scope.CONSTANT][constantId]
         address = self.getNextAddressAvailable(Scope.CONSTANT, '')
         self.virtualMemoryObject[Scope.CONSTANT][constantId] = address
         return address

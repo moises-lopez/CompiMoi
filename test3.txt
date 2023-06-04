@@ -1,5 +1,6 @@
 Programa patito;
-var int A[1 10, 0 1], b;
+var int A[1 10], b;
 
 Main(){
+    A[1] = 1;
 }

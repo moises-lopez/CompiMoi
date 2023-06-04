@@ -272,6 +272,41 @@ def p_idOrArrayDeclaration(p):
                             | ID seen_ID_var LEFTBRACKET seen_lBracket_array arrayDimesionAux RIGHTBRACKET seen_rBracket_array
     '''
 
+def p_arrayAccesing(p):
+    '''
+        arrayAccesing : ID seen_ID LEFTBRACKET seen_initArrayAccesing arrayAccesingExpresionAux RIGHTBRACKET seen_endArrayAccesing
+    '''
+
+def p_arrayAccesingExpresionAux(p):
+    '''
+        arrayAccesingExpresionAux : expresion seen_expresion_array
+                            | expresion seen_expresion_array COMMA seen_commaAccesingExpresion
+    '''
+
+
+def p_seen_initArrayAccesing(p):
+    '''
+        seen_initArrayAccesing :
+    '''
+    compilerManager.handleInitArrayAccessing()
+
+def p_seen_expresion_array(p):
+    '''
+        seen_expresion_array :
+    '''
+    compilerManager.handleSeenExpresionArray()
+
+def p_seen_commaAccesingExpresion(p):
+    '''
+        seen_commaAccesingExpresion :
+    '''
+    compilerManager.handleIncrementCurrentArrayDimention()
+
+def p_seen_endArrayAccesing(p):
+    '''
+        seen_endArrayAccesing :
+    '''
+    compilerManager.handleEndArrayAccessing()
 
 def p_arrayDimesionAux(p):
     '''
@@ -647,6 +682,7 @@ def p_varcte(p):
                     | INT_CTE seen_CTE_INT
                     | FLOAT_CTE seen_CTE_FLOAT
                     | functionCall
+                    | arrayAccesing
       '''
 
 

@@ -12,6 +12,8 @@ class ParamsVm:
         self.Constants = {'size': 0, 'constantDictionary': {}}
 
     def addConstant(self, value, address):
+        if address in self.Constants['constantDictionary']:
+            return
         self.Constants['constantDictionary'][address] = value
         self.Constants['size'] += 1
 

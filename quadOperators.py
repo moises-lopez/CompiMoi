@@ -11,6 +11,7 @@ class QuadOperator(str, Enum):
     PARAMETER = 'PARAMETER',
     GOSUB = 'GOSUB',
     END = 'END'
+    VERIFY = 'VERIFY'
 
     def __str__(self):
         return self.value
