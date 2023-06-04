@@ -280,7 +280,7 @@ def p_arrayAccesing(p):
 def p_arrayAccesingExpresionAux(p):
     '''
         arrayAccesingExpresionAux : expresion seen_expresion_array
-                            | expresion seen_expresion_array COMMA seen_commaAccesingExpresion
+                            | expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
     '''
 
 

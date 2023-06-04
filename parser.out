@@ -25,7 +25,7 @@ Rule 10    idOrArrayDeclaration -> ID seen_ID_var
 Rule 11    idOrArrayDeclaration -> ID seen_ID_var LEFTBRACKET seen_lBracket_array arrayDimesionAux RIGHTBRACKET seen_rBracket_array
 Rule 12    arrayAccesing -> ID seen_ID LEFTBRACKET seen_initArrayAccesing arrayAccesingExpresionAux RIGHTBRACKET seen_endArrayAccesing
 Rule 13    arrayAccesingExpresionAux -> expresion seen_expresion_array
-Rule 14    arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion
+Rule 14    arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
 Rule 15    seen_initArrayAccesing -> <empty>
 Rule 16    seen_expresion_array -> <empty>
 Rule 17    seen_commaAccesingExpresion -> <empty>
@@ -184,7 +184,7 @@ error                :
 Nonterminals, with rules where they appear
 
 arrayAccesing        : 99
-arrayAccesingExpresionAux : 12
+arrayAccesingExpresionAux : 12 14
 arrayDimesionAux     : 11 20
 asignacion           : 56
 bloque               : 34 37 86 87 109
@@ -2085,7 +2085,7 @@ state 129
 
     (12) arrayAccesing -> ID seen_ID LEFTBRACKET seen_initArrayAccesing . arrayAccesingExpresionAux RIGHTBRACKET seen_endArrayAccesing
     (13) arrayAccesingExpresionAux -> . expresion seen_expresion_array
-    (14) arrayAccesingExpresionAux -> . expresion seen_expresion_array COMMA seen_commaAccesingExpresion
+    (14) arrayAccesingExpresionAux -> . expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
     (64) expresion -> . exp seen_comparacion
     (65) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
     (78) exp -> . termino seen_termino
@@ -2429,7 +2429,7 @@ state 151
 state 152
 
     (13) arrayAccesingExpresionAux -> expresion . seen_expresion_array
-    (14) arrayAccesingExpresionAux -> expresion . seen_expresion_array COMMA seen_commaAccesingExpresion
+    (14) arrayAccesingExpresionAux -> expresion . seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
     (16) seen_expresion_array -> .
 
     COMMA           reduce using rule 16 (seen_expresion_array -> .)
@@ -2744,7 +2744,7 @@ state 170
 state 171
 
     (13) arrayAccesingExpresionAux -> expresion seen_expresion_array .
-    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array . COMMA seen_commaAccesingExpresion
+    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array . COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
 
     RIGHTBRACKET    reduce using rule 13 (arrayAccesingExpresionAux -> expresion seen_expresion_array .)
     COMMA           shift and go to state 185
@@ -2961,10 +2961,14 @@ state 184
 
 state 185
 
-    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA . seen_commaAccesingExpresion
+    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA . seen_commaAccesingExpresion arrayAccesingExpresionAux
     (17) seen_commaAccesingExpresion -> .
 
-    RIGHTBRACKET    reduce using rule 17 (seen_commaAccesingExpresion -> .)
+    LEFTPARENTHESES reduce using rule 17 (seen_commaAccesingExpresion -> .)
+    ID              reduce using rule 17 (seen_commaAccesingExpresion -> .)
+    INT_CTE         reduce using rule 17 (seen_commaAccesingExpresion -> .)
+    FLOAT_CTE       reduce using rule 17 (seen_commaAccesingExpresion -> .)
+    AT              reduce using rule 17 (seen_commaAccesingExpresion -> .)
 
     seen_commaAccesingExpresion    shift and go to state 192
 
@@ -3058,16 +3062,47 @@ state 191
 
 state 192
 
-    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion .
+    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion . arrayAccesingExpresionAux
+    (13) arrayAccesingExpresionAux -> . expresion seen_expresion_array
+    (14) arrayAccesingExpresionAux -> . expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
+    (64) expresion -> . exp seen_comparacion
+    (65) expresion -> . exp seen_comparacion expresionaux exp seen_comparacion
+    (78) exp -> . termino seen_termino
+    (79) exp -> . termino seen_termino expaux
+    (82) termino -> . factor seen_factor
+    (83) termino -> . factor seen_factor terminoaux
+    (92) factor -> . factoraux
+    (93) factor -> . varcte
+    (94) factoraux -> . LEFTPARENTHESES seen_insert_fondo expresion RIGHTPARENTHESES seen_remove_fondo
+    (95) varcte -> . ID seen_ID
+    (96) varcte -> . INT_CTE seen_CTE_INT
+    (97) varcte -> . FLOAT_CTE seen_CTE_FLOAT
+    (98) varcte -> . functionCall
+    (99) varcte -> . arrayAccesing
+    (113) functionCall -> . AT ID seen_fCall_id LEFTPARENTHESES seen_leftp_fCall paramsFunctionCall seen_end_paramsFCall RIGHTPARENTHESES seen_rightp_fCall
+    (12) arrayAccesing -> . ID seen_ID LEFTBRACKET seen_initArrayAccesing arrayAccesingExpresionAux RIGHTBRACKET seen_endArrayAccesing
 
-    RIGHTBRACKET    reduce using rule 14 (arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion .)
+    LEFTPARENTHESES shift and go to state 104
+    ID              shift and go to state 76
+    INT_CTE         shift and go to state 77
+    FLOAT_CTE       shift and go to state 78
+    AT              shift and go to state 75
 
+    expresion                      shift and go to state 152
+    arrayAccesingExpresionAux      shift and go to state 197
+    exp                            shift and go to state 99
+    termino                        shift and go to state 100
+    factor                         shift and go to state 101
+    factoraux                      shift and go to state 102
+    varcte                         shift and go to state 103
+    functionCall                   shift and go to state 105
+    arrayAccesing                  shift and go to state 79
 
 state 193
 
     (87) condicionaux -> ELSE seen_else bloque . SEMICOLON seen_end_condicion
 
-    SEMICOLON       shift and go to state 197
+    SEMICOLON       shift and go to state 198
 
 
 state 194
@@ -3139,7 +3174,7 @@ state 196
     AT              shift and go to state 75
 
     expresion                      shift and go to state 169
-    paramsFunctionCall             shift and go to state 198
+    paramsFunctionCall             shift and go to state 199
     exp                            shift and go to state 99
     termino                        shift and go to state 100
     factor                         shift and go to state 101
@@ -3149,6 +3184,13 @@ state 196
     arrayAccesing                  shift and go to state 79
 
 state 197
+
+    (14) arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux .
+
+    RIGHTBRACKET    reduce using rule 14 (arrayAccesingExpresionAux -> expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux .)
+
+
+state 198
 
     (87) condicionaux -> ELSE seen_else bloque SEMICOLON . seen_end_condicion
     (91) seen_end_condicion -> .
@@ -3163,16 +3205,16 @@ state 197
     RETURN          reduce using rule 91 (seen_end_condicion -> .)
     RIGHTBRACE      reduce using rule 91 (seen_end_condicion -> .)
 
-    seen_end_condicion             shift and go to state 199
+    seen_end_condicion             shift and go to state 200
 
-state 198
+state 199
 
     (116) paramsFunctionCall -> expresion seen_parameter_fCall COMMA seen_comma_params_fCall paramsFunctionCall .
 
     RIGHTPARENTHESES reduce using rule 116 (paramsFunctionCall -> expresion seen_parameter_fCall COMMA seen_comma_params_fCall paramsFunctionCall .)
 
 
-state 199
+state 200
 
     (87) condicionaux -> ELSE seen_else bloque SEMICOLON seen_end_condicion .
 

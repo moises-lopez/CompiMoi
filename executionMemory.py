@@ -26,6 +26,8 @@ class ExecutionMemory:
 
 
     def setValueToAddress(self, value, address):
+        if str(address).startswith('*'):
+            address = self.getValueOfAddress(address[1:])
         currentFunctionContext = self.localMemory[self.currentLocalMemoryPointer]
         if address in currentFunctionContext:
             self.localMemory[self.currentLocalMemoryPointer][address] = value
@@ -40,6 +42,9 @@ class ExecutionMemory:
         self.globalMemory[address] = value
 
     def getValueOfAddress(self, address):
+        if str(address).startswith('*'):
+            address = self.getValueOfAddress(address[1:])
+        address = int(address)
         currentFunctionContext = self.localMemory[self.currentLocalMemoryPointer]
         if address in currentFunctionContext:
             value = self.localMemory[self.currentLocalMemoryPointer][address]

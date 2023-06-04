@@ -445,12 +445,14 @@ class CompilerManager:
         lowerLimit = currentDimentionNode['lowerLimit']
         upperLimit = currentDimentionNode['upperLimit']
         m = currentDimentionNode['m']
-
-        self.addQuadruple(QuadOperator.VERIFY, self.operandsStack[-1], lowerLimit, upperLimit)
+        lowerLimitAddress = self.handleConstantNotOperand(lowerLimit)
+        upperLimitAddress = self.handleConstantNotOperand(upperLimit)
+        self.addQuadruple(QuadOperator.VERIFY, self.operandsStack[-1], lowerLimitAddress, upperLimitAddress)
         if not currentDimentionNode['isFinal']:
             aux = self.operandsStack.pop()
             result = self.nextAvail(VarType.INT)
-            self.addQuadruple('*', aux, m, result)
+            mAddress = self.handleConstantNotOperand(m)
+            self.addQuadruple('*', aux, mAddress, result)
             self.operandsStack.append(result)
         if currentDimention > 1:
             aux2 = self.operandsStack.pop()
@@ -470,11 +472,13 @@ class CompilerManager:
         result = self.nextAvail(VarType.INT)
         result2 = self.nextAvail(VarType.INT)
         K = currentDimentionNode['m']
-
+        KAddress = self.handleConstantNotOperand(K)
         initialAddress = self.getInitialAddressOfAnArray(currentVarId)
-        self.addQuadruple('+', aux1, K, result)
-        self.addQuadruple('+', result, initialAddress, result2)
-        self.operandsStack.append('(' + result2 + ')')
+        initialAddressAddress = self.handleConstantNotOperand(initialAddress)
+        self.addQuadruple('+', aux1, KAddress, result)
+        self.addQuadruple('+', result, initialAddressAddress, result2)
+        result2Address = self.getOperandAddress(result2)
+        self.operandsStack.append('*' + str(result2Address))
 
         if self.operatorsStack[-1] == '(':
             self.operatorsStack.pop()
@@ -489,11 +493,14 @@ class CompilerManager:
             dimentionNode = self.functionDirectory[self.currentFunction]['varsTable'][varId]['dimentionNodes'][dimention]
             if len(self.functionDirectory[self.currentFunction]['varsTable'][varId]['dimentionNodes']) <= dimention + 1:
                 dimentionNode['isFinal'] = True
+            else:
+                dimentionNode['isFinal'] = False
         else:
             dimentionNode = self.functionDirectory[self.programName]['varsTable'][varId]['dimentionNodes'][dimention]
             if len(self.functionDirectory[self.programName]['varsTable'][varId]['dimentionNodes']) <= dimention + 1:
                 dimentionNode['isFinal'] = True
-
+            else:
+                dimentionNode['isFinal'] = False
         return dimentionNode
 
     def getInitialAddressOfAnArray(self, varId):

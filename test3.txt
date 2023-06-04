@@ -1,6 +1,28 @@
 Programa patito;
-var int A[1 10], b;
+var int A[0 20];
 
 Main(){
-    A[1] = 1;
+    var boolean found;
+    var int cont;
+    var int objective;
+    A[0] = 123;
+    A[1] = 21;
+    A[2] = 12;
+    A[3] = 64;
+    A[4] = 87;
+    A[5] = 345;
+    A[6] = 55;
+    A[7] = 23;
+    A[8] = 2345;
+    A[9] = 45;
+    A[10] = 123;
+    cont = 0;
+    objective = 87;
+    while(found){
+        if(A[cont] == objective){
+            found = True;
+        };
+        cont = cont + 1;
+    }
+    print(cont);
 }
