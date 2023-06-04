@@ -99,6 +99,9 @@ class SemanticCube:
                 'int': {
                     'int': 'boolean',
                     'float': 'boolean'
+                },
+                'boolean': {
+                    'boolean': 'boolean',
                 }
             },
         }

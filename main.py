@@ -26,7 +26,6 @@ tokens = [
     'ASIGNATION',
     'COMMA',
     'SEMICOLON',
-    'COLON',
     'LEFTPARENTHESES',
     'RIGHTPARENTHESES',
     'LEFTBRACE',
@@ -56,8 +55,6 @@ reserved = {
     'boolean': 'BOOLEAN',
     'read': 'READ',
     'print': 'PRINT',
-    '!=': 'NOTEQUALS',
-    'call': 'CALL'
 }
 
 tokens += reserved.values()
@@ -99,7 +96,7 @@ def t_INT_CTE(t):
 
 
 def t_BOOLEAN_CTE(t):
-    r'\b(true|false)\b'
+    r'\b(True|False)\b'
     return t
 
 
@@ -230,6 +227,12 @@ def p_calc(p):  # falta poner main
      '''
     print('No syntax errors found :)')
 
+def p_vars(p):
+    ''' vars : VAR seen_vars tipo varsAuxDeclaration SEMICOLON vars
+                | empty
+    '''
+
+
 
 def p_modulesaux(p):
     '''
@@ -245,11 +248,6 @@ def p_seen_program(p):
     compilerManager.setCurrentFunction(programName)
     compilerManager.addFunctionToDir(programName, Scope.GLOBAL, 'Program')
 
-
-def p_vars(p):
-    ''' vars : VAR seen_vars tipo varsAuxDeclaration SEMICOLON vars 
-                | empty
-    '''
 
 
 def p_varsAuxDeclaration(p):
@@ -352,15 +350,6 @@ def p_seen_rBracket_array(p):
     '''
     compilerManager.endArrayDeclaration()
 
-
-def p_seen_vars(p):
-    "seen_vars : "
-    # TODO: MAYBE NEEDED
-    # if not ('varsTable' in dirFuncionesDict[currentDirFuncion]):
-    #    dirFuncionesDict[currentDirFuncion]['varsTable'] = {}
-    # if not ('size' in dirFuncionesDict[currentDirFuncion]):
-    #    dirFuncionesDict[currentDirFuncion]['size'] = {'local': {'int': 0, 'float': 0, 'boolean': 0},
-    #                                                   'temporal': {'int': 0, 'float': 0, 'boolean': 0, 'total': 0}}
 
 
 def p_varsaux(p):
@@ -683,6 +672,7 @@ def p_varcte(p):
                     | FLOAT_CTE seen_CTE_FLOAT
                     | functionCall
                     | arrayAccesing
+                    | BOOLEAN_CTE seen_CTE_BOOLEAN
       '''
 
 
@@ -690,6 +680,12 @@ def p_seen_CTE_INT(p):
     "seen_CTE_INT :"
     constant = p[-1]
     compilerManager.handleConstant(constant, VarType.INT)
+
+def p_seen_CTE_BOOLEAN(p):
+    "seen_CTE_BOOLEAN :"
+    constant = p[-1]
+    print('|||||||||||||', constant)
+    compilerManager.handleConstant(constant, VarType.BOOLEAN)
 
 
 def p_seen_CTE_FLOAT(p):

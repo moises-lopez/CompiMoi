@@ -1,28 +1,47 @@
 Programa patito;
-var int A[0 20];
 
 Main(){
-    var boolean found;
-    var int cont;
-    var int objective;
-    A[0] = 123;
-    A[1] = 21;
-    A[2] = 12;
-    A[3] = 64;
-    A[4] = 87;
-    A[5] = 345;
-    A[6] = 55;
-    A[7] = 23;
-    A[8] = 2345;
-    A[9] = 45;
-    A[10] = 123;
-    cont = 0;
-    objective = 87;
-    while(found){
-        if(A[cont] == objective){
-            found = True;
+    var int matrix1[0 2, 0 2], matrix2[0 2, 0 2], resultMatrix[0 2, 0 2], size, i, j, k, sum;
+    size = 3;
+
+
+    matrix1[0, 0] = 1;
+    matrix1[0, 1] = 2;
+    matrix1[0, 2] = 3;
+    matrix1[1, 0] = 4;
+    matrix1[1, 1] = 5;
+    matrix1[1, 2] = 6;
+    matrix1[2, 0] = 7;
+    matrix1[2, 1] = 8;
+    matrix1[2, 2] = 9;
+
+    matrix2[0, 0] = 9;
+    matrix2[0, 1] = 8;
+    matrix2[0, 2] = 7;
+    matrix2[1, 0] = 6;
+    matrix2[1, 1] = 5;
+    matrix2[1, 2] = 4;
+    matrix2[2, 0] = 3;
+    matrix2[2, 1] = 2;
+    matrix2[2, 2] = 1;
+
+    i = 0;
+    while(i < 3){
+        j = 0;
+        while(j < 3){
+            k = 0;
+            sum = 0;
+            while(k < 3){
+                sum = sum + matrix1[i, k] * matrix2[k, j];
+                k = k + 1;
+            };
+            resultMatrix[i, j] = sum;
+            j = j + 1;
         };
-        cont = cont + 1;
-    }
-    print(cont);
+        i = i + 1;
+    };
+    print(99);
+    print(resultMatrix[0,0]);
+    print(resultMatrix[0,1]);
+    print(resultMatrix[0,2]);
 }

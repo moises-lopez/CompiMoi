@@ -35,11 +35,11 @@ class VirtualMachine:
 
             if operator == QuadOperator.GOTOF:
                 value = self.executionMemory.getValueOfAddress(leftOperand)
-                if value == False:
+                if value == False or value == 'False':
                     self.instructionPointer = result
 
             if operator == QuadOperator.GOTOT:
-                if leftOperand == True:
+                if leftOperand == True or value == 'True':
                     self.instructionPointer = result
 
             if operator == QuadOperator.PRINT:
