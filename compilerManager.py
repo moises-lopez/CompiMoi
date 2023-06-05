@@ -188,7 +188,6 @@ class CompilerManager:
 
     def handleReturnFunction(self):
         type = self.typesStack.pop()
-        print(self.functionDirectory[self.programName]['varsTable'])
         expectedType = VarType.VOID
         if self.currentFunction in self.functionDirectory[self.programName]['varsTable']:
             expectedType = self.functionDirectory[self.programName]['varsTable'][self.currentFunction]['type']
