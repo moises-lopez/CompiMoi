@@ -1,12 +1,11 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import sys
-import json
-from virtualMemory import VirtualMemory
-from compilerManager import CompilerManager
-from scopes import Scope
-from varTypes import VarType
-from virtualMachine import VirtualMachine
+from src.virtualMemory import VirtualMemory
+from src.compilerManager import CompilerManager
+from enums.scopes import Scope
+from enums.varTypes import VarType
+from src.virtualMachine import VirtualMachine
 
 virtualMemoryManager = VirtualMemory()
 compilerManager = CompilerManager()
@@ -835,7 +834,7 @@ def p_empty(p):
 parser = yacc.yacc()
 
 
-file = open(sys.argv[1]).read()
+file = open("test/" + sys.argv[1]).read()
 parser.parse(file)
 cont = 0
 for cuadruplo in compilerManager.quadruples:

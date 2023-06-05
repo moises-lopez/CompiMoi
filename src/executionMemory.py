@@ -1,4 +1,4 @@
-from paramsVm import ParamsVm
+from src.paramsVm import ParamsVm
 
 
 class ExecutionMemory:

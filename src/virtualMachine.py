@@ -1,8 +1,6 @@
-from quadOperators import QuadOperator
-from varTypes import VarType
-from virtualMemory import VirtualMemory
-from paramsVm import ParamsVm
-from executionMemory import ExecutionMemory
+from enums.quadOperators import QuadOperator
+from src.paramsVm import ParamsVm
+from src.executionMemory import ExecutionMemory
 
 
 class VirtualMachine:

@@ -1,9 +1,9 @@
-from virtualMemory import VirtualMemory
-from scopes import Scope
-from quadOperators import QuadOperator
-from varTypes import VarType
-from semanticCube import SemanticCube
-from paramsVm import ParamsVm
+from src.virtualMemory import VirtualMemory
+from enums.scopes import Scope
+from enums.quadOperators import QuadOperator
+from enums.varTypes import VarType
+from src.semanticCube import SemanticCube
+from src.paramsVm import ParamsVm
 
 
 class CompilerManager:

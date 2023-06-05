@@ -1,7 +1,4 @@
-from quadOperators import QuadOperator
-from varTypes import VarType
-from virtualMemory import VirtualMemory
-from scopes import Scope
+from enums.scopes import Scope
 
 
 class ParamsVm:

@@ -1,4 +1,4 @@
-from scopes import Scope
+from enums.scopes import Scope
 
 START_GLOBAL_VARS = 0
 START_GLOBAL_VARS_INT = 0
