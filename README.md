@@ -95,40 +95,42 @@ CompiMoi sigue una estructura de programación convencional. Primero se define e
   ```
 
 
+# VIDEODEMO
+https://www.youtube.com/watch?v=kHtoc8P07uk&ab_channel=Mois%C3%A9sL%C3%B3pez
 
   
 
 Para más información favor de consultar sección de sintaxis.
 
-##Bitácora
-###Primer Avance
+Bitácora\
+Primer Avance\
 Se tomó tarea de little duck y se agregaron cosas extras:\
 Sintaxis de funciones, parámetros de funciones, primera parte de arrays.\
 Se cambió la forma que lee un archivo, ya acepta tabuladores, saltos de linea y espacios\
 Por el momento chequea de buena manera el archivo de prueba que se incluye\
 
-###Segundo Avance
+Segundo Avance\
 Se agregó generación de cuádruplos para expresiones\
 Cubo semántico\
 Pila de operadores, operandos, tipos\
 Y mucho research sobre cómo añadir puntos neurálgicos para analizar semánticamente\
 
-###Tercer Avance
+Tercer Avance\
 Se terminó y optimizó directorio de funciones\
 Se agregó reglas semánticas faltantes de módulos y variables globales\
 Se agregaron variables de current_type, current_function etc\
 
-###Cuarto Avance
+Cuarto Avance\
 Se empezó semántica y generación de código de módulos,\
 Se terminó de implemntar directorio de funciones para módulos\
 Research de máquina virtual\
 
-###Quinto Avance
+Quinto Avance\
 Se terminó generación de código de módulos y de estatutos no lineales\
 Se hizo primer draft de memoria virtual que está funcionando\
 Se toman en cuenta constantes y se guardan en memoria virtual, se usa su dirección para operaciones
 
-### Sexto Avance
+Sexto Avance\
 Se terminó máquina virtual para expresiones, estatutos no lineales, functiones\
 Se agregó acceso y declaración de Arrays\
 Se terminó memoria de execución dise;o
