@@ -144,6 +144,14 @@ class CompilerManager:
 
         arrayAddresses = self.getAddressesOfAnArray(scope, size - 1, self.currentType)
         self.paramsVm.updateVariableFunctionSize(scope, self.currentFunction, size - 1, arrayAddresses)
+        self.functionDirectory[self.currentFunction]['varsTable'][self.currentVarId]['size'] = size
+
+    def getArrayAddress(self, varId):
+        if varId in self.functionDirectory[self.currentFunction]['varsTable']:
+            return self.functionDirectory[self.currentFunction]['varsTable'][varId]['size']
+        if varId in self.functionDirectory[self.programName]['varsTable']:
+            return self.functionDirectory[self.programName]['varsTable'][varId]['size']
+        return 1
 
     def getAddressesOfAnArray(self, scope, size, type):
         arrayAddresses = []
@@ -182,7 +190,6 @@ class CompilerManager:
         self.currentType = type
 
     def endFunction(self):
-        # dirFuncionesDict[currentFunction]['varsTable'] = {} DESCOMENTAR, POR EL MOMENTO LO DEJO ASí PARA LOGGEARLO AL FINAL
         self.virtualMemoryManager.dumpLocalVirtualMemory()
         self.addQuadruple(QuadOperator.ENDFUNC, '', '', '')
 
@@ -191,6 +198,8 @@ class CompilerManager:
         expectedType = VarType.VOID
         if self.currentFunction in self.functionDirectory[self.programName]['varsTable']:
             expectedType = self.functionDirectory[self.programName]['varsTable'][self.currentFunction]['type']
+        print(self.functionDirectory[self.programName]['varsTable'])
+        print(expectedType, type)
         if expectedType == VarType.VOID:
             print('FUNCTION SHOULD NO RETURN ANYTHING')#TODO: HANDLE ERROR
         if type != expectedType:
@@ -507,3 +516,23 @@ class CompilerManager:
             return self.functionDirectory[self.currentFunction]['varsTable'][varId]['address']
         elif varId in self.functionDirectory[self.programName]['varsTable']:
             return self.functionDirectory[self.programName]['varsTable'][varId]['address']
+
+    def handleRead(self, varId):
+        self.addQuadruple(QuadOperator.READ, '', '', varId);
+
+    def setCurrentFunctionToProgramName(self):
+        self.currentFunction = self.programName
+
+    def handlePrintMatrix(self):
+        matrix = self.operandsStack.pop()
+        self.typesStack.pop()
+        size = self.getArrayAddress(matrix)
+        initialAddress = self.getInitialAddressOfAnArray(matrix)
+        self.addQuadruple(QuadOperator.PRINTMATRIX, size, initialAddress, '')
+
+    def handleSquareVector(self):
+        matrix = self.operandsStack.pop()
+        self.typesStack.pop()
+        size = self.getArrayAddress(matrix)
+        initialAddress = self.getInitialAddressOfAnArray(matrix)
+        self.addQuadruple(QuadOperator.SQUAREVECTOR, size, initialAddress, '')

@@ -15,7 +15,6 @@ class ExecutionMemory:
         self.localMemory = [mainMemoryContext]
         self.constantTable = paramsVm.Constants['constantDictionary']
         self.currentLocalMemoryPointer = 0
-        print(self.localMemory)
 
     def addLocalMemory(self, functionMemoryData):
         functionMemoryContext = {}
@@ -71,3 +70,15 @@ class ExecutionMemory:
 
     def incrementCurrentLocalMemoryPointer(self):
         self.currentLocalMemoryPointer = len(self.localMemory) - 1
+
+    def printMatrix(self, size, initialAddress):
+        print("|| PRINTING MATRIX ||")
+        for cont in range(size):
+            value = self.getValueOfAddress(initialAddress + cont)
+            print(value)
+        print("|| END PRINTING MATRIX ||")
+
+    def squareVector(self, size, initialAddress):
+        for cont in range(size):
+            value = self.getValueOfAddress(initialAddress + cont)
+            self.setValueToAddress(value * value, initialAddress + cont)

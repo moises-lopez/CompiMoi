@@ -12,6 +12,9 @@ class QuadOperator(str, Enum):
     GOSUB = 'GOSUB',
     END = 'END'
     VERIFY = 'VERIFY'
+    READ = 'READ'
+    PRINTMATRIX = 'PRINTMATRIX'
+    SQUAREVECTOR = 'SQUAREVECTOR'
 
     def __str__(self):
         return self.value

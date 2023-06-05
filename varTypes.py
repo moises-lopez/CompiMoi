@@ -7,6 +7,7 @@ class VarType(str, Enum):
     BOOLEAN = 'boolean',
     CHAR = 'char',
     VOID = 'void',
+    STRING = 'STRING',
 
     def __str__(self):
         return self.value

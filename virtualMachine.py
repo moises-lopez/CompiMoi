@@ -44,7 +44,7 @@ class VirtualMachine:
 
             if operator == QuadOperator.PRINT:
                 value = self.executionMemory.getValueOfAddress(result)
-                print('PRINTING', value)
+                print(value)
 
             if operator == QuadOperator.GOSUB:
                 self.instructionPointerStack.append(self.instructionPointer)
@@ -105,6 +105,18 @@ class VirtualMachine:
             if operator == '=':
                 value = self.executionMemory.getValueOfAddress(leftOperand)
                 self.executionMemory.setValueToAddress(value, result)
+
+            if operator == QuadOperator.READ:
+                value = input()
+                if value.isnumeric():
+                    value = int(value)
+                self.executionMemory.setValueToAddress(value, result)
+
+            if operator == QuadOperator.PRINTMATRIX:
+                self.executionMemory.printMatrix(leftOperand, rightOperand)
+
+            if operator == QuadOperator.SQUAREVECTOR:
+                self.executionMemory.squareVector(leftOperand, rightOperand)
 
             if operator == QuadOperator.END:
                 endOfProgram = True

@@ -1,0 +1,50 @@
+Programa Matrix;
+
+Main(){
+    var int matrix1[0 2, 0 2], matrix2[0 2, 0 2], resultMatrix[0 2, 0 2], size, i, j, k, sum;
+    size = 3;
+
+
+    matrix1[0, 0] = 1;
+    matrix1[0, 1] = 2;
+    matrix1[0, 2] = 3;
+    matrix1[1, 0] = 4;
+    matrix1[1, 1] = 5;
+    matrix1[1, 2] = 6;
+    matrix1[2, 0] = 7;
+    matrix1[2, 1] = 8;
+    matrix1[2, 2] = 9;
+
+    matrix2[0, 0] = 9;
+    matrix2[0, 1] = 8;
+    matrix2[0, 2] = 7;
+    matrix2[1, 0] = 6;
+    matrix2[1, 1] = 5;
+    matrix2[1, 2] = 4;
+    matrix2[2, 0] = 3;
+    matrix2[2, 1] = 2;
+    matrix2[2, 2] = 1;
+
+    i = 0;
+    while(i < size){
+        j = 0;
+        while(j < size){
+            k = 0;
+            sum = 0;
+            while(k < size){
+                sum = sum + matrix1[i, k] * matrix2[k, j];
+                k = k + 1;
+            };
+            resultMatrix[i, j] = sum;
+            j = j + 1;
+        };
+        i = i + 1;
+    };
+    print("MATRIX1:");
+    matrix1.print();
+    print("MATRIX2:");
+    matrix2.print();
+
+    print("MATRIX MULTIPLICATION RESULT");
+    resultMatrix.print();
+}

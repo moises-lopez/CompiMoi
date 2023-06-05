@@ -1,0 +1,36 @@
+Programa FindTest;
+
+Main(){
+    var boolean found;
+    var int cont, objective, index, A[0 10], size;
+
+    A[0] = 10;
+    A[1] = 12;
+    A[2] = 13;
+    A[3] = 16;
+    A[4] = 11;
+    A[5] = 19;
+    A[6] = 30;
+    A[7] = 25;
+    A[8] = 61;
+    A[9] = 123;
+    A[10] = 1235;
+
+    print("VALOR A ENCONTRAR");
+    read(objective);
+
+    size = 10;
+    index = 9999;
+    found = False;
+    cont = 0;
+
+    while(cont <= size){
+        if(objective == A[cont]){
+            found = True;
+            index = cont;
+        };
+        cont = cont + 1;
+    };
+
+    print("ENCONTRADO EN INDEX: ",index);
+}

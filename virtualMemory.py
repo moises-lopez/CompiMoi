@@ -39,9 +39,7 @@ END_CONSTANTS = 4000
 
 class VirtualMemory:
     def __init__(self):
-        self.virtualMemoryObject = {Scope.GLOBAL: {},
-                                    Scope.LOCAL: {}, Scope.TEMPORAL: {}, Scope.CONSTANT: {}}
-        self.virtualMemoryArray = [4000]
+        self.constantDirectory = {}
 
         self.globalIntCounter = 0
         self.globalFloatCounter = 0
@@ -61,44 +59,14 @@ class VirtualMemory:
         self.constantCounter = 0
 
     def setConstantInVirtualMemory(self, constantId):
-        if constantId in self.virtualMemoryObject[Scope.CONSTANT]:
-            return self.virtualMemoryObject[Scope.CONSTANT][constantId]
+        if constantId in self.constantDirectory:
+            return self.constantDirectory[constantId]
         address = self.getNextAddressAvailable(Scope.CONSTANT, '')
-        self.virtualMemoryObject[Scope.CONSTANT][constantId] = address
+        self.constantDirectory[constantId] = address
         return address
 
-    def setVarInVirtualMemory(self, varId, scope, type):
-        address = self.getNextAddressAvailable(scope, type)
-
-        self.virtualMemoryObject[scope][varId] = address
-        return address
-
-    def getConstantOfAddress(self, constantId):
-        address = None
-        address = self.virtualMemoryObject[Scope.LOCAL][constantId]
-        if (not address):
-            address = self.virtualMemoryObject[Scope.GLOBAL][constantId]
-        return address
-
-    def getValueOfAddress(self, address):
-        scope = ''
-        if (address >= START_GLOBAL_VARS & address <= END_GLOBAL_VARS):
-            return Scope.GLOBAL
-        elif (address >= START_LOCAL_VARS & address <= END_LOCAL_VARS):
-            return Scope.LOCAL
-        elif (address >= START_TEMPORAL_VARS & address <= END_TEMPORAL_VARS):
-            return Scope.TEMPORAL
-        elif (address >= START_CONSTANTS & address <= END_CONSTANTS):
-            return Scope.CONSTANT
-
-        return self.virtualMemoryArray[address]
-
-    def getAddressOfConstant(self, constantId):
-        return self.virtualMemoryObject[Scope.CONSTANT][constantId]
 
     def dumpLocalVirtualMemory(self):
-        self.virtualMemoryObject[Scope.LOCAL] = {}
-        self.virtualMemoryObject[Scope.TEMPORAL] = {}
         self.localIntCounter = 0
         self.localFloatCounter = 0
         self.localBooleanCounter = 0
@@ -166,40 +134,5 @@ class VirtualMemory:
             self.constantCounter += 1
             return address
 
-    def setValueToAddress(self, address, value):
-        self.virtualMemoryArray[address] = value
-
-    def getValueOfAddress(self, address, value):
-        return self.virtualMemoryArray[address]
 
 
-def getConstantStartOfAddresses(type, scope):
-    if scope == Scope.GLOBAL:
-        if type == 'int':
-            return START_GLOBAL_VARS_INT
-        elif type == 'float':
-            return START_GLOBAL_VARS_FLOAT
-        elif type == 'boolean':
-            return START_GLOBAL_VARS_BOOLEAN
-        elif type == 'char':
-            return START_GLOBAL_VARS_CHAR
-    elif scope == Scope.LOCAL:
-        if type == 'int':
-            return START_LOCAL_VARS_INT
-        elif type == 'float':
-            return START_LOCAL_VARS_FLOAT
-        elif type == 'boolean':
-            return START_LOCAL_VARS_BOOLEAN
-        elif type == 'char':
-            return START_LOCAL_VARS_CHAR
-    elif scope == Scope.TEMPORAL:
-        if type == 'int':
-            return START_TEMPORAL_VARS_INT
-        elif type == 'float':
-            return START_TEMPORAL_VARS_FLOAT
-        elif type == 'boolean':
-            return START_TEMPORAL_VARS_BOOLEAN
-        elif type == 'char':
-            return START_TEMPORAL_VARS_CHAR
-    elif scope == Scope.CONSTANT:
-        return START_CONSTANTS

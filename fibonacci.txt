@@ -1,0 +1,33 @@
+Programa Fibonnaci;
+
+Function int fibRecursivo(int n){
+    var int value;
+    if(n <= 1){
+        value = n;
+    }else{
+        value = @fibRecursivo(n - 1) + @fibRecursivo(n - 2);
+    };
+    return value;
+}
+
+Function int fibCiclico(int n){
+    var int init, fib, aux;
+    init = 1;
+    fib = 0;
+    aux = 1;
+    while(init <= n) {
+        aux = aux + fib;
+        fib = aux - fib;
+        init = init + 1;
+    };
+    return fib;
+}
+
+
+Main(){
+    var int cont;
+    print("INGRESA FIBONACCI A CALCULAR");
+    read(cont);
+    print("RESULTADO RECURSIVO: ", @fibRecursivo(cont));
+    print("RESULTADO CICLICO: ", @fibCiclico(cont));
+}

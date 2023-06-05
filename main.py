@@ -38,7 +38,8 @@ tokens = [
     'NOTEQUALS',
     'THREEDOTS',
     'RETURN',
-    'AT'
+    'AT',
+    'DOT'
 ]
 
 reserved = {
@@ -55,6 +56,7 @@ reserved = {
     'boolean': 'BOOLEAN',
     'read': 'READ',
     'print': 'PRINT',
+    'square': 'SQUARE',
 }
 
 tokens += reserved.values()
@@ -79,6 +81,7 @@ t_LEFTBRACKET = r'\['
 t_RIGHTBRACKET = r'\]'
 t_THREEDOTS = r'\.\.\.'
 t_AT = r'\@'
+t_DOT = r'\.'
 t_ignore = ' \n'
 
 
@@ -196,6 +199,10 @@ def t_PRINT(t):
 
 def t_RETURN(t):
     r'return'
+    return t
+
+def t_SQUARE(t):
+    r'square'
     return t
 
 
@@ -331,6 +338,8 @@ def p_estatuto(p):
               | escritura
               | while
               | functionCall SEMICOLON
+              | lectura
+              | specialArrayExpresion
 
       '''
 
@@ -344,6 +353,11 @@ def p_paramsFunctionCall(p):
     '''
         paramsFunctionCall : expresion seen_parameter_fCall COMMA seen_comma_params_fCall paramsFunctionCall
                         | expresion seen_parameter_fCall seen_comma_params_fCall
+    '''
+
+def p_lectura(p):
+    '''
+        lectura : READ LEFTPARENTHESES ID seen_lectura RIGHTPARENTHESES SEMICOLON
     '''
 
 
@@ -389,7 +403,7 @@ def p_escrituraaux(p):
 def p_escrituraaux2(p):
     '''
       escrituraaux2 : expresion seen_print_cuadruplo
-                    | STRING_CTE seen_print_cuadruplo
+                    | STRING_CTE seen_string_cte seen_print_cuadruplo
       '''
 
 
@@ -472,6 +486,12 @@ def p_arrayAccesingExpresionAux(p):
                             | expresion seen_expresion_array COMMA seen_commaAccesingExpresion arrayAccesingExpresionAux
     '''
 
+def p_specialArrayExpression(p):
+    '''
+        specialArrayExpresion : ID seen_ID DOT PRINT seen_print_matrix LEFTPARENTHESES RIGHTPARENTHESES SEMICOLON
+        | ID seen_ID DOT SQUARE seen_square_vector LEFTPARENTHESES RIGHTPARENTHESES SEMICOLON
+    '''
+
 
 def p_seen_program(p):
     "seen_program : "
@@ -479,6 +499,14 @@ def p_seen_program(p):
     compilerManager.setProgramName(programName)
     compilerManager.setCurrentFunction(programName)
     compilerManager.addFunctionToDir(programName, Scope.GLOBAL, 'Program')
+
+def p_seen_print_matrix(p):
+    "seen_print_matrix : "
+    compilerManager.handlePrintMatrix()
+
+def p_seen_square_vector(p):
+    "seen_square_vector : "
+    compilerManager.handleSquareVector()
 
 def p_seen_function_main(p):
     "seen_function_main : "
@@ -555,6 +583,7 @@ def p_seen_id_function(p):
         seen_id_function :
     '''
     functionName = p[-1]
+    compilerManager.setCurrentFunctionToProgramName()
     compilerManager.addFunctionToDir(functionName, Scope.LOCAL, 'Function')
     compilerManager.setCurrentFunction(functionName)
 
@@ -749,6 +778,11 @@ def p_seen_CTE_BOOLEAN(p):
     constant = p[-1]
     compilerManager.handleConstant(constant, VarType.BOOLEAN)
 
+def p_seen_string_cte(p):
+    "seen_string_cte :"
+    constant = p[-1]
+    compilerManager.handleConstant(constant[1:-1], VarType.STRING)
+
 def p_seen_initArrayAccesing(p):
     '''
         seen_initArrayAccesing :
@@ -775,6 +809,13 @@ def p_seen_commaAccesingExpresion(p):
     '''
     compilerManager.handleIncrementCurrentArrayDimention()
 
+def p_seen_lectura(p):
+    '''
+        seen_lectura :
+    '''
+    varId = p[-1]
+    compilerManager.handleRead(varId)
+
 
 
 # Mensaje de error sintactico
@@ -794,47 +835,13 @@ def p_empty(p):
 parser = yacc.yacc()
 
 
-print("1-Load Example from TXT")
-print("2-Input code manually")
-print('sCOPE', Scope.GLOBAL)
-option = input("Option : ")
-if option == "1":
-    file = open("/Users/moiseslopez/Documents/compi2s2/CompiMoi/test.txt").read()
-    parser.parse(file)
-    print('operandos: ', compilerManager.operandsStack)
-    print('compilerManager.quadruples: ', compilerManager.quadruples)
-    print('directorio funciones: ', compilerManager.functionDirectory)
-    print('pila tipos :', compilerManager.typesStack)
-elif option == "2":
-    file = open(
-        "/Users/moiseslopez/Documents/compi2s2/CompiMoi/test2.txt").read()
-    parser.parse(file)
-    print('operandos: ', compilerManager.operandsStack)
-    print('compilerManager.quadruples: ', compilerManager.quadruples)
-    print('directorio funciones: ', compilerManager.functionDirectory)
-    print('pila tipos :', compilerManager.typesStack)
-elif option == "3":
-    file = open(
-        "/Users/moiseslopez/Documents/compi2s2/CompiMoi/test3.txt").read()
-    parser.parse(file)
-    print('operandos: ', compilerManager.operandsStack)
-    cont = 0
-    for cuadruplo in compilerManager.quadruples:
-        print(cont, cuadruplo)
-        cont += 1
-    print('directorio funciones: ', compilerManager.functionDirectory)
-    print('pila tipos :', compilerManager.typesStack)
-    print('pila operandos:', compilerManager.operandsStack)
-    print('pila typos:', compilerManager.typesStack)
-    compilerManager.paramsVm.printParamsVm()
-    virtualMachineManager.init(
-        compilerManager.quadruples, compilerManager.paramsVm)
-    virtualMachineManager.run()
-
-else:
-    while True:
-        try:
-            s = input('>> ')
-        except EOFError:
-            break
-        parser.parse(s)
+file = open(sys.argv[1]).read()
+parser.parse(file)
+cont = 0
+for cuadruplo in compilerManager.quadruples:
+    print(cont, cuadruplo)
+    cont += 1
+#compilerManager.paramsVm.printParamsVm()
+virtualMachineManager.init(
+    compilerManager.quadruples, compilerManager.paramsVm)
+virtualMachineManager.run()
