@@ -95,6 +95,11 @@ class VirtualMachine:
                 tempResult = leftValue <= rightValue
                 self.executionMemory.setValueToAddress(tempResult, result)
 
+            if operator == '>=':
+                leftValue, rightValue = self.getValuesOfAddresses(leftOperand, rightOperand)
+                tempResult = leftValue >= rightValue
+                self.executionMemory.setValueToAddress(tempResult, result)
+
             if operator == '==':
                 leftValue, rightValue = self.getValuesOfAddresses(leftOperand, rightOperand)
                 tempResult = leftValue == rightValue

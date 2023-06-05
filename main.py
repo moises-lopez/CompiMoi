@@ -33,6 +33,7 @@ tokens = [
     'RIGHTBRACKET',
     'LESSTHAN',
     'LESSTHANOREQUALS',
+    'GREATERTHANOREQUALS',
     'GREATERTHAN',
     'NOTEQUALS',
     'THREEDOTS',
@@ -74,6 +75,7 @@ t_LEFTBRACE = r'\{'
 t_RIGHTBRACE = r'\}'
 t_LESSTHAN = r'\<'
 t_LESSTHANOREQUALS = r'\<\='
+t_GREATERTHANOREQUALS = r'\>\='
 t_GREATERTHAN = r'\>'
 t_NOTEQUALS = r'\!\='
 t_LEFTBRACKET = r'\['
@@ -419,6 +421,7 @@ def p_expresionaux(p):
                 | LESSTHANOREQUALS seen_operador
                 | NOTEQUALS seen_operador
                 | EQUALS seen_operador
+                | GREATERTHANOREQUALS seen_operador
                 |
       '''
 

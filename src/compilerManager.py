@@ -198,8 +198,6 @@ class CompilerManager:
         expectedType = VarType.VOID
         if self.currentFunction in self.functionDirectory[self.programName]['varsTable']:
             expectedType = self.functionDirectory[self.programName]['varsTable'][self.currentFunction]['type']
-        print(self.functionDirectory[self.programName]['varsTable'])
-        print(expectedType, type)
         if expectedType == VarType.VOID:
             print('FUNCTION SHOULD NO RETURN ANYTHING')#TODO: HANDLE ERROR
         if type != expectedType:
@@ -335,7 +333,7 @@ class CompilerManager:
         if (len(self.operatorsStack) == 0):
             return
 
-        if self.operatorsStack[-1] == '>' or self.operatorsStack[-1] == '<' or self.operatorsStack[-1] == '!=' or self.operatorsStack[-1] == '==' or self.operatorsStack[-1] == '<=':  # TODO: IMPROVE
+        if self.operatorsStack[-1] == '>' or self.operatorsStack[-1] == '<' or self.operatorsStack[-1] == '!=' or self.operatorsStack[-1] == '==' or self.operatorsStack[-1] == '<=' or self.operatorsStack[-1] == '>=':  # TODO: IMPROVE
             rightOperand = self.operandsStack.pop()
             leftOperand = self.operandsStack.pop()
             rightType = self.typesStack.pop()

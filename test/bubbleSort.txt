@@ -1,0 +1,41 @@
+Programa BubbleSort;
+
+Main(){
+    var boolean found;
+    var int i, j, aux, A[0 10], size;
+
+    A[0] = 10;
+    A[1] = 12;
+    A[2] = 13;
+    A[3] = 16;
+    A[4] = 11;
+    A[5] = 19;
+    A[6] = 30;
+    A[7] = 25;
+    A[8] = 61;
+    A[9] = 123;
+    A[10] = 1235;
+
+    size = 10;
+    i = 0;
+    j = 1;
+
+    A.print();
+
+    while(i < size){
+      j = i + 1;
+      while(j < size){
+          if(A[i] > A[j]){
+            aux = A[i];
+            A[i] = A[j];
+            A[j] = aux;
+          };
+        j = j + 1;
+      };
+      i = i + 1;
+    };
+
+
+
+    A.print();
+}
