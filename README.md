@@ -4,13 +4,12 @@
 ## Instalación:
 
 Descargar repositorio y descomprimir en una carpeta, asegurarse de tener python instalado y asignado en el path de la terminal
--   Agregar archivo txt a carpeta de test
--   Abrir una terminal
--   Navegar por la terminal a la carpeta donde se encuentra main.py
-    
--   Correr el comando `python main.py archivo.txt`
-    
--   La terminal correrá el archivo.txt, primero desplegará los cuádruplos generados y después le ejecución del programa.
+- Agregar archivo txt a carpeta de test
+- Abrir una terminal
+- Instalar librería ply
+- Navegar por la terminal a la carpeta donde se encuentra main.py
+- Correr el comando `python main.py archivo.txt` o en su defecto `python3 main.py archivo.txt`
+- La terminal correrá el archivo.txt, primero desplegará los cuádruplos generados y después le ejecución del programa.
 
 CompiMoi sigue una estructura de programación convencional. Primero se define el nombre del programa, luego variables globales, módulos y al final una Main Function.
 
